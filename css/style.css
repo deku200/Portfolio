@@ -27,6 +27,8 @@ html, body { background: var(--bg); color: var(--fg); font-family: var(--mono); 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; }
   html { scroll-behavior: auto; }
+  .hero-logo.is-spinning { animation: none; }
+  .grain::before { animation: none; }
 }
 html, body { overflow-x: hidden; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
@@ -482,6 +484,11 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
    hscroll is NOT active: narrow widths OR any touch device (no hover / coarse
    pointer) — tablets included, or they'd freeze at the 100vh hscroll section */
 @media (max-width: 768px), (hover: none), (pointer: coarse) {
+  /* stop the full-screen grain repainting every 0.35s on phones (static noise
+     reads the same on a small display) and dial the overlays back a touch */
+  .grain::before { animation: none; }
+  .grain { opacity: .06; }
+  .scanlines { opacity: .10; }
   .hscroll { height: auto; overflow: visible; }
   .htrack { display: block; transform: none !important; }
   .hpanel { width: auto; height: auto; overflow: visible; }

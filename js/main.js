@@ -387,8 +387,11 @@ function startHeroLogo() {
     .join("\n");
 
   // real 3D: stack copies of the text along Z so the spinning logo has an
-  // actual extruded side face when seen edge-on
-  const LAYERS = 8, GAP = 4; // 8 slices, 4px apart = 28px deep
+  // actual extruded side face when seen edge-on. On phones, fewer slices — 8
+  // preserve-3d layers spinning is a heavy composite there; 3 still reads as 3D.
+  const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const LOW = REDUCED || matchMedia("(max-width:768px), (hover:none), (pointer:coarse)").matches;
+  const LAYERS = LOW ? 3 : 8, GAP = 4; // slices 4px apart
   const layers = [];
   for (let i = 0; i < LAYERS; i++) {
     const l = document.createElement("pre");
@@ -429,6 +432,7 @@ function startHeroLogo() {
   // constant subtle noise: ~5% of the glyphs flip to 0/1 at random spots,
   // a fresh 5% every tick, so the logo always quietly "recomputes" itself
   function startBitFlicker() {
+    if (REDUCED) return;                 // honor reduced-motion: hold the glyphs still
     setInterval(() => {
       setText(target
         .split("")
@@ -436,15 +440,16 @@ function startHeroLogo() {
           ? c
           : (Math.random() < 0.5 ? "0" : "1"))
         .join(""));
-    }, 300);
+    }, LOW ? 600 : 300);                 // half the rewrite rate on phones
   }
   // extra layer between wrap (perspective) and pre (spin) that carries the tilt
   const tilt = document.createElement("div");
   tilt.className = "hero-logo-tilt";
   pre.parentElement.appendChild(tilt);
   tilt.appendChild(pre);
-  // tilt toward the mouse from anywhere on screen
-  addEventListener("pointermove", e => {
+  // tilt toward the mouse — desktop pointer only (touch has no hover, and
+  // reacting to touch-scroll here just thrashes the transform)
+  if (!LOW) addEventListener("pointermove", e => {
     const rx = (e.clientY / innerHeight - 0.5) * -24; // deg
     const ry = (e.clientX / innerWidth - 0.5) * 24;
     tilt.style.transform = `rotateX(${rx.toFixed(1)}deg) rotateY(${ry.toFixed(1)}deg)`;
@@ -462,10 +467,15 @@ function startHero() {
   const CELL = 16;
   const mouse = { x: -1e4, y: -1e4 };
   const shards = []; // for "break" effect
+  // mobile/low-power tuning: shrink the backing store and cap the framerate,
+  // and (below) pause the whole loop when the hero is off-screen or tab hidden
+  const LOW = matchMedia("(max-width:768px), (hover:none), (pointer:coarse)").matches
+           || matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const DPR = Math.min(devicePixelRatio || 1, LOW ? 1 : 2);
 
   function resize() {
-    W = canvas.width = canvas.offsetWidth * devicePixelRatio;
-    H = canvas.height = canvas.offsetHeight * devicePixelRatio;
+    W = canvas.width = canvas.offsetWidth * DPR;
+    H = canvas.height = canvas.offsetHeight * DPR;
     cols = Math.ceil(canvas.offsetWidth / CELL);
     rows = Math.ceil(canvas.offsetHeight / CELL);
   }
@@ -492,7 +502,7 @@ function startHero() {
 
   function draw() {
     t += 0.02;
-    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
     ctx.font = `${CELL - 3}px monospace`;
 
@@ -526,9 +536,24 @@ function startHero() {
         ctx.fillText(s.c, s.x, s.y);
       }
     }
-    requestAnimationFrame(draw);
   }
-  draw();
+
+  // run only while visible: pause off-screen and when the tab is hidden so the
+  // floor doesn't keep burning cycles behind the rest of the page (mobile jank)
+  let visible = true, running = false, last = 0;
+  const minDelta = LOW ? 33 : 0;          // ~30fps cap on mobile, uncapped on desktop
+  function frame(now) {
+    if (!visible || document.hidden) { running = false; return; }
+    if (now - last >= minDelta) { last = now; draw(); }
+    requestAnimationFrame(frame);
+  }
+  function start() { if (!running) { running = true; requestAnimationFrame(frame); } }
+  new IntersectionObserver(es => {
+    visible = es[0].isIntersecting;
+    if (visible) start();
+  }, { threshold: 0 }).observe(canvas);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && visible) start(); });
+  start();
 }
 
 /* ---------- 4. SCRAMBLE TEXT ---------- */
