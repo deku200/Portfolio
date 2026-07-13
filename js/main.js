@@ -114,6 +114,7 @@ const I18N = {
   heroLine:     { en: "&lt;QUALITY, SPEED AND AUTOMATION<br>FOR YOUR BUSINESS — FROM $1,000.<br>YOUR TASK IS TO STAY IN TOUCH<br>OR HOLD A GREAT BRIEFING WITH US&gt;",
                   uk: "&lt;ЯКІСТЬ, ШВИДКІСТЬ І АВТОМАТИЗАЦІЯ<br>ДЛЯ ТВОГО БІЗНЕСУ — ВІД $1,000.<br>ТВОЯ ЗАДАЧА — БУТИ НА ЗВ'ЯЗКУ<br>АБО ПРОВЕСТИ З НАМИ КРУТИЙ БРИФІНГ&gt;" },
   breakBtn:     { en: "CLICK TO BREAK", uk: "НАТИСНИ — РОЗБИЙ" },
+  tgBtn:        { en: "→ TELEGRAM", uk: "→ ТЕЛЕГРАМ" },
   descGreening: { en: "LANDING PAGE FOR A COLLECTIVE REFORESTATION INITIATIVE.",
                   uk: "ЛЕНДІНГ ДЛЯ КОЛЕКТИВНОЇ ІНІЦІАТИВИ ВІДНОВЛЕННЯ ЛІСІВ." },
   descMelman:   { en: "MERCH STORE FOR THE #1 OSTRICH IN UKRAINIAN TIKTOK.",

@@ -173,7 +173,10 @@ button { font-family: inherit; cursor: pointer; }
 #ascii-floor { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .hero-corner { position: absolute; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
 .hero-corner-bottom-left { left: 6vw; bottom: 6vh; line-height: 1.9; }
-.hero-corner-bottom-right { right: 4vw; bottom: 6vh; text-align: right; line-height: 2.2; }
+.hero-corner-bottom-right {
+  right: 4vw; bottom: 6vh;
+  display: flex; flex-direction: column; align-items: flex-end; gap: .7rem;
+}
 
 /* ============ work ============ */
 .work { padding: 10vh 0; background: #000; }
