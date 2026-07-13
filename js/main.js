@@ -130,7 +130,7 @@ const I18N = {
                   uk: '<a data-tip="TIKTOK: @VALERICH_OFFICIAL ↗" href="https://www.tiktok.com/@valerich_official" target="_blank" rel="noopener noreferrer">&lt;@VALERICH_OFFICIAL&gt; ↗</a><br>&lt;БЛОГЕР І ВЛАСНИК / СТРАУСИНА ФЕРМА&gt;' },
   // member0-2 / bio0-2 are generated from TEAM_DEFAULTS (+ admin overrides)
   // by renderBuiltinTeam() below, so status/info edits flow through one model.
-  servicesLabel:{ en: "&lt;WHAT WE'RE CAPABLE OF&gt;", uk: "&lt;ЩО Я РОБЛЮ&gt;" },
+  servicesLabel:{ en: "&lt;WHAT WE'RE CAPABLE OF&gt;", uk: "&lt;НА ЩО МИ ЗДАТНІ&gt;" },
   servicesList: { en: SVC_ROWS([
                     ["WEB DESIGN", "LANDINGS / UI",
                      "LANDING PAGES, PORTFOLIOS AND MARKETING SITES DESIGNED IN FIGMA — WITH STRUCTURE, TYPOGRAPHY AND MOTION THOUGHT THROUGH BEFORE A SINGLE LINE OF CODE."],
@@ -160,7 +160,7 @@ const I18N = {
                      "ЧАТ-БОТИ, ІНТЕГРАЦІЇ LLM ТА АВТОМАТИЗАЦІЯ ПРОЦЕСІВ, ЩО ВІДПОВІДАЮТЬ КЛІЄНТАМ, ЗАПОВНЮЮТЬ ТАБЛИЦІ Й ЕКОНОМЛЯТЬ ГОДИНИ ЩОТИЖНЯ."],
                   ]) },
   servicesCta:  { en: "→ START A PROJECT — FROM $1,000", uk: "→ ПОЧАТИ ПРОЄКТ — ВІД $1,000" },
-  clientsLabel: { en: "&lt;WE'RE BEING ELECTED&gt;", uk: "&lt;ТІ, ХТО НАС ОБРАВ&gt;" },
+  clientsLabel: { en: "&lt;WE'RE BEING ELECTED&gt;", uk: "&lt;НАС ОБИРАЮТЬ&gt;" },
   clientsList:  { en: CLI_ROWS([
                     ["2026", "MOCLAME HOME", "E-COMMERCE"],
                     ["2026", "MELMAN", "BRAND / LANDING PAGE"],
@@ -197,7 +197,6 @@ const I18N = {
   fMessage:     { en: "&gt; MESSAGE", uk: "&gt; ПОВІДОМЛЕННЯ" },
   transmit:     { en: "TRANSMIT", uk: "НАДІСЛАТИ" },
   footerName:   { en: "&lt;YAROSLAV / slv_visual&gt;", uk: "&lt;ЯРОСЛАВ / slv_visual&gt;" },
-  socials:      { en: "&lt;SOCIALS&gt;", uk: "&lt;СОЦМЕРЕЖІ&gt;" },
 };
 const TERMINAL_LINES = {
   en: ["INITIALISING SECURE CONNECTION...", "ENCRYPTING PAYLOAD...",

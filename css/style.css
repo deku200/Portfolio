@@ -124,7 +124,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 .btn-orange { transition: background .3s ease, transform .3s ease; }
 .btn-orange:hover { background: #fff; transform: translateY(-2px); }
-.lang-btn, .team-tab, .socials a { transition: color .3s ease; }
+.lang-btn, .team-tab { transition: color .3s ease; }
 .lang-btn:hover, .team-tab:hover { color: var(--fg); }
 .contact-form input, .contact-form textarea { transition: border-color .35s ease; }
 .btn-small { font-size: .75rem; }
@@ -445,7 +445,6 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
   display: flex; justify-content: space-between; gap: 2rem; flex-wrap: wrap;
   padding: 6vh 6vw 8vh; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase;
 }
-.socials a { color: var(--green); margin-right: .8em; }
 
 /* ============ custom tooltip ============ */
 .tip {
