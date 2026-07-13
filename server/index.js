@@ -8,10 +8,21 @@ const rateLimit = require("express-rate-limit");
 const { db, UPLOAD_DIR } = require("./db");
 const { seed } = require("./seed");
 const {
-  verifyPassword, signToken, setAuthCookie, clearAuthCookie, requireAuth,
+  verifyPassword, signToken, setAuthCookie, clearAuthCookie, requireAuth, hashPassword,
 } = require("./auth");
 
 seed(); // idempotent — inserts built-in team + projects on first run
+
+// bootstrap the first admin from env vars (handy on a PaaS with no shell):
+// if ADMIN_USERNAME + ADMIN_PASSWORD are set and no admin exists yet, create one.
+(function bootstrapAdmin() {
+  const u = (process.env.ADMIN_USERNAME || "").trim();
+  const p = process.env.ADMIN_PASSWORD || "";
+  if (!u || !p) return;
+  if (db.prepare("SELECT COUNT(*) AS n FROM admins").get().n > 0) return; // never overwrite
+  db.prepare("INSERT INTO admins (username, password_hash) VALUES (?, ?)").run(u, hashPassword(p));
+  console.log(`[bootstrap] created admin "${u}" from env vars`);
+})();
 
 const app = express();
 const ROOT = path.join(__dirname, "..");        // the Portfolio folder (static site)
