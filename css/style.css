@@ -461,6 +461,8 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
 }
 .tip.is-on { opacity: 1; transform: translateY(0); }
 .tip::before { content: "// "; color: var(--accent); }
+/* hide the hint chips on tablet/mobile/touch (covers a desktop page resized down) */
+@media (max-width: 1024px), (hover: none), (pointer: coarse) { .tip { display: none !important; } }
 
 /* ============ horizontal block scroller ============ */
 .hscroll { height: 100vh; overflow: hidden; position: relative; }

@@ -592,7 +592,9 @@ document.addEventListener("mouseover", e => {
 });
 
 /* ---------- 4b. CUSTOM TOOLTIP (terminal chip following the cursor) ---------- */
-{
+// desktop only — no cursor-following hints on tablet/mobile/touch (there's no
+// cursor to anchor them to, and tap-fired mouseover leaves them stuck)
+if (matchMedia("(min-width: 1025px) and (hover: hover) and (pointer: fine)").matches) {
   const tip = document.createElement("div");
   tip.className = "tip";
   document.body.appendChild(tip);
