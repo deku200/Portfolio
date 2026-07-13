@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="color-scheme" content="dark" />
+  <title>&lt;YOUR NAME&gt; — Product Design & Creative Development</title>
+  <meta name="description" content="Portfolio of &lt;YOUR NAME&gt; — design, development and creative engineering." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&subset=cyrillic&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- CRT frame (always on) -->
+  <div class="crt-frame" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <!-- ============ BOOT / LOADER ============ -->
+  <div id="boot" class="boot">
+    <div class="boot-pct"><span id="boot-pct">0</span> %</div>
+  </div>
+
+  <!-- ============ SPLASH ============ -->
+  <div id="splash" class="splash" hidden>
+    <pre id="splash-logo" class="splash-logo" aria-label="logo"></pre>
+    <button id="enter-btn" class="btn-orange" data-i18n="enter">CLICK TO ENTER</button>
+  </div>
+
+  <!-- ============ SITE ============ -->
+  <div id="site" class="site" hidden>
+
+    <header class="site-header">
+      <div class="logo scramble-hover">&lt;SV&gt;</div>
+      <div class="header-col" data-i18n="tagline">&lt;COMPREHENSIVE WEBSITE DEVELOPMENT<br>FOR THOSE WHO VALUE<br>QUALITY AND SPEED&gt;</div>
+      <div class="header-col lang">
+        &lt;LANG&gt;<br>
+        <button class="lang-btn is-active" data-lang="en" data-tip="ENGLISH">EN</button>
+        <button class="lang-btn" data-lang="uk" data-tip="УКРАЇНСЬКА">UK</button>
+      </div>
+      <a href="#contact" class="btn-orange btn-small" data-i18n="contactBtn" data-tip="→ CONTACT / КОНТАКТ">CONTACT</a>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero">
+        <canvas id="ascii-floor"></canvas>
+        <div class="hero-logo-wrap" aria-hidden="true"><div id="hero-logo" class="hero-logo"></div></div>
+        <div class="hero-corner hero-corner-bottom-left scramble-in" data-i18n="heroLine">
+          &lt;QUALITY, SPEED AND AUTOMATION<br>
+          FOR YOUR BUSINESS — FROM $1,000.<br>
+          YOUR TASK IS TO STAY IN TOUCH<br>
+          OR HOLD A GREAT BRIEFING WITH US&gt;
+        </div>
+        <div class="hero-corner hero-corner-bottom-right">
+          <span class="btn-orange btn-small" id="break-btn" data-i18n="breakBtn">CLICK TO BREAK</span>
+        </div>
+      </section>
+
+      <!-- FEATURED WORK -->
+      <section class="work" id="work">
+        <div class="marquee" aria-hidden="true">
+          <div class="marquee-track" id="tag-marquee"></div>
+        </div>
+        <div class="work-items">
+          <article class="work-item" data-title="&lt;GREENING AFRICA&gt;">
+            <div class="w-head"><span class="w-case">CASE 001 — 2026</span><span class="w-status">■ DESIGN</span></div>
+            <div class="work-media glitchable"><img src="img/greening-africa.png" alt="Greening Africa — landing page" /></div>
+            <h2 class="work-title scramble-hover">&lt;GREENING AFRICA&gt;</h2>
+            <p class="work-desc" data-i18n="descGreening">LANDING PAGE FOR A COLLECTIVE REFORESTATION INITIATIVE.</p>
+            <div class="w-tags"><span>FIGMA</span><span>GSAP</span><span>LANDING</span></div>
+          </article>
+          <article class="work-item" data-title="&lt;МЕЛМАН&gt;">
+            <div class="w-head"><span class="w-case">CASE 002 — 2026</span><span class="w-status is-live">● LIVE</span></div>
+            <div class="work-media glitchable"><img src="img/melman.png" alt="МЕЛМАН — merch store" /></div>
+            <h2 class="work-title scramble-hover"><a data-tip="MELMAN.SHOP ↗" href="https://melman.shop/" target="_blank" rel="noopener noreferrer">&lt;МЕЛМАН&gt; ↗</a></h2>
+            <p class="work-desc" data-i18n="descMelman">MERCH STORE FOR THE #1 OSTRICH IN UKRAINIAN TIKTOK.</p>
+            <div class="w-tags"><span>E-COMMERCE</span><span>JS</span><span>NETLIFY</span></div>
+          </article>
+          <article class="work-item" data-title="&lt;MOCLAME HOME&gt;">
+            <div class="w-head"><span class="w-case">CASE 003 — 2026</span><span class="w-status">■ IN DEV</span></div>
+            <div class="work-media glitchable"><img src="img/moclame-home.png" alt="MOCLAME HOME — 3D print shop" /></div>
+            <h2 class="work-title scramble-hover">&lt;MOCLAME HOME&gt;</h2>
+            <p class="work-desc" data-i18n="descMoclame">E-COMMERCE FOR 3D-PRINTED HOME DECOR WITH LIVE 3D PREVIEWS.</p>
+            <div class="w-tags"><span>3D</span><span>THREE.JS</span><span>SHOP</span></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- HORIZONTAL BLOCK SCROLLER: quote → team → services → clients → contact -->
+      <section id="hscroll" class="hscroll">
+        <div id="htrack" class="htrack">
+        <div class="hpanel">
+      <!-- TESTIMONIAL -->
+      <section class="quote-section">
+        <div class="quote-label" data-i18n="quoteLabel">&lt;STRAIGHT FROM THE CLIENT&gt;</div>
+        <div class="q-meta">
+          <span class="q-rec">●</span>
+          <span data-i18n="qMeta">INCOMING TRANSMISSION // SRC: TIKTOK</span>
+          <span class="q-wave" id="q-wave"></span>
+        </div>
+        <blockquote id="typewriter" class="quote"></blockquote>
+        <div class="q-after">
+          <span class="q-stamp" id="q-stamp" data-i18n="qStamp">✓ VERIFIED CLIENT · 10,000%</span>
+          <button class="q-replay" id="q-replay" data-i18n="qReplay">↻ REPLAY</button>
+        </div>
+        <div class="quote-author" data-i18n="quoteAuthor"><a href="https://www.tiktok.com/@valerich_official" target="_blank" rel="noopener noreferrer">&lt;@VALERICH_OFFICIAL&gt; ↗</a><br>&lt;BLOGGER AND OWNER / OSTRICH FARM&gt;</div>
+      </section>
+
+        </div>
+        <div class="hpanel">
+      <!-- TEAM / ABOUT -->
+      <section class="team">
+        <nav class="team-tabs" id="team-tabs">
+          <button class="team-tab is-active" data-member="0" data-i18n="member0">&lt;YAROSLAV&gt;</button>
+          <button class="team-tab" data-member="1" data-i18n="member1">&lt;COLLABORATOR&gt;</button>
+          <button class="team-tab" data-member="2" data-i18n="member2">&lt;ROMAN&gt;</button>
+        </nav>
+        <div class="team-panels" id="team-panels">
+          <div class="team-panel is-active">
+            <div class="team-photo halftone"><img src="img/yaroslav.jpg" alt="Yaroslav — founder of slv_visual" /></div>
+            <div class="team-dossier" data-i18n="bio0"></div>
+          </div>
+          <div class="team-panel">
+            <div class="team-photo halftone"><img src="img/oleksandr.jpg" alt="Oleksandr — full-stack developer at slv_visual" /></div>
+            <div class="team-dossier" data-i18n="bio1"></div>
+          </div>
+          <div class="team-panel">
+            <div class="team-photo halftone"><img src="img/roman.jpg" alt="Roman — front-end developer at slv_visual" /></div>
+            <div class="team-dossier" data-i18n="bio2"></div>
+          </div>
+        </div>
+      </section>
+
+        </div>
+        <div class="hpanel">
+      <!-- SERVICES -->
+      <section class="services">
+        <div class="services-label" data-i18n="servicesLabel">&lt;THE WORK I DO&gt;</div>
+        <ul class="services-list" data-i18n="servicesList"></ul>
+        <a href="#contact" class="services-cta btn-orange" data-i18n="servicesCta" data-tip="→ CONTACT / КОНТАКТ">→ START A PROJECT — FROM $1,000</a>
+      </section>
+
+        </div>
+        <div class="hpanel">
+      <!-- CLIENTS -->
+      <section class="clients">
+        <div class="clients-label" data-i18n="clientsLabel">&lt;THOSE WHO CHOSE US&gt;</div>
+        <ul class="clients-list" data-i18n="clientsList"></ul>
+      </section>
+
+        </div>
+        <div class="hpanel">
+      <!-- CONTACT (terminal form) -->
+      <section class="contact" id="contact">
+        <div class="contact-label" data-i18n="contactLabel">TELL US WHAT CAN WE DO FOR YOU?</div>
+        <div class="contact-grid">
+        <div class="term-window">
+          <div class="term-bar">
+            <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
+            <span class="term-title">yaroslav@slv_visual:~/contact</span>
+          </div>
+          <div class="term-body">
+            <form id="contact-form" class="contact-form" autocomplete="off">
+              <label><span data-i18n="fName">&gt; YOUR NAME</span><input name="name" required /></label>
+              <label><span data-i18n="fEmail">&gt; YOUR EMAIL</span><input name="email" type="email" required /></label>
+              <label><span data-i18n="fBudget">&gt; WHAT IS YOUR BUDGET FOR THE PROJECT?</span><input name="budget" /></label>
+              <label><span data-i18n="fSource">&gt; WHERE DID YOU HEAR ABOUT US?</span><input name="source" /></label>
+              <label><span data-i18n="fMessage">&gt; MESSAGE</span><textarea name="message" rows="4" required></textarea></label>
+              <button type="submit" class="btn-orange" data-i18n="transmit">TRANSMIT</button>
+              <pre id="terminal-log" class="terminal-log" aria-live="polite"></pre>
+            </form>
+            <aside class="term-status">
+              <div id="term-status" aria-hidden="true"></div>
+            </aside>
+          </div>
+        </div>
+        <div class="term-process" data-i18n="process"></div>
+        </div>
+      </section>
+
+      <!-- footer rides inside the last panel -->
+      <footer class="site-footer">
+        <div data-i18n="footerName">&lt;YAROSLAV / slv_visual&gt;</div>
+        <div class="socials"><span data-i18n="socials">&lt;SOCIALS&gt;</span><br>
+          <a href="#" data-tip="LINKEDIN">LKDN</a> <a href="#" data-tip="YOUTUBE">YT</a> <a href="#" data-tip="INSTAGRAM">IG</a>
+        </div>
+      </footer>
+        </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

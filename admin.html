@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>slv_visual — admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+  <!-- password gate -->
+  <div class="gate" id="gate">
+    <h1>&lt;SLV_VISUAL / ADMIN&gt;</h1>
+    <form id="gate-form">
+      <input type="text" id="gate-user" placeholder="USERNAME" autocomplete="username" autofocus />
+      <input type="password" id="gate-pass" placeholder="PASSWORD" autocomplete="current-password" />
+      <button class="btn" type="submit">ENTER</button>
+    </form>
+    <div class="err" id="gate-err"></div>
+  </div>
+
+  <!-- admin app (hidden until unlocked) -->
+  <div id="app" hidden>
+    <div class="admin-head">
+      <div>
+        <div class="brand">&lt;SLV_VISUAL / ADMIN&gt;</div>
+        <div class="sub">client-side control panel · data stored in this browser</div>
+      </div>
+      <div style="display:flex; gap:1rem; align-items:center;">
+        <a class="back-link" href="index.html">↗ VIEW SITE</a>
+        <button class="btn ghost" id="lock-btn" type="button">LOCK</button>
+      </div>
+    </div>
+
+    <nav class="tabbar" id="tabbar">
+      <button data-view="applications" class="is-active">APPLICATIONS</button>
+      <button data-view="partners">TEAM</button>
+      <button data-view="projects">PROJECTS</button>
+    </nav>
+
+    <!-- APPLICATIONS -->
+    <section class="view is-active" id="view-applications">
+      <div class="card">
+        <h3>Submitted applications</h3>
+        <p class="muted">Applications submitted through the contact form on this browser appear here.</p>
+        <div class="actions" style="margin-top:.9rem;">
+          <button class="btn ghost" id="apps-refresh" type="button">REFRESH</button>
+          <button class="btn danger" id="apps-clear" type="button">CLEAR ALL</button>
+        </div>
+      </div>
+      <div id="apps-list"></div>
+    </section>
+
+    <!-- PARTNERS -->
+    <section class="view" id="view-partners">
+      <div class="card">
+        <h3>Add a partner</h3>
+        <form id="partner-form">
+          <div class="row2">
+            <label class="field"><span>Name</span><input name="name" required placeholder="e.g. Roman" /></label>
+            <label class="field"><span>Role</span><input name="role" placeholder="e.g. Partner" value="Partner" /></label>
+          </div>
+          <div class="row2">
+            <label class="field"><span>Location</span><input name="location" placeholder="e.g. Ukraine" value="Ukraine" /></label>
+            <label class="field"><span>Photo</span><input name="photo" type="file" accept="image/*" /></label>
+          </div>
+          <div class="row2">
+            <label class="field"><span>Status</span><select name="status">
+              <option value="online">Online</option>
+              <option value="offline">Offline</option>
+              <option value="atwork">At Work</option>
+            </select></label>
+            <span></span>
+          </div>
+          <label class="field"><span>Bio</span><textarea name="bio" placeholder="Short one-line bio"></textarea></label>
+
+          <span style="display:block; color:var(--dim); font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; margin:.2rem 0 .5rem;">Skills</span>
+          <div id="skill-rows"></div>
+          <button class="btn ghost" id="add-skill" type="button">+ ADD SKILL</button>
+
+          <div class="actions" style="margin-top:1rem;">
+            <button class="btn" type="submit">SAVE PARTNER</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Team members</h3>
+        <p class="muted">Everyone shown in the team section — the founder, built-in partners and any you add. Change a status inline, or click EDIT to change a person's info. Reload the site to see changes.</p>
+        <div id="partners-list" style="margin-top:.9rem;"></div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="view" id="view-projects">
+      <div class="card">
+        <h3>Edit projects</h3>
+        <p class="muted">Edit the three case files shown in the Featured Work section. Leave the image field empty to keep the current image.</p>
+      </div>
+      <div id="projects-editor"></div>
+    </section>
+  </div>
+
+  <div class="flash" id="flash"></div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
