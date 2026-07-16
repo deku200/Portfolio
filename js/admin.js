@@ -32,24 +32,37 @@ const statusSelect = (cur, cls) =>
   STATUS_OPTS.map(([v, l]) => `<option value="${v}"${v === cur ? " selected" : ""}>${l}</option>`).join("") +
   `</select>`;
 
-/* ---------- image resize + upload ---------- */
-function resizeToBlob(file, maxW, quality) {
+/* ---------- image optimizer + upload ---------- */
+const MAX_UPLOAD = 4.5 * 1024 * 1024; // stay under the server's 5 MB cap
+function loadImage(file) {
   return new Promise((resolve, reject) => {
     const img = new Image(); const url = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      const scale = Math.min(1, maxW / img.width);
-      const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
-      const c = document.createElement("canvas"); c.width = w; c.height = h;
-      c.getContext("2d").drawImage(img, 0, 0, w, h);
-      c.toBlob(b => b ? resolve(b) : reject(new Error("encode failed")), "image/jpeg", quality);
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
+    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("unsupported or corrupted image file")); };
     img.src = url;
   });
 }
+function encodeJpeg(c, quality) {
+  return new Promise((resolve, reject) =>
+    c.toBlob(b => b ? resolve(b) : reject(new Error("image dimensions too large to process")), "image/jpeg", quality));
+}
+async function optimizeImage(file, maxW, maxH) {
+  const img = await loadImage(file);
+  // fit inside maxW × maxH — the height cap keeps huge full-page screenshots
+  // within canvas limits instead of only scaling by width
+  const scale = Math.min(1, maxW / img.width, (maxH || 4000) / img.height);
+  const w = Math.max(1, Math.round(img.width * scale)), h = Math.max(1, Math.round(img.height * scale));
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  c.getContext("2d").drawImage(img, 0, 0, w, h);
+  // step the quality down until the file fits the upload cap
+  for (const q of [0.82, 0.7, 0.58, 0.45]) {
+    const blob = await encodeJpeg(c, q);
+    if (blob.size <= MAX_UPLOAD) return blob;
+  }
+  throw new Error("image is too large even after compression");
+}
 async function uploadImage(file, maxW) {
-  const blob = await resizeToBlob(file, maxW || 800, 0.82);
+  const blob = await optimizeImage(file, maxW || 800);
   const fd = new FormData(); fd.append("file", blob, "image.jpg");
   const d = await api("POST", "/upload", fd, true);
   return d.url;
@@ -156,7 +169,7 @@ function buildPartnerForm() {
 
     let photo = "";
     const file = f.photo.files[0];
-    if (file) { try { photo = await uploadImage(file, 600); } catch (_) { flash("Could not upload image"); return; } }
+    if (file) { try { photo = await uploadImage(file, 600); } catch (err) { flash("Image error: " + err.message); return; } }
 
     try {
       await api("POST", "/team", {
@@ -166,7 +179,7 @@ function buildPartnerForm() {
       });
       e.target.reset(); buildPartnerForm(); renderTeamList();
       flash("Partner added — reload the site to see them");
-    } catch (_) { flash("Could not add partner"); }
+    } catch (err) { flash("Could not add partner: " + err.message); }
   }, { once: false });
 }
 
@@ -261,9 +274,9 @@ function openEditor(editor, p) {
       bio: g(".e-bio").value.trim(), skills,
     };
     const file = g(".e-photo").files[0];
-    if (file) { try { payload.photo = await uploadImage(file, 600); } catch (_) { flash("Could not upload image"); return; } }
+    if (file) { try { payload.photo = await uploadImage(file, 600); } catch (err) { flash("Image error: " + err.message); return; } }
     try { await api("PUT", "/team/" + encodeURIComponent(p.id), payload); renderTeamList(); flash("Saved — reload the site to see it"); }
-    catch (_) { flash("Save failed"); }
+    catch (err) { flash("Save failed: " + err.message); }
   });
 }
 
@@ -299,9 +312,9 @@ async function buildProjectsEditor() {
       const payload = {};
       $$("[data-k]", card).forEach(el => { if (el.dataset.k !== "imageFile") payload[el.dataset.k] = el.value.trim(); });
       const file = card.querySelector('[data-k="imageFile"]').files[0];
-      if (file) { try { payload.image = await uploadImage(file, 1200); } catch (_) { flash("Could not upload image"); return; } }
+      if (file) { try { payload.image = await uploadImage(file, 1200); } catch (err) { flash("Image error: " + err.message); return; } }
       try { await api("PUT", "/projects/" + p.id, payload); buildProjectsEditor(); flash("Project saved — reload the site to see it"); }
-      catch (_) { flash("Save failed"); }
+      catch (err) { flash("Save failed: " + err.message); }
     });
 
     wrap.appendChild(card);
