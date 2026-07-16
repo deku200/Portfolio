@@ -34,13 +34,12 @@ const statusSelect = (cur, cls) =>
 
 /* ---------- image optimizer + upload ---------- */
 const MAX_UPLOAD = 4.5 * 1024 * 1024; // stay under the server's 5 MB cap
-function loadImage(file) {
-  return new Promise((resolve, reject) => {
-    const img = new Image(); const url = URL.createObjectURL(file);
-    img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("unsupported or corrupted image file")); };
-    img.src = url;
-  });
+async function loadImage(file) {
+  // createImageBitmap decodes the file directly — no blob: URL, which the
+  // server's CSP (img-src 'self' data:) blocks and which made every admin
+  // image upload fail with a bogus "corrupted file" error
+  try { return await createImageBitmap(file); }
+  catch (_) { throw new Error("unsupported or corrupted image file"); }
 }
 function encodeJpeg(c, quality) {
   return new Promise((resolve, reject) =>
