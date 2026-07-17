@@ -118,6 +118,8 @@ app.get("/robots.txt", (_req, res) => res.type("text/plain").sendFile(path.join(
 app.get("/sitemap.xml", (_req, res) => res.type("application/xml").sendFile(path.join(ROOT, "sitemap.xml")));
 app.get("/site.webmanifest", (_req, res) => res.type("application/manifest+json").sendFile(path.join(ROOT, "site.webmanifest")));
 app.get("/llms.txt", (_req, res) => res.type("text/plain").sendFile(path.join(ROOT, "llms.txt")));
+app.get("/favicon.ico", (_req, res) => res.type("image/x-icon").sendFile(path.join(ROOT, "favicon.ico")));
+app.get("/favicon.svg", (_req, res) => res.type("image/svg+xml").sendFile(path.join(ROOT, "favicon.svg")));
 
 app.use((_req, res) => res.status(404).json({ error: "not found" }));
 
