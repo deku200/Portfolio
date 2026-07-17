@@ -1,6 +1,6 @@
 # slv_visual
 
-> Ukraine-based web development and product design studio led by Yaroslav. Builds fast, high-quality websites, online stores and brand experiences in English and Ukrainian. Custom projects start from $1,000.
+> Ukraine-based web development and product design studio led by Yaroslav. Builds fast, high-quality websites, online stores and brand experiences in English and Ukrainian. Custom projects start from $400.
 
 slv_visual (brand mark "SV") is a one-person studio combining web development and product design. The focus is quality, speed and automation for business. Working languages are English and Ukrainian.
 
@@ -17,7 +17,7 @@ slv_visual (brand mark "SV") is a one-person studio combining web development an
 - MOCLAME HOME: e-commerce for 3D-printed home decor with live 3D previews (in development).
 
 ## Pricing
-- Custom projects start from $1,000. Final scope and price are agreed after a briefing.
+- Custom projects start from $400. Final scope and price are agreed after a briefing.
 
 ## Contact
 - Website: https://www.slv-visual.online/

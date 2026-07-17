@@ -111,8 +111,8 @@ const I18N = {
   tagline:      { en: "&lt;COMPREHENSIVE WEBSITE DEVELOPMENT<br>FOR THOSE WHO VALUE<br>QUALITY AND SPEED&gt;",
                   uk: "&lt;КОМПЛЕКСНА РОЗРОБКА САЙТІВ<br>ДЛЯ ТИХ, ХТО ЦІНУЄ<br>ЯКІСТЬ І ШВИДКІСТЬ&gt;" },
   contactBtn:   { en: "SUBMIT A REQUEST", uk: "ЗАЛИШИТИ ЗАЯВКУ" },
-  heroLine:     { en: "&lt;QUALITY, SPEED AND AUTOMATION<br>FOR YOUR BUSINESS — FROM $1,000.<br>YOUR TASK IS TO STAY IN TOUCH<br>OR HOLD A GREAT BRIEFING WITH US&gt;",
-                  uk: "&lt;ЯКІСТЬ, ШВИДКІСТЬ І АВТОМАТИЗАЦІЯ<br>ДЛЯ ТВОГО БІЗНЕСУ — ВІД $1,000.<br>ТВОЯ ЗАДАЧА — БУТИ НА ЗВ'ЯЗКУ<br>АБО ПРОВЕСТИ З НАМИ КРУТИЙ БРИФІНГ&gt;" },
+  heroLine:     { en: "&lt;QUALITY, SPEED AND AUTOMATION<br>FOR YOUR BUSINESS — FROM $400.<br>YOUR TASK IS TO STAY IN TOUCH<br>OR HOLD A GREAT BRIEFING WITH US&gt;",
+                  uk: "&lt;ЯКІСТЬ, ШВИДКІСТЬ І АВТОМАТИЗАЦІЯ<br>ДЛЯ ТВОГО БІЗНЕСУ — ВІД $400.<br>ТВОЯ ЗАДАЧА — БУТИ НА ЗВ'ЯЗКУ<br>АБО ПРОВЕСТИ З НАМИ КРУТИЙ БРИФІНГ&gt;" },
   breakBtn:     { en: "CLICK TO BREAK", uk: "НАТИСНИ — РОЗБИЙ" },
   tgBtn:        { en: "→ TELEGRAM", uk: "→ ТЕЛЕГРАМ" },
   descGreening: { en: "LANDING PAGE FOR A COLLECTIVE REFORESTATION INITIATIVE.",
@@ -160,7 +160,7 @@ const I18N = {
                     ["AI-АГЕНТИ", "АВТОМАТИЗАЦІЯ / БОТИ",
                      "ЧАТ-БОТИ, ІНТЕГРАЦІЇ LLM ТА АВТОМАТИЗАЦІЯ ПРОЦЕСІВ, ЩО ВІДПОВІДАЮТЬ КЛІЄНТАМ, ЗАПОВНЮЮТЬ ТАБЛИЦІ Й ЕКОНОМЛЯТЬ ГОДИНИ ЩОТИЖНЯ."],
                   ]) },
-  servicesCta:  { en: "→ START A PROJECT — FROM $1,000", uk: "→ ПОЧАТИ ПРОЄКТ — ВІД $1,000" },
+  servicesCta:  { en: "→ START A PROJECT — FROM $400", uk: "→ ПОЧАТИ ПРОЄКТ — ВІД $400" },
   clientsLabel: { en: "&lt;WE'RE BEING ELECTED&gt;", uk: "&lt;НАС ОБИРАЮТЬ&gt;" },
   clientsList:  { en: CLI_ROWS([
                     ["2026", "MOCLAME HOME", "E-COMMERCE"],
@@ -925,9 +925,9 @@ new IntersectionObserver((es, ob) => {
   budget.addEventListener("input", () => {
     if (!budget.value.startsWith("$"))
       budget.value = "$" + budget.value.replace(/\$/g, "");
-    // minimum project budget: $1,000
-    budget.setCustomValidity(budget.value.trim().length > 1 && budgetAmount() < 1000
-      ? (lang === "uk" ? "Мінімальний бюджет проєкту — $1,000" : "The minimum project budget is $1,000")
+    // minimum project budget: $400
+    budget.setCustomValidity(budget.value.trim().length > 1 && budgetAmount() < 400
+      ? (lang === "uk" ? "Мінімальний бюджет проєкту — $400" : "The minimum project budget is $400")
       : "");
   });
   budget.addEventListener("keydown", e => {
@@ -973,7 +973,7 @@ new IntersectionObserver((es, ob) => {
 
   const filled = f =>
     f === email ? f.value.includes("@")
-    : f === budget ? budgetAmount() >= 1000      // at least $1,000
+    : f === budget ? budgetAmount() >= 400      // at least $400
     : !!f.value.trim();
 
   function render() {
