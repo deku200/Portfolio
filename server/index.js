@@ -43,18 +43,41 @@ app.use(helmet({
   },
   crossOriginEmbedderPolicy: false,
 }));
-app.use(express.json({ limit: "8mb" }));
+// JSON bodies are only ever small metadata payloads; images go through multipart
+// upload. A tight limit shrinks the memory-exhaustion (DoS) surface.
+app.use(express.json({ limit: "100kb" }));
 app.use(cookieParser());
+
+// Defense-in-depth CSRF: reject state-changing requests whose Origin isn't us.
+// Cookies are SameSite=Lax already, but an explicit same-origin check on
+// mutations closes the gap for any request a browser is willing to send.
+// (Missing Origin = non-browser client like curl/health-checks — allowed.)
+app.use((req, res, next) => {
+  if (!["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) return next();
+  const origin = req.get("origin");
+  if (!origin) return next();
+  try {
+    if (new URL(origin).host !== req.get("host")) {
+      return res.status(403).json({ error: "cross-origin request blocked" });
+    }
+  } catch (_) {
+    return res.status(403).json({ error: "invalid origin" });
+  }
+  next();
+});
 
 /* ---------- auth ---------- */
 const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 20, standardHeaders: true, legacyHeaders: false });
 
 app.post("/api/login", loginLimiter, (req, res) => {
   const { username, password } = req.body || {};
-  const admin = db.prepare("SELECT * FROM admins WHERE username = ?").get(String(username || "").trim());
+  const uname = String(username || "").trim();
+  const admin = db.prepare("SELECT * FROM admins WHERE username = ?").get(uname);
   if (!admin || !verifyPassword(String(password || ""), admin.password_hash)) {
+    console.warn(`[auth] failed login for "${uname}" from ${req.ip}`);
     return res.status(401).json({ error: "invalid credentials" });
   }
+  console.log(`[auth] successful login for "${admin.username}" from ${req.ip}`);
   setAuthCookie(res, signToken({ uid: admin.id, username: admin.username }));
   res.json({ ok: true, username: admin.username });
 });
@@ -72,14 +95,39 @@ app.use("/api/upload", require("./routes/upload"));
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
 /* ---------- static site (explicit paths only — never expose server/ or node_modules) ---------- */
-app.use("/uploads", express.static(UPLOAD_DIR, { maxAge: "7d" }));
+app.use("/uploads", express.static(UPLOAD_DIR, {
+  maxAge: "7d",
+  // user-supplied files: never let the browser sniff/execute them, and force a
+  // download rather than in-page rendering as a last line of defense
+  setHeaders: (res) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Content-Disposition", "inline");
+    res.setHeader("Content-Security-Policy", "default-src 'none'; sandbox");
+  },
+}));
 app.use("/css", express.static(path.join(ROOT, "css")));
 app.use("/js", express.static(path.join(ROOT, "js")));
 app.use("/img", express.static(path.join(ROOT, "img"), { maxAge: "7d" }));
 app.get(["/", "/index.html"], (_req, res) => res.sendFile(path.join(ROOT, "index.html")));
 app.get(["/admin", "/admin.html"], (_req, res) => res.sendFile(path.join(ROOT, "admin.html")));
+app.get(["/privacy", "/privacy.html"], (_req, res) => res.sendFile(path.join(ROOT, "privacy.html")));
+app.get(["/terms", "/terms.html"], (_req, res) => res.sendFile(path.join(ROOT, "terms.html")));
+
+// SEO / GEO root files
+app.get("/robots.txt", (_req, res) => res.type("text/plain").sendFile(path.join(ROOT, "robots.txt")));
+app.get("/sitemap.xml", (_req, res) => res.type("application/xml").sendFile(path.join(ROOT, "sitemap.xml")));
+app.get("/site.webmanifest", (_req, res) => res.type("application/manifest+json").sendFile(path.join(ROOT, "site.webmanifest")));
+app.get("/llms.txt", (_req, res) => res.type("text/plain").sendFile(path.join(ROOT, "llms.txt")));
 
 app.use((_req, res) => res.status(404).json({ error: "not found" }));
+
+// Generic error handler: log the real error server-side, return a safe message.
+// Never leak stack traces or internal detail to the client.
+app.use((err, _req, res, _next) => {
+  console.error("[error]", err && err.stack ? err.stack : err);
+  if (res.headersSent) return;
+  res.status(500).json({ error: "internal server error" });
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`slv_visual backend on http://localhost:${PORT}`));

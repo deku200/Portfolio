@@ -1,0 +1,118 @@
+/* ============ legal / info pages (privacy, terms) ============
+   Brand-consistent but calm: no heavy CRT motion, just the mono/dark look so
+   long-form text stays readable. Reuses the palette from style.css. */
+
+.legal-body {
+  min-height: 100vh;
+  background: var(--bg, #000);
+  color: var(--fg, #e8e8e8);
+  font-family: var(--mono, "JetBrains Mono", ui-monospace, monospace);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.legal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem clamp(1.1rem, 4vw, 3rem);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  position: sticky;
+  top: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  z-index: 5;
+}
+.legal-header .logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--fg);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+.legal-header .logo:hover { color: var(--green, #9dff9e); }
+
+.legal-lang { display: flex; gap: 0.4rem; align-items: center; }
+.legal-lang button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--dim, #8a8a8a);
+  font-family: inherit;
+  font-size: 0.72rem;
+  padding: 0.25rem 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.legal-lang button.is-active {
+  color: var(--bg, #000);
+  background: var(--green, #9dff9e);
+  border-color: var(--green, #9dff9e);
+}
+
+.legal-main {
+  max-width: 76ch;
+  margin: 0 auto;
+  padding: clamp(1.6rem, 5vw, 3.5rem) clamp(1.1rem, 4vw, 2rem) 5rem;
+}
+
+.legal-breadcrumb {
+  font-size: 0.72rem;
+  color: var(--dim, #8a8a8a);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.2rem;
+}
+.legal-breadcrumb a { color: var(--dim, #8a8a8a); text-decoration: none; }
+.legal-breadcrumb a:hover { color: var(--green, #9dff9e); }
+
+.legal-main h1 {
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+  color: var(--fg);
+}
+.legal-updated {
+  font-size: 0.75rem;
+  color: var(--dim, #8a8a8a);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 2rem;
+}
+.legal-main h2 {
+  font-size: 1.05rem;
+  margin: 2.2rem 0 0.6rem;
+  color: var(--green, #9dff9e);
+  letter-spacing: 0.02em;
+}
+.legal-main h2::before { content: "// "; color: var(--dim, #8a8a8a); }
+.legal-main p, .legal-main li { font-size: 0.92rem; }
+.legal-main p { margin-bottom: 0.9rem; }
+.legal-main ul { margin: 0 0 0.9rem 1.2rem; }
+.legal-main li { margin-bottom: 0.4rem; }
+.legal-main a { color: var(--green, #9dff9e); }
+.legal-main strong { color: var(--fg); }
+.legal-intro {
+  border-left: 2px solid var(--accent, #e8231a);
+  padding-left: 1rem;
+  color: #cfcfcf;
+}
+
+.legal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 1.6rem clamp(1.1rem, 4vw, 3rem);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.4rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--dim, #8a8a8a);
+}
+.legal-footer a { color: var(--dim, #8a8a8a); text-decoration: none; }
+.legal-footer a:hover { color: var(--green, #9dff9e); }
+.legal-footer .sep { opacity: 0.4; }
+
+/* bilingual toggle: show only the active language's blocks */
+[data-lang="en"] [data-lang-block="uk"],
+[data-lang="uk"] [data-lang-block="en"] { display: none; }

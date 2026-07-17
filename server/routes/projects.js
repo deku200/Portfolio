@@ -5,6 +5,15 @@ const { requireAuth } = require("../auth");
 const router = express.Router();
 const s = (v) => String(v ?? "").trim();
 
+// The project link renders into an <a href> on the public site. Only permit
+// http(s) (or an empty string) so a stored `javascript:`/`data:` URI can't turn
+// into XSS if an admin account is ever misused.
+const safeUrl = (v) => {
+  const t = s(v);
+  if (t === "") return "";
+  return /^https?:\/\//i.test(t) ? t : "";
+};
+
 function shape(row) {
   return {
     id: row.id, title: row.title, caseLabel: row.case_label, status: row.status,
@@ -30,7 +39,7 @@ router.put("/:id", requireAuth, (req, res) => {
   };
   const fields = {};
   for (const [inKey, col] of Object.entries(map)) {
-    if (b[inKey] != null) fields[col] = s(b[inKey]);
+    if (b[inKey] != null) fields[col] = inKey === "link" ? safeUrl(b[inKey]) : s(b[inKey]);
   }
   const keys = Object.keys(fields);
   if (keys.length) {

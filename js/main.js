@@ -198,6 +198,9 @@ const I18N = {
   fMessage:     { en: "&gt; MESSAGE", uk: "&gt; ПОВІДОМЛЕННЯ" },
   transmit:     { en: "TRANSMIT", uk: "НАДІСЛАТИ" },
   footerName:   { en: "&lt;YAROSLAV / slv_visual&gt;", uk: "&lt;ЯРОСЛАВ / slv_visual&gt;" },
+  footerPrivacy:{ en: "PRIVACY POLICY", uk: "КОНФІДЕНЦІЙНІСТЬ" },
+  footerTerms:  { en: "TERMS OF USE", uk: "УМОВИ ВИКОРИСТАННЯ" },
+  footerContact:{ en: "CONTACT", uk: "КОНТАКТ" },
 };
 const TERMINAL_LINES = {
   en: ["INITIALISING SECURE CONNECTION...", "ENCRYPTING PAYLOAD...",
@@ -1096,7 +1099,7 @@ function applyLocalOverrides() {
 
   // --- edited projects: override the 3 hardcoded case files ---------------
   const projects = read("slv_projects", {});
-  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   $$(".work-item").forEach((art, i) => {
     const o = projects[i];
     if (!o) return;
@@ -1142,7 +1145,7 @@ function applyLocalOverrides() {
     if (!o || o.photo == null || o.photo === "") return;
     const panel = $$(".team-panel")[+k];
     const box = panel && $(".team-photo", panel);
-    if (box) box.innerHTML = `<img src="${o.photo}" alt="slv_visual team member" />`;
+    if (box) box.innerHTML = `<img src="${esc(o.photo)}" alt="slv_visual team member" />`;
   });
 
   // --- added partners: append a team tab + dossier panel for each ---------

@@ -1,0 +1,24 @@
+# slv_visual
+
+> Ukraine-based web development and product design studio led by Yaroslav. Builds fast, high-quality websites, online stores and brand experiences in English and Ukrainian. Custom projects start from $1,000.
+
+slv_visual (brand mark "SV") is a one-person studio combining web development and product design. The focus is quality, speed and automation for business. Working languages are English and Ukrainian.
+
+## Services
+- Website development — landing pages, corporate sites, web apps
+- E-commerce and online stores
+- Product and UI/UX design
+- Brand identity and creative development
+- Automation for business
+
+## Selected work
+- [Master the Blade](https://ronin-forge.store): one-page store selling custom-made katanas on order.
+- [МЕЛМАН](https://melman.shop/): merch store for the #1 ostrich in Ukrainian TikTok.
+- MOCLAME HOME: e-commerce for 3D-printed home decor with live 3D previews (in development).
+
+## Pricing
+- Custom projects start from $1,000. Final scope and price are agreed after a briefing.
+
+## Contact
+- Website: https://www.slv-visual.online/
+- Telegram: https://t.me/slv_visual (@slv_visual)
