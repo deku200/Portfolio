@@ -1,4 +1,5 @@
 require("dotenv").config();
+const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const helmet = require("helmet");
@@ -108,10 +109,27 @@ app.use("/uploads", express.static(UPLOAD_DIR, {
 app.use("/css", express.static(path.join(ROOT, "css")));
 app.use("/js", express.static(path.join(ROOT, "js")));
 app.use("/img", express.static(path.join(ROOT, "img"), { maxAge: "7d" }));
-app.get(["/", "/index.html"], (_req, res) => res.sendFile(path.join(ROOT, "index.html")));
-app.get(["/admin", "/admin.html"], (_req, res) => res.sendFile(path.join(ROOT, "admin.html")));
-app.get(["/privacy", "/privacy.html"], (_req, res) => res.sendFile(path.join(ROOT, "privacy.html")));
-app.get(["/terms", "/terms.html"], (_req, res) => res.sendFile(path.join(ROOT, "terms.html")));
+/* Cache-busting for CSS/JS.
+   Cloudflare tells browsers to cache .css/.js for 4h, so after a deploy visitors
+   could keep an old stylesheet and render a broken page (this bit us three times).
+   Each HTML page references its assets as `style.css?v=__V__`; we swap __V__ for a
+   token that changes every deploy, so a new build is always a new URL = always
+   fresh, with no cache purge needed. The HTML itself is served no-cache. */
+const ASSET_V = (process.env.RAILWAY_GIT_COMMIT_SHA || "").slice(0, 8) || String(Date.now());
+const htmlCache = new Map();
+function sendHtml(res, file) {
+  let html = htmlCache.get(file);
+  if (html == null) {
+    html = fs.readFileSync(path.join(ROOT, file), "utf8").replace(/__V__/g, ASSET_V);
+    htmlCache.set(file, html);
+  }
+  res.set("Cache-Control", "no-cache").type("html").send(html);
+}
+
+app.get(["/", "/index.html"], (_req, res) => sendHtml(res, "index.html"));
+app.get(["/admin", "/admin.html"], (_req, res) => sendHtml(res, "admin.html"));
+app.get(["/privacy", "/privacy.html"], (_req, res) => sendHtml(res, "privacy.html"));
+app.get(["/terms", "/terms.html"], (_req, res) => sendHtml(res, "terms.html"));
 
 // SEO / GEO root files
 app.get("/robots.txt", (_req, res) => res.type("text/plain").sendFile(path.join(ROOT, "robots.txt")));
