@@ -38,6 +38,7 @@ html, body { background: var(--bg); color: var(--fg); font-family: var(--mono); 
   html { scroll-behavior: auto; }
   .hero-logo.is-spinning { animation: none; }
   .grain::before { animation: none; }
+  .promo-badge::before { animation: none; }
 }
 html, body { overflow-x: hidden; max-width: 100%; }
 a { color: inherit; text-decoration: none; }
@@ -180,6 +181,36 @@ button { font-family: inherit; cursor: pointer; }
   to   { transform: rotateY(360deg); }
 }
 #ascii-floor { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* limited-time promo card, sits under the header on the left of the hero */
+.hero-promo {
+  position: absolute; z-index: 3; left: 6vw; top: 15vh;
+  display: flex; flex-direction: column; gap: .38rem;
+  max-width: min(28rem, 82vw); padding: .85rem 1.1rem;
+  border: 1px solid var(--accent); background: rgba(0, 0, 0, .72);
+  backdrop-filter: blur(3px); text-decoration: none;
+  text-transform: uppercase; letter-spacing: .08em;
+  transition: transform .3s ease, background .3s ease, box-shadow .3s ease;
+}
+.hero-promo:hover {
+  transform: translateY(-2px); background: rgba(0, 0, 0, .9);
+  box-shadow: 0 0 0 1px var(--accent), 0 8px 24px rgba(232, 35, 26, .18);
+}
+.promo-badge {
+  display: flex; align-items: center; gap: .45rem;
+  font-size: .6rem; letter-spacing: .14em; color: var(--accent);
+}
+.promo-badge::before {
+  content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); flex: none; animation: promo-pulse 1.6s ease-in-out infinite;
+}
+.promo-headline { font-size: .92rem; font-weight: 700; line-height: 1.35; color: var(--fg); }
+.promo-headline b { color: var(--green); }
+.promo-terms { font-size: .6rem; letter-spacing: .1em; color: var(--dim); }
+@keyframes promo-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .3; transform: scale(.75); }
+}
+
 .hero-corner { position: absolute; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
 .hero-corner-bottom-left { left: 6vw; bottom: 6vh; line-height: 1.9; }
 .hero-corner-bottom-right {
@@ -547,6 +578,12 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
     left: 5vw; bottom: 16vh; max-width: 90vw;
     font-size: .68rem; line-height: 2;
   }
+  .hero-promo {
+    left: 5vw; right: 5vw; top: 13vh; max-width: none;
+    padding: .7rem .85rem; gap: .3rem;
+  }
+  .promo-headline { font-size: .8rem; }
+  .promo-badge, .promo-terms { font-size: .56rem; }
   .hero-corner-bottom-right { right: 5vw; bottom: 7vh; }
 
   .work-items { padding: 8vh 5vw 0; gap: 8vh; }

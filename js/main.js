@@ -113,6 +113,11 @@ const I18N = {
   contactBtn:   { en: "SUBMIT A REQUEST", uk: "ЗАЛИШИТИ ЗАЯВКУ" },
   heroLine:     { en: "&lt;QUALITY, SPEED AND AUTOMATION<br>FOR YOUR BUSINESS — FROM $400.<br>YOUR TASK IS TO STAY IN TOUCH<br>OR HOLD A GREAT BRIEFING WITH US&gt;",
                   uk: "&lt;ЯКІСТЬ, ШВИДКІСТЬ І АВТОМАТИЗАЦІЯ<br>ДЛЯ ТВОГО БІЗНЕСУ — ВІД $400.<br>ТВОЯ ЗАДАЧА — БУТИ НА ЗВ'ЯЗКУ<br>АБО ПРОВЕСТИ З НАМИ КРУТИЙ БРИФІНГ&gt;" },
+  promoBadge:   { en: "LIMITED OFFER · 19.07 — 25.07", uk: "ОБМЕЖЕНА ПРОПОЗИЦІЯ · 19.07 — 25.07" },
+  promoHeadline:{ en: "FIRST 10 CLIENTS — LANDING PAGE FOR <b>$250</b>",
+                  uk: "ПЕРШІ 10 КЛІЄНТІВ — ЛЕНДІНГ ЗА <b>$250</b>" },
+  promoTerms:   { en: "&lt;LANDING PAGE ONLY · 100% PREPAYMENT&gt;",
+                  uk: "&lt;ЛИШЕ ЛЕНДІНГ · 100% ПЕРЕДОПЛАТА&gt;" },
   breakBtn:     { en: "CLICK TO BREAK", uk: "НАТИСНИ — РОЗБИЙ" },
   tgBtn:        { en: "→ TELEGRAM", uk: "→ ТЕЛЕГРАМ" },
   descGreening: { en: "LANDING PAGE FOR A COLLECTIVE REFORESTATION INITIATIVE.",
@@ -925,9 +930,9 @@ new IntersectionObserver((es, ob) => {
   budget.addEventListener("input", () => {
     if (!budget.value.startsWith("$"))
       budget.value = "$" + budget.value.replace(/\$/g, "");
-    // minimum project budget: $400
-    budget.setCustomValidity(budget.value.trim().length > 1 && budgetAmount() < 400
-      ? (lang === "uk" ? "Мінімальний бюджет проєкту — $400" : "The minimum project budget is $400")
+    // minimum accepted budget: $250 (the promo tier — landing page, full prepayment)
+    budget.setCustomValidity(budget.value.trim().length > 1 && budgetAmount() < 250
+      ? (lang === "uk" ? "Мінімальний бюджет проєкту — $250" : "The minimum project budget is $250")
       : "");
   });
   budget.addEventListener("keydown", e => {
@@ -973,7 +978,7 @@ new IntersectionObserver((es, ob) => {
 
   const filled = f =>
     f === email ? f.value.includes("@")
-    : f === budget ? budgetAmount() >= 400      // at least $400
+    : f === budget ? budgetAmount() >= 250      // at least $250
     : !!f.value.trim();
 
   function render() {
@@ -1276,4 +1281,15 @@ function applyLocalOverrides() {
   }).catch(() => {
     applyLocalOverrides(); // backend unreachable -> defaults + legacy localStorage
   });
+})();
+
+/* ---------- 13. PROMO AUTO-EXPIRY ----------
+   The hero promo is explicitly dated (19.07 — 25.07). Drop it from the page once
+   the window closes so a stale, expired offer never sits on the live site.
+   To extend or re-run the promo, change PROMO_END (and the dates in I18N). */
+(function promoExpiry() {
+  const PROMO_END = new Date(2026, 6, 26); // exclusive — last active day is 25.07.2026
+  if (Date.now() < PROMO_END.getTime()) return;
+  const el = document.querySelector(".hero-promo");
+  if (el) el.remove();
 })();
