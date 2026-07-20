@@ -213,6 +213,11 @@ button { font-family: inherit; cursor: pointer; }
   letter-spacing: .04em; color: var(--fg);
 }
 .promo-headline b { color: var(--green); }
+.promo-bonus {
+  display: flex; align-items: baseline; gap: .4rem;
+  font-size: .68rem; font-weight: 700; letter-spacing: .06em; color: var(--green);
+}
+.promo-bonus b { color: var(--green); }
 .promo-terms {
   font-size: .58rem; letter-spacing: .12em; color: var(--dim);
   padding-top: .5rem; border-top: 1px dashed rgba(255, 255, 255, .14);
