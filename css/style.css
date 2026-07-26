@@ -229,7 +229,7 @@ button { font-family: inherit; cursor: pointer; }
 
 .hero-corner { position: absolute; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
 .hero-corner-bottom-left { left: 6vw; bottom: 6vh; line-height: 1.9; }
-.hero-corner b { color: var(--accent); font-weight: 700; }
+.hero-corner b { color: var(--green); font-weight: 700; }
 .hero-corner-bottom-right {
   right: 4vw; bottom: 6vh;
   display: flex; flex-direction: column; align-items: flex-end; gap: .7rem;
