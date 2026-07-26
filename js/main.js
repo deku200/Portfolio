@@ -113,7 +113,7 @@ const I18N = {
   contactBtn:   { en: "SUBMIT A REQUEST", uk: "ЗАЛИШИТИ ЗАЯВКУ" },
   heroLine:     { en: "&lt;QUALITY, SPEED AND AUTOMATION<br>FOR YOUR BUSINESS — FROM $400.<br>YOUR TASK IS TO STAY IN TOUCH<br>OR HOLD A GREAT BRIEFING WITH US&gt;",
                   uk: "&lt;ЯКІСТЬ, ШВИДКІСТЬ І АВТОМАТИЗАЦІЯ<br>ДЛЯ ТВОГО БІЗНЕСУ — ВІД $400.<br>ТВОЯ ЗАДАЧА — БУТИ НА ЗВ'ЯЗКУ<br>АБО ПРОВЕСТИ З НАМИ КРУТИЙ БРИФІНГ&gt;" },
-  promoBadge:   { en: "LIMITED OFFER · 20.07 — 27.07", uk: "ОБМЕЖЕНА ПРОПОЗИЦІЯ · 20.07 — 27.07" },
+  promoBadge:   { en: "LIMITED OFFER · 25.07 — 31.07", uk: "ОБМЕЖЕНА ПРОПОЗИЦІЯ · 25.07 — 31.07" },
   promoHeadline:{ en: "FIRST 10 CLIENTS — LANDING PAGE FOR <b>$250</b>",
                   uk: "ПЕРШІ 10 КЛІЄНТІВ — ЛЕНДІНГ ЗА <b>$250</b>" },
   promoBonus:   { en: "+ BONUS — <b>FIRST MONTH OF SUPPORT FREE</b>",
@@ -183,7 +183,8 @@ const I18N = {
                     ["2026", "KRUTA", "E-COMMERCE / РЕДИЗАЙН"],
                     ["2025", "SLV.VISUAL", "ЛЕНДІНГ / ПОРТФОЛІО", "наш продукт :)"],
                   ]) },
-  contactLabel: { en: "TELL US WHAT CAN WE DO FOR YOU?", uk: "РОЗКАЖИ, ЩО МИ МОЖЕМО ЗРОБИТИ ДЛЯ ТЕБЕ?" },
+  contactLabel: { en: "Want a landing for <b>$250</b>? Just leave a request below.<br>Another goal? Enter a budget <b>from $400</b> to lock in <b>−10%</b>.",
+                  uk: "Хочеш лендінг за <b>$250</b>? Просто залиш заявку нижче.<br>Інша ціль? Впиши бюджет <b>від $400</b> — і зафіксуй знижку <b>−10%</b>." },
   process:      { en: PROCESS([
                     ["BRIEFING", "WE DISCUSS YOUR GOALS, AUDIENCE AND BUDGET. FREE AND WITH NO OBLIGATIONS."],
                     ["FRONTEND DESIGN", "LAYOUT, TYPOGRAPHY, ANIMATIONS AND RESPONSIVENESS — THE VISUAL PART OF YOUR SITE, BUILT DIRECTLY IN CODE AND APPROVED BY YOU AT EVERY STAGE."],
@@ -1290,7 +1291,7 @@ function applyLocalOverrides() {
    the window closes so a stale, expired offer never sits on the live site.
    To extend or re-run the promo, change PROMO_END (and the dates in I18N). */
 (function promoExpiry() {
-  const PROMO_END = new Date(2026, 6, 28); // exclusive — last active day is 27.07.2026
+  const PROMO_END = new Date(2026, 7, 1); // exclusive — last active day is 31.07.2026
   if (Date.now() < PROMO_END.getTime()) return;
   const el = document.querySelector(".hero-promo");
   if (el) el.remove();
