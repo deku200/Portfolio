@@ -113,13 +113,6 @@ const I18N = {
   contactBtn:   { en: "SUBMIT A REQUEST", uk: "ЗАЛИШИТИ ЗАЯВКУ" },
   heroLine:     { en: "&lt;WEBSITES THAT SELL YOUR BUSINESS — FROM $400.<br>FAST, POLISHED, BUILT TO CONVERT.<br><b>LEAVE A REQUEST NOW</b> — THE BRIEFING IS FREE.<br>LET'S LAUNCH YOUR PROJECT&gt;",
                   uk: "&lt;САЙТИ, ЩО ПРОДАЮТЬ ТВІЙ БІЗНЕС — ВІД $400.<br>ШВИДКО, ЯКІСНО, ІЗ ФОКУСОМ НА РЕЗУЛЬТАТ.<br><b>ЗАЛИШ ЗАЯВКУ ЗАРАЗ</b> — БРИФІНГ БЕЗКОШТОВНИЙ.<br>ДАВАЙ ЗАПУСТИМО ТВІЙ ПРОЄКТ&gt;" },
-  promoBadge:   { en: "LIMITED OFFER · 25.07 — 31.07", uk: "ОБМЕЖЕНА ПРОПОЗИЦІЯ · 25.07 — 31.07" },
-  promoHeadline:{ en: "FIRST 10 CLIENTS — LANDING PAGE FOR <b>$250</b>",
-                  uk: "ПЕРШІ 10 КЛІЄНТІВ — ЛЕНДІНГ ЗА <b>$250</b>" },
-  promoBonus:   { en: "+ BONUS — <b>FIRST MONTH OF SUPPORT FREE</b>",
-                  uk: "+ БОНУС — <b>ПЕРШИЙ МІСЯЦЬ ПІДТРИМКИ БЕЗКОШТОВНО</b>" },
-  promoTerms:   { en: "&lt;LANDING PAGE ONLY · 100% PREPAYMENT&gt;",
-                  uk: "&lt;ЛИШЕ ЛЕНДІНГ · 100% ПЕРЕДОПЛАТА&gt;" },
   breakBtn:     { en: "CLICK TO BREAK", uk: "НАТИСНИ — РОЗБИЙ" },
   tgBtn:        { en: "→ TELEGRAM", uk: "→ ТЕЛЕГРАМ" },
   descGreening: { en: "LANDING PAGE FOR A COLLECTIVE REFORESTATION INITIATIVE.",
@@ -183,8 +176,7 @@ const I18N = {
                     ["2026", "KRUTA", "E-COMMERCE / РЕДИЗАЙН"],
                     ["2025", "SLV.VISUAL", "ЛЕНДІНГ / ПОРТФОЛІО", "наш продукт :)"],
                   ]) },
-  contactLabel: { en: "Want a landing for <b>$250</b>? Just leave a request below.<br>Another goal? Enter a budget <b>from $400</b> to lock in <b>−10%</b>.",
-                  uk: "Хочеш лендінг за <b>$250</b>? Просто залиш заявку нижче.<br>Інша ціль? Впиши бюджет <b>від $400</b> — і зафіксуй знижку <b>−10%</b>." },
+  contactLabel: { en: "TELL US WHAT CAN WE DO FOR YOU?", uk: "РОЗКАЖИ, ЩО МИ МОЖЕМО ЗРОБИТИ ДЛЯ ТЕБЕ?" },
   process:      { en: PROCESS([
                     ["BRIEFING", "WE DISCUSS YOUR GOALS, AUDIENCE AND BUDGET. FREE AND WITH NO OBLIGATIONS."],
                     ["FRONTEND DESIGN", "LAYOUT, TYPOGRAPHY, ANIMATIONS AND RESPONSIVENESS — THE VISUAL PART OF YOUR SITE, BUILT DIRECTLY IN CODE AND APPROVED BY YOU AT EVERY STAGE."],
@@ -933,9 +925,9 @@ new IntersectionObserver((es, ob) => {
   budget.addEventListener("input", () => {
     if (!budget.value.startsWith("$"))
       budget.value = "$" + budget.value.replace(/\$/g, "");
-    // minimum accepted budget: $250 (the promo tier — landing page, full prepayment)
-    budget.setCustomValidity(budget.value.trim().length > 1 && budgetAmount() < 250
-      ? (lang === "uk" ? "Мінімальний бюджет проєкту — $250" : "The minimum project budget is $250")
+    // minimum project budget: $400
+    budget.setCustomValidity(budget.value.trim().length > 1 && budgetAmount() < 400
+      ? (lang === "uk" ? "Мінімальний бюджет проєкту — $400" : "The minimum project budget is $400")
       : "");
   });
   budget.addEventListener("keydown", e => {
@@ -981,7 +973,7 @@ new IntersectionObserver((es, ob) => {
 
   const filled = f =>
     f === email ? f.value.includes("@")
-    : f === budget ? budgetAmount() >= 250      // at least $250
+    : f === budget ? budgetAmount() >= 400      // at least $400
     : !!f.value.trim();
 
   function render() {
@@ -1284,15 +1276,4 @@ function applyLocalOverrides() {
   }).catch(() => {
     applyLocalOverrides(); // backend unreachable -> defaults + legacy localStorage
   });
-})();
-
-/* ---------- 13. PROMO AUTO-EXPIRY ----------
-   The hero promo is explicitly dated (19.07 — 25.07). Drop it from the page once
-   the window closes so a stale, expired offer never sits on the live site.
-   To extend or re-run the promo, change PROMO_END (and the dates in I18N). */
-(function promoExpiry() {
-  const PROMO_END = new Date(2026, 7, 1); // exclusive — last active day is 31.07.2026
-  if (Date.now() < PROMO_END.getTime()) return;
-  const el = document.querySelector(".hero-promo");
-  if (el) el.remove();
 })();
