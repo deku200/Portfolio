@@ -1287,3 +1287,23 @@ function applyLocalOverrides() {
     applyLocalOverrides(); // backend unreachable -> defaults + legacy localStorage
   });
 })();
+
+/* ---------- 13. WHY-READOUT SCAN ----------
+   One phosphor sweep down the diagnostic panel the first time it is seen.
+   The content is fully visible without it — this only adds the moment, it
+   never gates visibility (a class-gated reveal would ship blank in headless
+   renderers and on hidden tabs). */
+(function whyScan() {
+  const el = document.getElementById("why-console");
+  if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      // the sweep travels the panel's real height, so it always clears the end
+      el.style.setProperty("--scan-h", el.offsetHeight + "px");
+      el.classList.add("is-scanning");
+      io.unobserve(el);
+    }
+  }, { threshold: 0.18 });
+  io.observe(el);
+})();

@@ -600,43 +600,179 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
 
 .works-section { padding: clamp(2.5rem, 7vw, 6rem) clamp(1.1rem, 5vw, 4rem); border-top: 1px solid #1c1c1c; }
 .works-label {
+  /* used on both <div> and <h2>: pin the weight so the two look identical */
+  font-weight: 400;
   font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
   color: var(--accent); margin-bottom: 2.2rem;
 }
 
-/* ---------- why a website ---------- */
+/* ---------- why a website: a diagnostic readout ----------
+   Deliberately NOT a card grid. The section reads as one machine running an
+   audit, reusing the .term-window chrome from the contact terminal. Hierarchy
+   comes from the lead statement and the first (dominant) row, not from six
+   equally-weighted boxes. */
 .why-lead {
-  max-width: 62ch; margin-bottom: 2.6rem;
-  font-size: clamp(.95rem, 2vw, 1.2rem); line-height: 1.6; color: var(--fg);
-  border-left: 2px solid var(--accent); padding-left: 1.1rem;
+  font-size: clamp(1.45rem, 4.4vw, 3.1rem);
+  line-height: 1.12; letter-spacing: -.022em; font-weight: 700;
+  text-wrap: balance; margin-bottom: .9rem;
 }
-.why-grid {
-  display: grid; gap: 1.2rem;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+.why-lead > span { display: block; }
+.why-lead b { color: var(--green); font-weight: 700; }
+.why-sub {
+  color: var(--dim); font-size: clamp(.8rem, 1.6vw, .95rem);
+  line-height: 1.7; max-width: 58ch; margin-bottom: clamp(2rem, 4.5vw, 3.4rem);
 }
-.why-card {
-  position: relative; padding: 1.4rem 1.3rem 1.5rem;
-  border: 1px solid #1c1c1c; background: #050505;
-  transition: border-color .3s ease, background .3s ease;
-}
-.why-card:hover { border-color: var(--green); background: #070907; }
-.why-num { display: block; font-size: .68rem; letter-spacing: .12em; color: var(--accent); margin-bottom: .7rem; }
-.why-card h3 { font-size: .92rem; font-weight: 700; margin-bottom: .55rem; letter-spacing: .01em; }
-.why-card p { font-size: .78rem; line-height: 1.7; color: var(--dim); }
 
-/* ---------- CTA ---------- */
-.works-cta {
-  padding: clamp(3rem, 8vw, 6rem) clamp(1.1rem, 5vw, 4rem);
-  border-top: 1px solid #1c1c1c; text-align: center;
+.why-console { position: relative; overflow: hidden; }
+.why-cmd {
+  margin-left: auto; font-size: .64rem; letter-spacing: .08em;
+  color: var(--green); opacity: .75; white-space: nowrap;
 }
-.works-cta h2 { font-size: clamp(1.3rem, 4vw, 2.2rem); font-weight: 700; margin-bottom: .9rem; }
-.works-cta p { max-width: 54ch; margin: 0 auto 2rem; color: var(--dim); font-size: .85rem; line-height: 1.7; }
-.works-cta-btn { font-size: .85rem; padding: .75em 1.8em; letter-spacing: .1em; }
+.why-list { list-style: none; }
+
+.why-row {
+  position: relative;
+  display: grid; grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: 0 1.5rem; padding: 1.15rem 1.3rem 1.25rem 1.9rem;
+  border-top: 1px solid #141414;
+  transition: background .4s cubic-bezier(.2, .7, .3, 1);
+}
+.why-row:first-child { border-top: none; }
+/* terminal caret slides in on hover — the row behaves like a selectable line */
+.why-row::before {
+  content: ">"; position: absolute; left: .75rem; top: 1.15rem;
+  color: var(--green); font-weight: 700; opacity: 0;
+  transform: translateX(-.35rem);
+  transition: opacity .3s ease, transform .3s cubic-bezier(.2, .7, .3, 1);
+}
+.why-row:hover { background: rgba(157, 255, 158, .035); }
+.why-row:hover::before { opacity: 1; transform: none; }
+
+.why-flag {
+  font-size: .62rem; letter-spacing: .12em; color: var(--green);
+  text-shadow: 0 0 12px rgba(157, 255, 158, .45);
+  white-space: nowrap; padding-top: .3rem;
+}
+.why-text h3 {
+  font-size: clamp(.92rem, 1.9vw, 1.06rem); font-weight: 700;
+  letter-spacing: .01em; line-height: 1.35; margin-bottom: .42rem;
+}
+.why-text p { font-size: .8rem; line-height: 1.78; color: var(--dim); max-width: 70ch; }
+
+/* the strongest argument leads and is sized to say so */
+.why-row.is-lead { padding-top: 1.5rem; padding-bottom: 1.6rem; }
+.why-row.is-lead .why-text h3 { font-size: clamp(1.05rem, 2.5vw, 1.42rem); margin-bottom: .55rem; }
+.why-row.is-lead .why-text p { color: #b9b9b9; font-size: .84rem; }
+
+.why-verdict {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.5rem;
+  padding: 1.1rem 1.3rem; border-top: 1px solid #1f1f1f;
+  background: rgba(157, 255, 158, .04);
+}
+.why-verdict-key {
+  font-size: .62rem; letter-spacing: .14em; color: var(--green);
+  text-shadow: 0 0 12px rgba(157, 255, 158, .4);
+}
+.why-verdict-val { font-size: .84rem; line-height: 1.6; font-weight: 700; }
+
+/* one meaningful moment: a phosphor scan sweeps the readout once, when it is
+   first seen. --scan-h is set from JS so the sweep clears the real height. */
+.why-console::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 170px;
+  pointer-events: none; opacity: 0; transform: translateY(-170px);
+  background: linear-gradient(180deg,
+    transparent, rgba(157, 255, 158, .06) 42%, rgba(157, 255, 158, .13) 50%,
+    rgba(157, 255, 158, .06) 58%, transparent);
+}
+.why-console.is-scanning::after { animation: why-scan 1.5s cubic-bezier(.34, 0, .22, 1) forwards; }
+@keyframes why-scan {
+  0%   { opacity: 0; transform: translateY(-170px); }
+  9%   { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(var(--scan-h, 900px)); }
+}
+
+/* ---------- CTA: a command prompt, with the facts beside it ---------- */
+.works-cta {
+  position: relative; overflow: hidden;
+  padding: clamp(3.2rem, 8.5vw, 7rem) clamp(1.1rem, 5vw, 4rem);
+  border-top: 1px solid #1c1c1c;
+}
+/* faint horizon grid — echoes the hero's ascii floor, masked so it never
+   competes with the type */
+.works-cta::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, .03) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, .03) 1px, transparent 1px);
+  background-size: 58px 58px;
+  -webkit-mask-image: radial-gradient(ellipse 72% 78% at 40% 45%, #000 15%, transparent 76%);
+  mask-image: radial-gradient(ellipse 72% 78% at 40% 45%, #000 15%, transparent 76%);
+}
+.cta-inner {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, .8fr);
+  gap: clamp(2rem, 5vw, 4.5rem); align-items: start;
+  max-width: 86rem; margin: 0 auto;
+}
+.cta-title {
+  font-size: clamp(1.75rem, 5.4vw, 3.9rem); line-height: 1.04;
+  letter-spacing: -.028em; font-weight: 700; text-wrap: balance;
+  margin-bottom: 1.05rem;
+}
+.cta-sub {
+  color: var(--dim); font-size: clamp(.82rem, 1.6vw, .95rem);
+  line-height: 1.75; max-width: 52ch; margin-bottom: clamp(1.7rem, 3.5vw, 2.5rem);
+}
+.cta-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.8rem; }
+.cta-btn {
+  display: inline-flex; align-items: center; gap: .6rem;
+  background: var(--accent); color: #000; border: 1px solid var(--accent);
+  font-weight: 700; font-size: clamp(.78rem, 1.6vw, .92rem);
+  letter-spacing: .1em; text-transform: uppercase;
+  padding: .95em 1.55em;
+  transition: transform .38s cubic-bezier(.2, .7, .3, 1), box-shadow .38s ease;
+}
+.cta-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 36px rgba(232, 35, 26, .34); }
+.cta-btn-prompt { opacity: .55; }
+.cta-caret {
+  width: .58em; height: 1.05em; background: #000; display: inline-block;
+  animation: cta-blink 1.05s steps(1) infinite;
+}
+@keyframes cta-blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
 .works-tg {
-  display: block; margin-top: 1.3rem; font-size: .68rem; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--dim); text-decoration: none;
+  font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--dim); text-decoration: none; transition: color .3s ease;
 }
 .works-tg:hover { color: var(--green); }
+
+/* the offer's actual terms, as evidence rather than decoration */
+.cta-specs { border-top: 1px solid #262626; }
+.cta-specs > div {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 1rem; padding: .85rem .1rem; border-bottom: 1px solid #171717;
+  font-size: .7rem; letter-spacing: .08em; text-transform: uppercase;
+}
+.cta-specs dt { color: var(--dim); }
+.cta-specs dd { color: var(--green); font-weight: 700; text-align: right; }
+
+@media (max-width: 860px) {
+  .cta-inner { grid-template-columns: 1fr; }
+  .cta-specs { margin-top: .5rem; }
+}
+@media (max-width: 620px) {
+  .why-row { grid-template-columns: 1fr; gap: .55rem; padding: 1.1rem 1rem 1.2rem 1.6rem; }
+  .why-row::before { left: .55rem; top: 1.1rem; }
+  .why-flag { padding-top: 0; }
+  .why-cmd { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .why-console.is-scanning::after { animation: none; }
+  .cta-caret { animation: none; }
+  .why-row, .why-row::before, .cta-btn { transition: none; }
+}
 
 /* ---------- FAQ (home page) ---------- */
 .faq-item { border-top: 1px solid #1c1c1c; }
