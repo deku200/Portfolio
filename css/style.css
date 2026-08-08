@@ -143,7 +143,8 @@ button { font-family: inherit; cursor: pointer; }
 /* ============ header ============ */
 .site-header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-  display: grid; grid-template-columns: 1fr 2fr .8fr auto;
+  /* logo | tagline | language — the CTA now lives in the hero, above the copy */
+  display: grid; grid-template-columns: 1fr 2fr auto;
   gap: 2rem; align-items: start; padding: 2.2rem 4vw 1rem;
   font-size: .72rem; letter-spacing: .06em; text-transform: uppercase;
   mix-blend-mode: normal;
@@ -152,6 +153,7 @@ button { font-family: inherit; cursor: pointer; }
 /* slides up out of view when scrolling down; returns on scroll up / at top */
 .site-header.is-hidden { transform: translateY(-115%); }
 .logo { font-weight: 700; font-size: 1rem; }
+.site-header .lang { justify-self: end; text-align: right; }
 .lang-btn { background: none; border: none; color: var(--dim); font-size: .72rem; letter-spacing: .06em; padding: 0; margin-right: .6em; }
 .lang-btn.is-active { color: var(--accent); }
 
@@ -181,7 +183,11 @@ button { font-family: inherit; cursor: pointer; }
 }
 #ascii-floor { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .hero-corner { position: absolute; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
-.hero-corner-bottom-left { left: 6vw; bottom: 6vh; line-height: 1.9; }
+.hero-corner-bottom-left {
+  left: 6vw; bottom: 6vh; line-height: 1.9;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 1.15rem;
+}
+.hero-cta { align-self: flex-start; padding: .55em 1.15em; letter-spacing: .1em; }
 .hero-corner b { color: var(--green); font-weight: 700; }
 .hero-corner-bottom-right {
   right: 4vw; bottom: 6vh;
@@ -525,7 +531,7 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
 
 /* --- tablet --- */
 @media (max-width: 1024px) {
-  .site-header { grid-template-columns: auto 1fr auto auto auto; gap: 1.4rem; padding: 1.6rem 4vw 1rem; }
+  .site-header { grid-template-columns: auto 1fr auto; gap: 1.4rem; padding: 1.6rem 4vw 1rem; }
   .services, .clients { grid-template-columns: 1fr; gap: 2.5rem; }
   .services-cta { justify-self: start; white-space: normal; }
   .quote-section { padding: 14vh 8vw; }
@@ -536,7 +542,8 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
 /* --- mobile --- */
 @media (max-width: 768px) {
   .site-header {
-    grid-template-columns: auto 1fr auto; gap: 1rem;
+    /* only the logo and the language switch remain once the tagline is hidden */
+    grid-template-columns: auto auto; justify-content: space-between; gap: 1rem;
     align-items: center; padding: 1.2rem 5vw .8rem;
     background: linear-gradient(180deg, rgba(0,0,0,.85), transparent);
   }
