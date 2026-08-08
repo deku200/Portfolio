@@ -72,13 +72,21 @@ function seed() {
     console.log(`[seed] inserted ${TEAM.length} team members`);
   }
 
+  // Projects are seeded exactly once, tracked by a marker row. Without the
+  // marker, an admin who deletes every project would see the built-in three
+  // reappear on the next restart (the old "table is empty -> seed" check).
+  const seeded = db.prepare("SELECT value FROM meta WHERE key = 'projects_seeded'").get();
   const projCount = db.prepare("SELECT COUNT(*) AS n FROM projects").get().n;
-  if (projCount === 0) {
-    const ins = db.prepare(`INSERT INTO projects
-      (id, title, case_label, status, tags, link, image_url, desc_en, desc_uk)
-      VALUES (:id,:title,:case_label,:status,:tags,:link,:image_url,:desc_en,:desc_uk)`);
-    for (const p of PROJECTS) ins.run(p);
-    console.log(`[seed] inserted ${PROJECTS.length} projects`);
+  if (!seeded) {
+    if (projCount === 0) {
+      const ins = db.prepare(`INSERT INTO projects
+        (id, title, case_label, status, tags, link, image_url, desc_en, desc_uk)
+        VALUES (:id,:title,:case_label,:status,:tags,:link,:image_url,:desc_en,:desc_uk)`);
+      for (const p of PROJECTS) ins.run(p);
+      console.log(`[seed] inserted ${PROJECTS.length} projects`);
+    }
+    // mark as seeded either way: an existing DB has already been through this
+    db.prepare("INSERT INTO meta (key, value) VALUES ('projects_seeded', ?)").run(new Date().toISOString());
   }
 }
 

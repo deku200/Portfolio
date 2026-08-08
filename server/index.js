@@ -128,6 +128,7 @@ function sendHtml(res, file) {
 
 app.get(["/", "/index.html"], (_req, res) => sendHtml(res, "index.html"));
 app.get(["/admin", "/admin.html"], (_req, res) => sendHtml(res, "admin.html"));
+app.get(["/projects", "/projects.html"], (_req, res) => sendHtml(res, "projects.html"));
 app.get(["/privacy", "/privacy.html"], (_req, res) => sendHtml(res, "privacy.html"));
 app.get(["/terms", "/terms.html"], (_req, res) => sendHtml(res, "terms.html"));
 

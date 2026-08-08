@@ -190,6 +190,8 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ============ work ============ */
 .work { padding: 10vh 0; background: #000; }
+.work-more { display: flex; justify-content: center; padding: 6vh 6vw 0; }
+.work-more-btn { font-size: .8rem; padding: .6em 1.4em; letter-spacing: .1em; }
 .marquee { overflow: hidden; border-top: 1px solid #1c1c1c; border-bottom: 1px solid #1c1c1c; }
 .marquee-track {
   display: inline-flex; white-space: nowrap; padding: .7rem 0;

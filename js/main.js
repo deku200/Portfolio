@@ -197,6 +197,7 @@ const I18N = {
   fSource:      { en: "&gt; WHERE DID YOU HEAR ABOUT US?", uk: "&gt; ЗВІДКИ ТИ ПРО НАС ДІЗНАВСЯ?" },
   fMessage:     { en: "&gt; MESSAGE", uk: "&gt; ПОВІДОМЛЕННЯ" },
   transmit:     { en: "TRANSMIT", uk: "НАДІСЛАТИ" },
+  viewAll:      { en: "VIEW ALL PROJECTS →", uk: "ДИВИТИСЯ ВСІ ПРОЄКТИ →" },
   footerName:   { en: "&lt;YAROSLAV / slv_visual&gt;", uk: "&lt;ЯРОСЛАВ / slv_visual&gt;" },
   footerPrivacy:{ en: "PRIVACY POLICY", uk: "КОНФІДЕНЦІЙНІСТЬ" },
   footerTerms:  { en: "TERMS OF USE", uk: "УМОВИ ВИКОРИСТАННЯ" },
@@ -1245,9 +1246,15 @@ function applyLocalOverrides() {
   }
 
   function renderProjects(projects) {
-    projects.forEach(p => {
-      const art = $$(".work-item")[p.id];
+    // The home page has three slots; fill them by position, not by id — ids are
+    // no longer 0,1,2 once projects are added or deleted in the admin panel.
+    // Everything beyond the third lives on /projects.html.
+    const slots = $$(".work-item");
+    slots.forEach((art, i) => { if (!projects[i]) art.hidden = true; });
+    projects.slice(0, slots.length).forEach((p, i) => {
+      const art = slots[i];
       if (!art) return;
+      art.hidden = false;
       const titleEl = $(".work-title", art);
       if (titleEl) {
         const label = `&lt;${esc(p.title)}&gt;`;

@@ -100,8 +100,34 @@
     <!-- PROJECTS -->
     <section class="view" id="view-projects">
       <div class="card">
+        <h3>Add a new project</h3>
+        <p class="muted">Adds a case to the portfolio. The first three appear on the home page; all of them show on the “All projects” page.</p>
+        <form id="project-form">
+          <div class="row2">
+            <label class="field"><span>Title *</span><input name="title" required placeholder="e.g. MASTER THE BLADE" /></label>
+            <label class="field"><span>Case label (auto if empty)</span><input name="caseLabel" placeholder="CASE 004 — 2026" /></label>
+          </div>
+          <div class="row2">
+            <label class="field"><span>Status</span><select name="status">
+              <option value="● LIVE">● LIVE</option>
+              <option value="■ IN DEV">■ IN DEV</option>
+              <option value="■ DESIGN">■ DESIGN</option>
+            </select></label>
+            <label class="field"><span>External link (optional)</span><input name="link" placeholder="https://…" /></label>
+          </div>
+          <label class="field"><span>Tags (comma separated)</span><input name="tags" placeholder="E-COMMERCE, JS, LANDING" /></label>
+          <label class="field"><span>Description (English)</span><textarea name="descEn" placeholder="One line about the project."></textarea></label>
+          <label class="field"><span>Description (Ukrainian — copies English if empty)</span><textarea name="descUk"></textarea></label>
+          <label class="field"><span>Cover image</span><input name="image" type="file" accept="image/*" /></label>
+          <div class="actions" style="margin-top:1rem;">
+            <button class="btn" type="submit">ADD PROJECT</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
         <h3>Edit projects</h3>
-        <p class="muted">Edit the three case files shown in the Featured Work section. Leave the image field empty to keep the current image.</p>
+        <p class="muted">Every case in the portfolio. Leave the image field empty to keep the current image. Reload the site to see changes.</p>
       </div>
       <div id="projects-editor"></div>
     </section>

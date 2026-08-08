@@ -103,6 +103,7 @@ function initApp() {
   renderApplications();
   renderTeamList();
   buildPartnerForm();
+  buildProjectForm();
   buildProjectsEditor();
 }
 
@@ -280,18 +281,48 @@ function openEditor(editor, p) {
 }
 
 /* ---------- 4. PROJECTS ---------- */
+function buildProjectForm() {
+  const form = $("#project-form");
+  if (!form) return;
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    const f = e.target.elements;
+    const payload = {
+      title: f.title.value.trim(),
+      caseLabel: f.caseLabel.value.trim(),
+      status: f.status.value,
+      link: f.link.value.trim(),
+      tags: f.tags.value.trim(),
+      descEn: f.descEn.value.trim(),
+      descUk: f.descUk.value.trim(),
+    };
+    const file = f.image.files[0];
+    if (file) {
+      try { payload.image = await uploadImage(file, 1200); }
+      catch (err) { flash("Image error: " + err.message); return; }
+    }
+    try {
+      await api("POST", "/projects", payload);
+      e.target.reset();
+      buildProjectsEditor();
+      flash("Project added — reload the site to see it");
+    } catch (err) { flash("Could not add project: " + err.message); }
+  });
+}
+
 async function buildProjectsEditor() {
   const wrap = $("#projects-editor");
   let projects;
   try { projects = await api("GET", "/projects"); }
   catch (_) { wrap.innerHTML = `<div class="empty">// could not load projects — is the server running?</div>`; return; }
   wrap.innerHTML = "";
+  if (!projects.length) { wrap.innerHTML = `<div class="empty">// no projects yet — add one above</div>`; return; }
 
-  projects.forEach(p => {
+  projects.forEach((p, i) => {
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
-      <h3>Project ${p.id + 1}</h3>
+      <h3>${esc(p.title) || "(untitled)"} <span class="muted" style="font-weight:400;">· ${esc(p.caseLabel)}${i < 3 ? " · on home page" : ""}</span></h3>
       <div class="row2">
         <label class="field"><span>Title</span><input data-k="title" value="${esc(p.title)}" /></label>
         <label class="field"><span>Case label</span><input data-k="caseLabel" value="${esc(p.caseLabel)}" /></label>
@@ -305,7 +336,16 @@ async function buildProjectsEditor() {
       <label class="field"><span>Description (Ukrainian)</span><textarea data-k="descUk">${esc(p.desc.uk)}</textarea></label>
       <label class="field"><span>Replace image (optional — keeps current if empty)</span><input data-k="imageFile" type="file" accept="image/*" /></label>
       <div class="muted" style="margin:-.4rem 0 .6rem;">Current image: ${esc(p.image)}</div>
-      <div class="actions"><button class="btn" data-save type="button">SAVE</button></div>`;
+      <div class="actions">
+        <button class="btn" data-save type="button">SAVE</button>
+        <button class="btn danger" data-del type="button">DELETE</button>
+      </div>`;
+
+    card.querySelector("[data-del]").addEventListener("click", async () => {
+      if (!confirm(`Delete "${p.title}"? This cannot be undone.`)) return;
+      try { await api("DELETE", "/projects/" + p.id); buildProjectsEditor(); flash("Project deleted — reload the site"); }
+      catch (err) { flash("Delete failed: " + err.message); }
+    });
 
     card.querySelector("[data-save]").addEventListener("click", async () => {
       const payload = {};
