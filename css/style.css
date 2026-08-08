@@ -637,3 +637,23 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
   text-transform: uppercase; color: var(--dim); text-decoration: none;
 }
 .works-tg:hover { color: var(--green); }
+
+/* ---------- FAQ (home page) ---------- */
+.faq-item { border-top: 1px solid #1c1c1c; }
+.faq-item:last-of-type { border-bottom: 1px solid #1c1c1c; }
+.faq-item summary {
+  cursor: pointer; list-style: none; padding: 1.15rem 2.2rem 1.15rem 0;
+  position: relative; font-size: clamp(.86rem, 1.8vw, 1rem); font-weight: 700;
+  line-height: 1.45; transition: color .25s ease;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary:hover { color: var(--green); }
+.faq-item summary::after {
+  content: "+"; position: absolute; right: .2rem; top: 50%; transform: translateY(-50%);
+  color: var(--accent); font-size: 1.1rem; line-height: 1; transition: transform .25s ease;
+}
+.faq-item[open] summary::after { content: "−"; }
+.faq-a { padding: 0 0 1.4rem; max-width: 72ch; }
+.faq-a p { font-size: .82rem; line-height: 1.8; color: var(--dim); margin-bottom: .8rem; }
+.faq-a p:last-child { margin-bottom: 0; }
+.faq-a b { color: var(--green); font-weight: 700; }
