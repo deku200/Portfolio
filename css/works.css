@@ -11,9 +11,9 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* bilingual toggle: show only the active language's blocks */
-[data-lang="en"] [data-lang-block="uk"],
-[data-lang="uk"] [data-lang-block="en"] { display: none; }
+/* The bilingual [data-lang-block] rule, the .works-section/.works-label shell,
+   the why-grid and the CTA now live in style.css — those blocks are shared with
+   the home page, which only loads style.css. */
 
 /* ---------- header ---------- */
 .works-header {
@@ -47,13 +47,6 @@
   letter-spacing: -.01em; margin-bottom: 1.2rem;
 }
 .works-hero-sub { max-width: 60ch; color: var(--dim); font-size: clamp(.82rem, 1.6vw, .95rem); }
-
-/* ---------- section shell ---------- */
-.works-section { padding: clamp(2.5rem, 7vw, 6rem) clamp(1.1rem, 5vw, 4rem); border-top: 1px solid #1c1c1c; }
-.works-label {
-  font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 2.2rem;
-}
 
 /* ---------- projects grid ---------- */
 .works-grid {
@@ -90,29 +83,6 @@
   color: var(--dim); border: 1px solid #232323; padding: .18rem .45rem;
 }
 
-/* ---------- why-a-website ---------- */
-.why-lead {
-  max-width: 62ch; margin-bottom: 2.6rem;
-  font-size: clamp(.95rem, 2vw, 1.2rem); line-height: 1.6; color: var(--fg);
-  border-left: 2px solid var(--accent); padding-left: 1.1rem;
-}
-.why-grid {
-  display: grid; gap: 1.2rem;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
-}
-.why-card {
-  position: relative; padding: 1.4rem 1.3rem 1.5rem;
-  border: 1px solid #1c1c1c; background: #050505;
-  transition: border-color .3s ease, background .3s ease;
-}
-.why-card:hover { border-color: var(--green); background: #070907; }
-.why-num {
-  display: block; font-size: .68rem; letter-spacing: .12em;
-  color: var(--accent); margin-bottom: .7rem;
-}
-.why-card h3 { font-size: .92rem; font-weight: 700; margin-bottom: .55rem; letter-spacing: .01em; }
-.why-card p { font-size: .78rem; line-height: 1.7; color: var(--dim); }
-
 /* ---------- FAQ ---------- */
 .faq-item { border-top: 1px solid #1c1c1c; }
 .faq-item:last-of-type { border-bottom: 1px solid #1c1c1c; }
@@ -132,20 +102,6 @@
 .faq-a p { font-size: .82rem; line-height: 1.8; color: var(--dim); margin-bottom: .8rem; }
 .faq-a p:last-child { margin-bottom: 0; }
 .faq-a b { color: var(--green); font-weight: 700; }
-
-/* ---------- CTA ---------- */
-.works-cta {
-  padding: clamp(3rem, 8vw, 6rem) clamp(1.1rem, 5vw, 4rem);
-  border-top: 1px solid #1c1c1c; text-align: center;
-}
-.works-cta h2 { font-size: clamp(1.3rem, 4vw, 2.2rem); font-weight: 700; margin-bottom: .9rem; }
-.works-cta p { max-width: 54ch; margin: 0 auto 2rem; color: var(--dim); font-size: .85rem; line-height: 1.7; }
-.works-cta-btn { font-size: .85rem; padding: .75em 1.8em; letter-spacing: .1em; }
-.works-tg {
-  display: block; margin-top: 1.3rem; font-size: .68rem; letter-spacing: .1em;
-  text-transform: uppercase; color: var(--dim); text-decoration: none;
-}
-.works-tg:hover { color: var(--green); }
 
 /* ---------- footer ---------- */
 .works-footer {

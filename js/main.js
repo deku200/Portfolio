@@ -218,6 +218,9 @@ function setLang(next) {
   lang = next;
   localStorage.setItem("lang", lang);
   document.documentElement.lang = lang;
+  // drives the [data-lang-block] sections (why / CTA), which are plain markup
+  // rather than I18N dict entries — same mechanism as the info pages
+  document.documentElement.setAttribute("data-lang", lang);
   $$("[data-i18n]").forEach(el => {
     const t = I18N[el.dataset.i18n];
     if (!t) return;
