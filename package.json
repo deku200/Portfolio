@@ -11,7 +11,12 @@
     "start": "node server/index.js",
     "dev": "nodemon --watch server server/index.js",
     "setup:admin": "node server/setup-admin.js",
-    "seed": "node server/seed.js"
+    "seed": "node server/seed.js",
+    "cf:dev": "wrangler dev",
+    "cf:deploy": "wrangler deploy",
+    "cf:schema": "wrangler d1 execute slv-visual --remote --file=worker/schema.sql",
+    "cf:import": "wrangler d1 execute slv-visual --remote --file=worker/import.sql",
+    "cf:tail": "wrangler tail"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -24,6 +29,7 @@
     "multer": "^2.2.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "wrangler": "^4.0.0"
   }
 }

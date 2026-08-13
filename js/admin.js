@@ -1,7 +1,7 @@
 /* ==========================================================
    slv_visual — admin panel (talks to the backend API)
-   Auth is a real login (POST /api/login) with an httpOnly session
-   cookie; all data lives in the server database, not the browser.
+   Auth is handled by Cloudflare Access before this page is ever served, so
+   there is no password form here; all data lives in the D1 database.
    ========================================================== */
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -67,25 +67,20 @@ async function uploadImage(file, maxW) {
   return d.url;
 }
 
-/* ---------- 1. LOGIN GATE ---------- */
+/* ---------- 1. ACCESS GATE ----------
+   Cloudflare Access authenticates the visitor before this page is served, so
+   reaching it means they are already signed in. The gate is only shown if the
+   Access session expired underneath an open tab. */
 (async function boot() {
   const gateEl = $("#gate"), app = $("#app");
-  const show = () => { gateEl.style.display = "none"; app.hidden = false; initApp(); };
-
-  $("#gate-form").addEventListener("submit", async e => {
-    e.preventDefault();
-    $("#gate-err").textContent = "";
-    try {
-      await api("POST", "/login", { username: $("#gate-user").value.trim(), password: $("#gate-pass").value });
-      $("#gate-pass").value = "";
-      show();
-    } catch (err) {
-      $("#gate-err").textContent = err.status === 401 ? "ACCESS DENIED" : "LOGIN FAILED — IS THE SERVER RUNNING?";
-    }
-  });
-
-  // resume an existing session
-  try { await api("GET", "/me"); show(); } catch (_) { /* stay on the gate */ }
+  try {
+    await api("GET", "/me");
+    gateEl.style.display = "none";
+    app.hidden = false;
+    initApp();
+  } catch (_) {
+    $("#gate-err").textContent = "SESSION EXPIRED — RELOAD TO SIGN IN AGAIN";
+  }
 })();
 
 function initApp() {
@@ -95,9 +90,9 @@ function initApp() {
     $$("#tabbar button").forEach(b => b.classList.toggle("is-active", b === btn));
     $$(".view").forEach(v => v.classList.toggle("is-active", v.id === "view-" + btn.dataset.view));
   });
-  $("#lock-btn").addEventListener("click", async () => {
-    try { await api("POST", "/logout"); } catch (_) {}
-    location.reload();
+  $("#lock-btn").addEventListener("click", () => {
+    // ends the Cloudflare Access session, not a cookie we control
+    location.href = "/cdn-cgi/access/logout";
   });
 
   renderApplications();

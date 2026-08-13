@@ -1,0 +1,22 @@
+# everything the edge must never serve
+server/
+worker/
+node_modules/
+.git/
+.claude/
+.agents/
+.devbrain/
+*.html
+*.md
+*.db
+*.db-shm
+*.db-wal
+.env
+.env.example
+Dockerfile
+.dockerignore
+railway.json
+wrangler.toml
+package.json
+package-lock.json
+skills-lock.json

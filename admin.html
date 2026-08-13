@@ -17,11 +17,11 @@
   <!-- password gate -->
   <div class="gate" id="gate">
     <h1>&lt;SLV_VISUAL / ADMIN&gt;</h1>
-    <form id="gate-form">
-      <input type="text" id="gate-user" placeholder="USERNAME" autocomplete="username" autofocus />
-      <input type="password" id="gate-pass" placeholder="PASSWORD" autocomplete="current-password" />
-      <button class="btn" type="submit">ENTER</button>
-    </form>
+    <p class="muted" style="max-width:38ch;line-height:1.7;">
+      Sign-in is handled by Cloudflare Access — you are let in automatically
+      once you have confirmed the one-time code sent to your email.
+    </p>
+    <a class="btn" href="/admin">RELOAD</a>
     <div class="err" id="gate-err"></div>
   </div>
 
@@ -30,7 +30,7 @@
     <div class="admin-head">
       <div>
         <div class="brand">&lt;SLV_VISUAL / ADMIN&gt;</div>
-        <div class="sub">client-side control panel · data stored in this browser</div>
+        <div class="sub">control panel · signed in via Cloudflare Access</div>
       </div>
       <div style="display:flex; gap:1rem; align-items:center;">
         <a class="back-link" href="index.html">↗ VIEW SITE</a>
