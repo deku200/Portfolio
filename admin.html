@@ -48,10 +48,11 @@
     <section class="view is-active" id="view-applications">
       <div class="card">
         <h3>Submitted applications</h3>
-        <p class="muted">Applications submitted through the contact form on this browser appear here.</p>
+        <p class="muted">Requests sent through the contact form. “Download backup” saves every table (applications, projects, team) as one JSON file.</p>
         <div class="actions" style="margin-top:.9rem;">
           <button class="btn ghost" id="apps-refresh" type="button">REFRESH</button>
           <button class="btn danger" id="apps-clear" type="button">CLEAR ALL</button>
+          <a class="btn ghost" href="/api/export" download>DOWNLOAD BACKUP</a>
         </div>
       </div>
       <div id="apps-list"></div>

@@ -95,6 +95,19 @@ app.use("/api/upload", require("./routes/upload"));
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 
+/* One-click backup: every table as a single JSON file. Added so the database
+   can be rescued without anyone handling credentials on the command line. */
+app.get("/api/export", requireAuth, (_req, res) => {
+  const dump = {
+    exportedAt: new Date().toISOString(),
+    applications: db.prepare("SELECT * FROM applications ORDER BY created_at ASC").all(),
+    projects: db.prepare("SELECT * FROM projects ORDER BY id ASC").all(),
+    team_members: db.prepare("SELECT * FROM team_members ORDER BY sort_order ASC").all(),
+  };
+  res.set("Content-Disposition", 'attachment; filename="slv-visual-backup.json"');
+  res.json(dump);
+});
+
 /* ---------- static site (explicit paths only — never expose server/ or node_modules) ---------- */
 app.use("/uploads", express.static(UPLOAD_DIR, {
   maxAge: "7d",

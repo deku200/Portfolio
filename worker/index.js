@@ -279,6 +279,7 @@ async function api(request, env, path, method) {
   /* everything that mutates, plus reading applications, is admin-only */
   const needsAdmin =
     resource === "me" ||
+    resource === "export" ||
     resource === "upload" ||
     (resource === "applications" && method !== "POST") ||
     (["projects", "team"].indexOf(resource) !== -1 && method !== "GET");
@@ -290,6 +291,21 @@ async function api(request, env, path, method) {
   }
 
   if (resource === "me") return json({ username: identity.email || "admin" });
+
+  /* one-click backup of every table, same shape as the Express version */
+  if (resource === "export" && method === "GET") {
+    const [apps, projects, team] = await Promise.all([
+      env.DB.prepare("SELECT * FROM applications ORDER BY created_at ASC").all(),
+      env.DB.prepare("SELECT * FROM projects ORDER BY id ASC").all(),
+      env.DB.prepare("SELECT * FROM team_members ORDER BY sort_order ASC").all(),
+    ]);
+    return json({
+      exportedAt: new Date().toISOString(),
+      applications: apps.results || [],
+      projects: projects.results || [],
+      team_members: team.results || [],
+    }, 200, { "Content-Disposition": 'attachment; filename="slv-visual-backup.json"' });
+  }
 
   /* ------------------------------------------------------------ projects */
   if (resource === "projects") {
