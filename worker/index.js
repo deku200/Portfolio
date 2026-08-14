@@ -3,7 +3,7 @@
    Port of the Express server that ran on Railway.
 
      server/db.js       -> D1 (env.DB)          same SQLite schema
-     multer -> /data    -> R2 (env.UPLOADS)
+     multer -> /data    -> KV (env.UPLOADS)
      bcrypt + JWT login -> Cloudflare Access    (Workers free caps CPU at 10ms
                                                  per request, far too tight to
                                                  hash a password safely)
@@ -161,7 +161,7 @@ const normSkills = (arr) =>
     return { label_en: label, label_uk: label, level: Math.max(0, Math.min(10, +k.level || 0)) };
   }).filter((k) => k.label_en);
 
-/* ------------------------------------------------------------- uploads/R2 */
+/* ------------------------------------------------------------- uploads/KV */
 const MIME_EXT = {
   "image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp", "image/gif": ".gif",
 };
@@ -251,21 +251,22 @@ export default {
   },
 };
 
-/* ------------------------------------------------------------- R2 serving */
+/* ------------------------------------------------------------- KV serving */
 async function serveUpload(env, path) {
   const key = decodeURIComponent(path.slice("/uploads/".length));
   if (!key || key.indexOf("..") !== -1) return json({ error: "not found" }, 404);
-  const obj = await env.UPLOADS.get(key);
-  if (!obj) return json({ error: "not found" }, 404);
-
-  const headers = new Headers();
-  obj.writeHttpMetadata(headers);
-  headers.set("Cache-Control", "public, max-age=604800");
-  // user-supplied bytes: never let a browser sniff or execute them
-  headers.set("X-Content-Type-Options", "nosniff");
-  headers.set("Content-Disposition", "inline");
-  headers.set("Content-Security-Policy", "default-src 'none'; sandbox");
-  return new Response(obj.body, { headers });
+  const { value, metadata } = await env.UPLOADS.getWithMetadata(key, { type: "arrayBuffer" });
+  if (!value) return json({ error: "not found" }, 404);
+  return new Response(value, {
+    headers: {
+      "Content-Type": (metadata && metadata.contentType) || "application/octet-stream",
+      "Cache-Control": "public, max-age=604800",
+      // user-supplied bytes: never let a browser sniff or execute them
+      "X-Content-Type-Options": "nosniff",
+      "Content-Disposition": "inline",
+      "Content-Security-Policy": "default-src 'none'; sandbox",
+    },
+  });
 }
 
 /* ---------------------------------------------------------------- the API */
@@ -500,7 +501,7 @@ async function api(request, env, path, method) {
     const rand = Array.from(crypto.getRandomValues(new Uint8Array(8)))
       .map((n) => n.toString(16).padStart(2, "0")).join("");
     const key = Date.now().toString(36) + "-" + rand + ext;
-    await env.UPLOADS.put(key, bytes, { httpMetadata: { contentType: real } });
+    await env.UPLOADS.put(key, bytes, { metadata: { contentType: real } });
     return json({ url: "/uploads/" + key }, 201);
   }
 

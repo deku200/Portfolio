@@ -3,3 +3,19 @@ server/data/
 .env
 *.log
 npm-debug.log*
+
+# DevBrain generated output (the knowledge files are meant to be committed)
+.devbrain/cache/
+.devbrain/brief.md
+
+# особисті фото / скріншоти в корені — не для публічного репозиторію
+/*.png
+/*.jpg
+/*.jpeg
+!/favicon.png
+
+# локальні налаштування Claude Code: містять записані команди з API-ключами
+.claude/settings.local.json
+.claude/skills/
+.agents/
+skills-lock.json

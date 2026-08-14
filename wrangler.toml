@@ -1,6 +1,6 @@
 # Cloudflare Worker — replaces the Express/Railway backend.
 #   D1  : the database (was node:sqlite on a Railway volume)
-#   R2  : uploaded images (was multer -> /data/uploads)
+#   KV  : uploaded images (was multer -> /data/uploads)
 #   Assets: css / js / img served straight from Cloudflare's edge (free, cached)
 # HTML is NOT an asset: the Worker imports it as text so it can substitute the
 # __V__ cache-busting token and serve it no-cache. See worker/index.js.
@@ -10,7 +10,7 @@ compatibility_date = "2026-08-01"
 
 # Only reachable through the custom domain, so Cloudflare Access can't be
 # side-stepped via a *.workers.dev URL.
-workers_dev = false
+workers_dev = true
 
 [assets]
 directory = "."
@@ -19,11 +19,11 @@ binding = "ASSETS"
 [[d1_databases]]
 binding = "DB"
 database_name = "slv-visual"
-database_id = "PLACEHOLDER_SET_BY_WRANGLER"
+database_id = "5b75f1f9-7c70-486e-b9a0-eacddfe3b6dd"
 
-[[r2_buckets]]
+[[kv_namespaces]]
 binding = "UPLOADS"
-bucket_name = "slv-visual-uploads"
+id = "4d69dc264815415a8297cb831084b715"
 
 [vars]
 # filled in once the Access application exists (see DEPLOY-CLOUDFLARE.md)

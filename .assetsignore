@@ -20,3 +20,13 @@ wrangler.toml
 package.json
 package-lock.json
 skills-lock.json
+backup/
+
+# build output — must never be served
+.wrangler/
+.devbrain/
+
+# stray photos/screenshots sitting in the repo root: not part of the site
+/*.png
+/*.jpg
+/*.jpeg

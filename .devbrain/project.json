@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "name": "slv-visual-backend",
+  "description": "Backend + static host for the slv_visual portfolio (Express + node:sqlite)",
+  "createdAt": "2026-08-07T19:33:01.221Z",
+  "lastScan": "2026-08-07T19:33:01.222Z",
+  "lastScanCommit": "4e3e7cf8744761b09bb9c3bbd9803bf44674d7bc",
+  "stack": {
+    "languages": [
+      {
+        "name": "JavaScript",
+        "files": 12,
+        "percent": 60
+      },
+      {
+        "name": "HTML",
+        "files": 4,
+        "percent": 20
+      },
+      {
+        "name": "CSS",
+        "files": 3,
+        "percent": 15
+      },
+      {
+        "name": "Python",
+        "files": 1,
+        "percent": 5
+      }
+    ],
+    "frameworks": [
+      "Docker",
+      "Express"
+    ],
+    "runtimes": [
+      "Node.js",
+      "Node.js 24.x"
+    ],
+    "packageManager": "npm",
+    "entryPoints": [],
+    "tests": {
+      "present": false,
+      "files": 0,
+      "dirs": [],
+      "runners": [],
+      "command": null
+    }
+  },
+  "structure": {
+    "tree": "├─ .agents/\n│  └─ skills/\n│     └─ nano-banana-pro/ (2 files)\n├─ .claude/\n│  ├─ launch.json\n│  └─ settings.local.json\n├─ css/\n│  ├─ admin.css\n│  ├─ legal.css\n│  └─ style.css\n├─ img/\n│  ├─ apple-touch-icon.png\n│  ├─ favicon-32.png\n│  ├─ greening-africa.png\n│  ├─ icon-192.png\n│  ├─ icon-512.png\n│  ├─ melman.png\n│  └─ … 5 more files\n├─ js/\n│  ├─ admin.js\n│  ├─ legal.js\n│  └─ main.js\n├─ server/\n│  ├─ routes/\n│  │  ├─ applications.js\n│  │  ├─ projects.js\n│  │  ├─ team.js\n│  │  └─ upload.js\n│  ├─ auth.js\n│  ├─ db.js\n│  ├─ index.js\n│  ├─ seed.js\n│  └─ setup-admin.js\n├─ .dockerignore\n├─ .env.example\n├─ .gitignore\n├─ DEPLOY.md\n├─ Dockerfile\n├─ IMG_20251113_050224_849.png\n└─ … 20 more files"
+  },
+  "counts": {
+    "files": 56,
+    "dirs": 10,
+    "bytes": 31058825
+  },
+  "git": {
+    "isRepo": true,
+    "branch": "main",
+    "head": "4e3e7cf8744761b09bb9c3bbd9803bf44674d7bc",
+    "remote": "https://github.com/deku200/Portfolio.git",
+    "firstCommit": "2026-07-13",
+    "commits": 22
+  }
+}
