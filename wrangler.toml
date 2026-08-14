@@ -10,7 +10,7 @@ compatibility_date = "2026-08-01"
 
 # Only reachable through the custom domain, so Cloudflare Access can't be
 # side-stepped via a *.workers.dev URL.
-workers_dev = true
+workers_dev = false
 
 [assets]
 directory = "."
@@ -27,8 +27,8 @@ id = "4d69dc264815415a8297cb831084b715"
 
 [vars]
 # filled in once the Access application exists (see DEPLOY-CLOUDFLARE.md)
-ACCESS_TEAM_DOMAIN = ""
-ACCESS_AUD = ""
+ACCESS_TEAM_DOMAIN = "odd-credit-9c34.cloudflareaccess.com"
+ACCESS_AUD = "d90b69324d7972b65719083155a3cc6fc31f03527d364326bf895796a5dfa3ed"
 
 # let the Worker import HTML and the SEO text files as strings
 [[rules]]
@@ -39,3 +39,11 @@ fallthrough = true
 # gives the Worker a unique id per deploy — used as the __V__ cache-bust token
 [version_metadata]
 binding = "CF_VERSION"
+
+# Serve the live site. A route (not a custom domain) intercepts requests before
+# they reach the origin, so the existing proxied DNS record can stay exactly as
+# it is — no downtime during the switch, and removing the route rolls straight
+# back to the old origin.
+[[routes]]
+pattern = "www.slv-visual.online/*"
+zone_name = "slv-visual.online"
