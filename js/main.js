@@ -1453,7 +1453,13 @@ function applyLocalOverrides() {
   ];
 
   const SERVICES = [
+    /* perProduct only bites on a shop: a landing page has one offer to write,
+       a catalogue has one description per item. */
+    { id: "copy", price: 100, perProduct: 2,
+      uk: "Копірайтинг: тексти для сайту", en: "Copywriting: all site texts" },
     { id: "np", price: 200, uk: "Нова Пошта: відділення та ТТН", en: "Nova Poshta: branches & waybills" },
+    { id: "intlpay", price: 600,
+      uk: "Закордонна платіжна система", en: "Foreign payment provider" },
     { id: "booking", price: 100, uk: "Онлайн-запис на послугу", en: "Online booking" },
     { id: "admin", price: 300, uk: "Адмін-панель для правок без нас", en: "Admin panel — edit it without us" },
     { id: "tgnotify", price: 50, uk: "Сповіщення про заявки в Telegram", en: "Telegram alerts for new requests" },
@@ -1531,6 +1537,8 @@ function applyLocalOverrides() {
     groups: { pay: "none", seo: "base" },
     services: new Set(),
     support: false,
+    products: 20,   // only used when a shop orders copywriting
+    melman: false,  // the Melman referral discount
   };
 
   const dev = () => DEVS.find((d) => d.id === state.dev);
@@ -1586,7 +1594,7 @@ function applyLocalOverrides() {
       `<li>${bi(uk, en)}</li>`).join("")}</ul>`;
 
   const optRow = (kind, o) => `
-    <label class="calc-opt" data-only="${o.only || ""}">
+    <label class="calc-opt" data-id="${o.id}" data-only="${o.only || ""}">
       <input type="checkbox" data-kind="${kind}" value="${o.id}" class="sr-only">
       <span class="co-pick" aria-hidden="true"></span>
       <span class="co-name">${bi(o.uk, o.en)}</span>
@@ -1625,6 +1633,23 @@ function applyLocalOverrides() {
   }
   renderSupport();
 
+  /* Copywriting is the one service whose price depends on something the
+     visitor has to tell us, so its quantity field appears exactly when it
+     matters — a shop, with copywriting actually ticked — and the row's own
+     price label switches to show the per-item rate. */
+  function syncCopy() {
+    const wrap = el("calc-copy-qty");
+    const row = document.querySelector('#calc-services .calc-opt[data-id="copy"]');
+    const svc = SERVICES.find((x) => x.id === "copy");
+    const isShop = state.cat === "shop";
+    wrap.hidden = !(isShop && state.services.has("copy"));
+    if (row) {
+      row.querySelector(".co-price").innerHTML = isShop
+        ? "+" + money(svc.price) + bi(" + $2/товар", " + $2/product")
+        : "+" + money(svc.price);
+    }
+  }
+
   /* blocks that belong only to a shop appear only when a shop is selected */
   function syncOnly() {
     document.querySelectorAll("#calc-blocks .calc-opt[data-only]").forEach((label) => {
@@ -1638,6 +1663,7 @@ function applyLocalOverrides() {
     });
   }
   syncOnly();
+  syncCopy();
 
   /* --------------------------------------------------------------- the maths */
   function build() {
@@ -1666,8 +1692,25 @@ function applyLocalOverrides() {
     });
 
     SERVICES.forEach((sv) => {
-      if (state.services.has(sv.id)) push(sv.uk, sv.en, sv.price, "service");
+      if (!state.services.has(sv.id)) return;
+      if (sv.perProduct && state.cat === "shop") {
+        const n = state.products;
+        push(sv.uk + " · " + n + " тов.", sv.en + " · " + n + " products",
+             sv.price + n * sv.perProduct, "service");
+      } else {
+        push(sv.uk, sv.en, sv.price, "service");
+      }
     });
+
+    /* The Melman referral comes off the one-off total only. Discounting a
+       recurring fee would keep costing us every month for a one-time
+       introduction, so support stays at its full rate. Tagged "discount" so it
+       is not counted as another day of work below. */
+    if (state.melman) {
+      const cut = Math.round(total * 0.1);
+      // the rate belongs in the price column, not doubled up in the label
+      push("Знижка від Мелмана", "Melman referral", -cut, "discount");
+    }
 
     // support is recurring — it is quoted beside the total, never inside it
     const monthly = state.support ? c.support : 0;
@@ -1695,10 +1738,15 @@ function applyLocalOverrides() {
   function renderLines() {
     quote = build();
     el("calc-lines").innerHTML = quote.lines.map((l) => `
-      <li class="calc-line">
+      <li class="calc-line${l.tag === "discount" ? " is-discount" : ""}">
         <span class="cl-name">${bi(l.uk, l.en)}</span>
         <span class="cl-dots" aria-hidden="true"></span>
-        <span class="cl-price">${money(l.price)}</span>
+        <span class="cl-price">${
+          // before "calculate" the cut is named but not priced: a real figure
+          // here would give away the total the button exists to reveal
+          l.tag === "discount"
+            ? (locked ? "−" + money(-l.price) : "−10%")
+            : money(l.price)}</span>
       </li>`).join("") +
       (quote.monthly ? `
       <li class="calc-line is-monthly">
@@ -1728,12 +1776,30 @@ function applyLocalOverrides() {
   el("calc-config").addEventListener("change", (e) => {
     const t = e.target;
     if (t.name === "calc-dev") state.dev = t.value;
-    else if (t.name === "calc-cat") { state.cat = t.value; syncOnly(); renderSupport(); }
+    else if (t.name === "calc-cat") { state.cat = t.value; syncOnly(); renderSupport(); syncCopy(); }
     else if (t.id === "calc-niche") state.niche = t.value;
     else if (t.dataset.group) state.groups[t.dataset.group] = t.value;
     else if (t.dataset.kind === "block") t.checked ? state.blocks.add(t.value) : state.blocks.delete(t.value);
-    else if (t.dataset.kind === "service") t.checked ? state.services.add(t.value) : state.services.delete(t.value);
+    else if (t.dataset.kind === "service") {
+      t.checked ? state.services.add(t.value) : state.services.delete(t.value);
+      syncCopy();
+    }
     else if (t.dataset.kind === "support") state.support = t.checked;
+    unlock();
+  });
+
+  el("calc-products").addEventListener("input", (e) => {
+    const n = parseInt(e.target.value, 10);
+    state.products = Math.max(0, Math.min(5000, isNaN(n) ? 0 : n));
+    unlock();
+  });
+  // reflect the clamp back on blur, so the field can never disagree with the
+  // quantity the estimate was actually priced on — but never mid-keystroke
+  el("calc-products").addEventListener("change", (e) => { e.target.value = state.products; });
+
+  // the referral checkbox sits in the receipt panel, outside the config form
+  el("calc-melman").addEventListener("change", (e) => {
+    state.melman = e.target.checked;
     unlock();
   });
 
@@ -1822,7 +1888,8 @@ function applyLocalOverrides() {
     const form = document.getElementById("contact-form");
     if (!form) return;
     const p = payload();
-    const spec = quote.lines.map((l) => "· " + (lang === "uk" ? l.uk : l.en) + " — " + money(l.price)).join("\n");
+    const spec = quote.lines.map((l) => "· " + (lang === "uk" ? l.uk : l.en) + " — " +
+      (l.price < 0 ? "−" + money(-l.price) : money(l.price))).join("\n");
     form.budget.value = "$" + quote.total;
     form.budget.dispatchEvent(new Event("input", { bubbles: true }));
     form.message.value = (lang === "uk"

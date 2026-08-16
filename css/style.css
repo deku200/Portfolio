@@ -981,6 +981,25 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
   font-style: normal; font-size: .68rem; line-height: 1.7; color: var(--dim);
 }
 
+/* the one input in the whole configurator: how many products need describing */
+.calc-qty {
+  margin-top: 1rem; padding: .9rem 1.1rem;
+  border: 1px dashed #2a2a2a; background: rgba(157, 255, 158, .03);
+  max-width: 34rem;
+}
+.calc-qty-label {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  font-size: .74rem; letter-spacing: .04em; color: var(--fg);
+}
+.calc-qty-label input {
+  width: 7rem; flex: 0 0 auto; text-align: right;
+  background: #050505; border: 1px solid #2a2a2a; color: var(--green);
+  font-family: inherit; font-size: .9rem; font-weight: 700;
+  padding: .45rem .6rem;
+}
+.calc-qty-label input:focus { outline: none; border-color: var(--accent); }
+.calc-qty-note { margin-top: .6rem; font-size: .68rem; line-height: 1.7; color: var(--dim); }
+
 /* ---- the estimate, printing beside the form ---- */
 .calc-receipt { position: sticky; top: 1.5rem; min-width: 0; }
 .calc-paper { transition: border-color .5s ease, box-shadow .5s ease; }
@@ -1024,6 +1043,30 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
 .calc-total-sub { margin-top: .55rem; font-size: .68rem; letter-spacing: .05em; color: var(--green); }
 .calc-eta { margin-top: .9rem; font-size: .72rem; letter-spacing: .06em; color: var(--dim); }
 .calc-eta b { color: var(--fg); }
+
+/* the referral sits directly above the button it changes the outcome of */
+.calc-referral {
+  display: grid; grid-template-columns: 1.6rem minmax(0, 1fr); gap: .5rem;
+  align-items: start; margin-top: 1.3rem; padding: .8rem .9rem;
+  border: 1px dashed #2a2a2a; background: rgba(157, 255, 158, .03);
+  transition: border-color .3s ease, background .3s ease;
+}
+.calc-referral:hover { border-color: #3d3d3d; }
+.calc-referral:has(input:checked) {
+  border-color: var(--green); border-style: solid;
+  background: rgba(157, 255, 158, .07);
+}
+.calc-referral:has(input:focus-visible) { outline: 1px solid var(--green); outline-offset: 2px; }
+.cr-name { display: block; font-size: .8rem; font-weight: 700; letter-spacing: .04em; }
+.calc-referral:has(input:checked) .cr-name { color: var(--green); }
+.cr-note {
+  display: block; margin-top: .3rem; font-style: normal;
+  font-size: .67rem; line-height: 1.65; color: var(--dim);
+}
+
+/* money coming off reads as a gain, not another charge */
+.calc-line.is-discount .cl-name,
+.calc-line.is-discount .cl-price { color: var(--green); font-weight: 700; }
 
 .calc-actions { margin-top: 1.5rem; }
 .calc-go { width: 100%; justify-content: center; }

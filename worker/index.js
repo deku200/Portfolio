@@ -512,7 +512,8 @@ async function api(request, env, path, method) {
       // request can never write an unbounded blob into D1
       const items = (Array.isArray(b.items) ? b.items : []).slice(0, 40).map((it) => ({
         label: s(it && it.label).slice(0, 120),
-        price: Math.max(0, Math.min(100000, Math.round(+(it && it.price) || 0))),
+        // negative on purpose: a discount is a line item like any other
+        price: Math.max(-100000, Math.min(100000, Math.round(+(it && it.price) || 0))),
       }));
       const sum = items.reduce((a, it) => a + it.price, 0);
 

@@ -374,6 +374,18 @@
               <legend class="calc-step-key">&gt; <span data-lang-block="uk">СЕРВІСИ ТА ІНТЕГРАЦІЇ</span><span data-lang-block="en">SERVICES &amp; INTEGRATIONS</span></legend>
               <div class="calc-groups" id="calc-groups"></div>
               <div class="calc-opts" id="calc-services"></div>
+              <!-- shown only when a shop orders copywriting: the one price that
+                   depends on something only the visitor can tell us -->
+              <div class="calc-qty" id="calc-copy-qty" hidden>
+                <label class="calc-qty-label">
+                  <span data-lang-block="uk">Скільки товарів у каталозі?</span><span data-lang-block="en">How many products in the catalogue?</span>
+                  <input type="number" id="calc-products" min="0" max="5000" step="1" value="20" inputmode="numeric" />
+                </label>
+                <p class="calc-qty-note">
+                  <span data-lang-block="uk">Копірайтинг магазину — $100 за сайт плюс $2 за опис кожного товару.</span>
+                  <span data-lang-block="en">Shop copywriting is $100 for the site plus $2 for every product description.</span>
+                </p>
+              </div>
             </fieldset>
 
             <fieldset class="calc-step">
@@ -407,6 +419,15 @@
                 <div class="calc-total-sub" id="calc-total-sub" hidden></div>
 
                 <p class="calc-eta" id="calc-eta" hidden></p>
+
+                <label class="calc-referral">
+                  <input type="checkbox" id="calc-melman" class="sr-only" />
+                  <span class="co-pick" aria-hidden="true"></span>
+                  <span class="cr-body">
+                    <span class="cr-name"><span data-lang-block="uk">Ви від Мелмана?</span><span data-lang-block="en">Came from Melman?</span></span>
+                    <em class="cr-note"><span data-lang-block="uk">Знижка −10% на всю суму — застосується після розрахунку.</span><span data-lang-block="en">−10% off the whole total — applied once you calculate.</span></em>
+                  </span>
+                </label>
 
                 <div class="calc-actions">
                   <button type="button" class="cta-btn calc-go" id="calc-go">
