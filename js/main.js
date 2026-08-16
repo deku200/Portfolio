@@ -1388,11 +1388,11 @@ function applyLocalOverrides() {
   ];
 
   const CATS = [
-    { id: "landing", base: 400, support: 100, days: 7,
+    { id: "landing", base: 400, support: 100, days: 4,
       uk: "Лендінг / Корпоративний", en: "Landing / Corporate",
       descUk: "Односторінковий сайт, який продає одну послугу або один товар. Уся аргументація, ціни та форма заявки — на одному екрані прокрутки.",
       descEn: "A one-page site that sells a single service or product. The whole argument, the prices and the request form live on one scroll." },
-    { id: "shop", base: 900, support: 200, days: 18,
+    { id: "shop", base: 900, support: 200, days: 9,
       uk: "E-commerce / Інтернет-магазин", en: "E-commerce / Online store",
       descUk: "Каталог товарів, картки, кошик і оформлення замовлення. Клієнт купує сам, без вашої участі.",
       descEn: "A product catalogue, product pages, a cart and checkout. The customer buys on their own, without you in the loop." },
@@ -1672,8 +1672,11 @@ function applyLocalOverrides() {
     // support is recurring — it is quoted beside the total, never inside it
     const monthly = state.support ? c.support : 0;
 
+    /* The whole schedule was halved: a day per extra block or service rather
+       than two, on top of a halved base. It is still a range, not a promise —
+       the low end is the quoted figure and the high end adds a third. */
     const count = lines.filter((l) => l.tag === "block" || l.tag === "service").length;
-    let days = c.days + count * 2 - (d.years >= 6 ? 2 : 0);
+    let days = c.days + count - (d.years >= 6 ? 1 : 0);
     days = Math.max(c.days, days);
 
     return { lines, total, monthly, days, dayMax: days + Math.ceil(days * 0.35) };
