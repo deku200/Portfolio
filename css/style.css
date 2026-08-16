@@ -945,6 +945,10 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
   gap: 0 2.4rem;
 }
 .calc-opts-single { grid-template-columns: 1fr; max-width: 34rem; }
+/* the support row carries an explanation under its label, so it drops the
+   leader dots the same way the radio rows do */
+.calc-opts-single .calc-opt { grid-template-columns: 1.6rem minmax(0, 1fr) auto; }
+.calc-opts-single .co-dots { display: none; }
 .calc-opt {
   display: grid; grid-template-columns: 1.6rem minmax(0, auto) minmax(1rem, 1fr) auto;
   align-items: baseline; gap: .5rem;
@@ -1036,21 +1040,17 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
 .calc-reset:hover { color: var(--green); border-color: var(--green); }
 .calc-note { margin-top: 1.15rem; font-size: .66rem; line-height: 1.8; color: #5e5e5e; }
 
-@media (max-width: 980px) {
+/* Phone and tablet: nothing is pinned. A panel stuck to the top of a phone
+   screen ate half of it, and half a screen is too high a price for a summary
+   nobody is reading while they tick boxes. On one column the estimate simply
+   sits where it belongs in the reading order — after everything you choose —
+   so the "calculate" button is exactly where the scrolling ends. Only the
+   two-column layout above this width keeps the panel sticky beside the form. */
+@media (max-width: 1024px) {
   .calc-shell { grid-template-columns: 1fr; }
-  /* On one column the estimate is the last row, so sticking to the bottom
-     would leave it nothing to stick to. It moves ahead of the options instead
-     and pins to the top while the visitor works down through them. */
-  .calc-receipt { order: -1; top: 0; margin-bottom: 1.4rem; z-index: 4; }
-  .calc-paper { box-shadow: 0 16px 34px rgba(0, 0, 0, .72); }
-  .calc-paper-body { padding: 1.1rem 1.1rem 1.25rem; }
-  .calc-lines { max-height: 21vh; }
-  /* the disclaimer earns its space once there is a number to disclaim; before
-     that it is only height, and height is what makes a pinned panel unusable
-     on a phone */
-  .calc-note { display: none; }
-  .calc-paper.is-final .calc-note { display: block; }
-  .calc-paper.is-final .calc-lines { max-height: 15vh; }
+  .calc-receipt { position: static; margin-top: 1.6rem; }
+  /* nothing is pinned, so the line list has no height to fight over */
+  .calc-lines { max-height: none; }
 }
 @media (max-width: 620px) {
   .calc-opts { grid-template-columns: 1fr; }

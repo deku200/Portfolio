@@ -1405,6 +1405,7 @@ function applyLocalOverrides() {
     ["Форма заявки та контакти", "Request form & contacts"],
     ["Адаптив під телефон і планшет", "Phone & tablet layouts"],
     ["Підключення домену і запуск", "Domain hookup & launch"],
+    ["Перший місяць підтримки — безкоштовно", "First month of support — free"],
   ];
 
   const BLOCKS = [
@@ -1615,7 +1616,9 @@ function applyLocalOverrides() {
       <label class="calc-opt">
         <input type="checkbox" data-kind="support" value="support" class="sr-only"${state.support ? " checked" : ""}>
         <span class="co-pick" aria-hidden="true"></span>
-        <span class="co-name">${bi("Щомісячна підтримка сайту", "Monthly site support")}</span>
+        <span class="co-name">${bi("Підтримка далі, з другого місяця", "Ongoing support, from month two")}<em class="co-note">${
+          bi("Перший місяць уже входить у ціну — безкоштовно, на будь-який сайт.",
+             "The first month is already in the price — free, on any site.")}</em></span>
         <span class="co-dots" aria-hidden="true"></span>
         <span class="co-price">${money(c.support)}${bi("/міс", "/mo")}</span>
       </label>`;
@@ -1696,7 +1699,7 @@ function applyLocalOverrides() {
       </li>`).join("") +
       (quote.monthly ? `
       <li class="calc-line is-monthly">
-        <span class="cl-name">${bi("Підтримка", "Support")}</span>
+        <span class="cl-name">${bi("Підтримка (з 2-го місяця)", "Support (from month 2)")}</span>
         <span class="cl-dots" aria-hidden="true"></span>
         <span class="cl-price">${money(quote.monthly)}${bi("/міс", "/mo")}</span>
       </li>` : "");
@@ -1786,7 +1789,8 @@ function applyLocalOverrides() {
     subEl.hidden = !quote.monthly;
     if (quote.monthly) {
       subEl.innerHTML = "+ " + money(quote.monthly) +
-        bi("/міс за підтримку — окремо від разової суми", "/mo for support — separate from the one-off total");
+        bi("/міс за підтримку з другого місяця. Перший — безкоштовно, і рахується окремо від разової суми.",
+           "/mo for support from the second month. The first one is free, and it is counted separately from the one-off total.");
     }
     etaEl.hidden = false;
     etaEl.innerHTML =
