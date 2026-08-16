@@ -307,7 +307,33 @@ function enterSite() {
     requestAnimationFrame(() => site.classList.add("is-on"));
     startHero();
     observeSections();
+    applyIncomingHash();
   }, 650);
+}
+
+/* A deep link such as /#calc — which is where both buttons on the projects
+   page point — has its anchor jump swallowed by the splash: while the browser
+   is looking for the target, #site is still hidden, so there is nothing to
+   scroll to and the jump is silently dropped. Re-apply it by hand the moment
+   the site is actually on screen. */
+function applyIncomingHash() {
+  if (!location.hash || location.hash.length < 2) return;
+  let target = null;
+  try { target = document.querySelector(location.hash); } catch (_) { return; } // not a valid selector
+  if (!target) return;
+
+  const jump = () => {
+    const hs = document.getElementById("hscroll");
+    // blocks inside the horizontal scroller need its panel maths, not a scroll
+    if (hs && hs.gotoPanel && hs.gotoPanel(target)) return;
+    target.scrollIntoView({ block: "start", behavior: "instant" });
+  };
+  // deliberately not requestAnimationFrame: it does not fire in a background
+  // or non-compositing tab, and a deep link that quietly does nothing is worse
+  // than one that lands a beat late. The second pass catches the layout
+  // settling as fonts and images finish loading.
+  jump();
+  setTimeout(jump, 220);
 }
 $("#enter-btn").addEventListener("click", enterSite);
 addEventListener("keydown", e => {
@@ -825,6 +851,18 @@ function installGlitch(media) {
     [...dots.children].forEach((d, i) => d.classList.toggle("is-active", i === idx));
   };
   apply();
+
+  /* Anything outside this section (an incoming /#contact deep link, say) can
+     hand us an element and let the scroller work out which panel holds it,
+     rather than duplicating the panel maths at the call site. */
+  hs.gotoPanel = (el) => {
+    const i = panels.findIndex((p) => p.contains(el));
+    if (i === -1) return false;
+    hs.scrollIntoView({ block: "start", behavior: "instant" });
+    if (desktop.matches) { idx = i; apply(); }
+    else el.scrollIntoView({ block: "start", behavior: "instant" });
+    return true;
+  };
 
   hs.addEventListener("wheel", e => {
     if (!desktop.matches) return;
