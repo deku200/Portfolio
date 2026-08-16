@@ -16,6 +16,8 @@ node_modules/
 Dockerfile
 .dockerignore
 railway.json
+.gitignore
+.gitattributes
 wrangler.toml
 package.json
 package-lock.json
