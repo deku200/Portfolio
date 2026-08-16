@@ -9,6 +9,9 @@ CREATE TABLE IF NOT EXISTS meta (
 
 CREATE TABLE IF NOT EXISTS applications (
   id         TEXT PRIMARY KEY,
+  -- one way to reach someone: a phone number or a Telegram handle. name/email
+  -- stay for applications taken before the form changed.
+  contact    TEXT NOT NULL DEFAULT '',
   name       TEXT NOT NULL DEFAULT '',
   email      TEXT NOT NULL DEFAULT '',
   budget     TEXT NOT NULL DEFAULT '',
@@ -54,3 +57,20 @@ CREATE TABLE IF NOT EXISTS rate_hits (
   ts     INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_rate_hits ON rate_hits (bucket, ts);
+
+-- Estimates built with the price calculator on the home page. Stored even when
+-- the visitor never sends a request: which configurations people assemble (and
+-- abandon) is the most useful signal the site produces.
+CREATE TABLE IF NOT EXISTS estimates (
+  id         TEXT PRIMARY KEY,
+  lang       TEXT NOT NULL DEFAULT 'uk',
+  developer  TEXT NOT NULL DEFAULT '',
+  category   TEXT NOT NULL DEFAULT '',
+  niche      TEXT NOT NULL DEFAULT '',
+  total      INTEGER NOT NULL DEFAULT 0,
+  monthly    INTEGER NOT NULL DEFAULT 0,
+  days       TEXT NOT NULL DEFAULT '',
+  items      TEXT NOT NULL DEFAULT '[]',
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_estimates_created ON estimates (created_at DESC);

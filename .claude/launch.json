@@ -4,15 +4,36 @@
     {
       "name": "portfolio",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["-y", "serve", "-l", "8741", "."],
+      "runtimeArgs": [
+        "-y",
+        "serve",
+        "-l",
+        "8741",
+        "."
+      ],
       "port": 8741
     },
     {
       "name": "backend",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["start"],
+      "runtimeArgs": [
+        "start"
+      ],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "worker",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "wrangler",
+        "dev",
+        "--port",
+        "8787",
+        "--persist-to",
+        "C:/Users/666an/AppData/Local/Temp/claude/wrangler-state"
+      ],
+      "port": 8787
     }
   ]
 }

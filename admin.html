@@ -40,6 +40,7 @@
 
     <nav class="tabbar" id="tabbar">
       <button data-view="applications" class="is-active">APPLICATIONS</button>
+      <button data-view="estimates">CALCULATOR</button>
       <button data-view="partners">TEAM</button>
       <button data-view="projects">PROJECTS</button>
     </nav>
@@ -56,6 +57,20 @@
         </div>
       </div>
       <div id="apps-list"></div>
+    </section>
+
+    <!-- CALCULATOR ESTIMATES -->
+    <section class="view" id="view-estimates">
+      <div class="card">
+        <h3>Price calculator</h3>
+        <p class="muted">Every estimate assembled on the home page, newest first — including the ones that never turned into a request. The configurations people build (and abandon) show which blocks and integrations they actually want.</p>
+        <div class="actions" style="margin-top:.9rem;">
+          <button class="btn ghost" id="est-refresh" type="button">REFRESH</button>
+          <button class="btn danger" id="est-clear" type="button">CLEAR ALL</button>
+        </div>
+        <div id="est-stats" class="muted" style="margin-top:.9rem; font-size:.75rem;"></div>
+      </div>
+      <div id="est-list"></div>
     </section>
 
     <!-- PARTNERS -->

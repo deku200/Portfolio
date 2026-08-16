@@ -165,12 +165,12 @@
         <canvas id="ascii-floor"></canvas>
         <div class="hero-logo-wrap" aria-hidden="true"><div id="hero-logo" class="hero-logo"></div></div>
         <div class="hero-corner hero-corner-bottom-left">
-        <a href="#contact" class="btn-orange btn-small hero-cta" data-i18n="contactBtn" data-tip="→ ЗАЛИШИТИ ЗАЯВКУ / SUBMIT A REQUEST">SUBMIT A REQUEST</a>
+        <a href="#calc" class="btn-orange btn-small hero-cta" data-i18n="calcBtn" data-tip="→ РОЗРАХУВАТИ ВАРТІСТЬ / CALCULATE THE PRICE">CALCULATE THE PRICE</a>
         <div class="hero-line scramble-in" data-i18n="heroLine">
-          &lt;WEBSITES THAT SELL YOUR BUSINESS — FROM $400.<br>
-          FAST, POLISHED, BUILT TO CONVERT.<br>
-          <b>LEAVE A REQUEST NOW</b> — THE BRIEFING IS FREE.<br>
-          LET'S LAUNCH YOUR PROJECT&gt;
+          &lt;PRICE YOUR FUTURE WEBSITE IN 30 SECONDS.<br>
+          PICK THE DEVELOPER, THE BLOCKS AND THE INTEGRATIONS —<br>
+          AND <b>SEE AN HONEST FIGURE</b>, WITH NO CALLS AND NO WAITING.<br>
+          WEBSITES FROM $400&gt;
         </div>
       </div>
         <div class="hero-corner hero-corner-bottom-right">
@@ -316,47 +316,123 @@
         </div>
       </section>
 
-      <!-- CTA — a command prompt with the offer's facts beside it, not a
-           centred block. Mirrored on the home page and /projects.html. -->
-      <section class="works-cta">
-        <div class="cta-inner">
-          <div class="cta-main">
-            <h2 class="cta-title">
-              <span data-lang-block="uk">Готові порахувати ваш проєкт?</span>
-              <span data-lang-block="en">Ready to scope your project?</span>
-            </h2>
-            <p class="cta-sub">
-              <span data-lang-block="uk">Брифінг безкоштовний і ні до чого не зобов'язує. Розкажіть задачу — ми скажемо, що реально потрібно і скільки це коштує.</span>
-              <span data-lang-block="en">The briefing is free and commits you to nothing. Tell us the task — we'll tell you what you actually need and what it costs.</span>
-            </p>
-            <div class="cta-actions">
-              <a class="cta-btn" href="#contact" data-tip="→ ЗАЛИШИТИ ЗАЯВКУ / SUBMIT A REQUEST">
-                <span class="cta-btn-prompt" aria-hidden="true">&gt;</span>
-                <span data-lang-block="uk">ЗАЛИШИТИ ЗАЯВКУ</span><span data-lang-block="en">SUBMIT A REQUEST</span>
-                <span class="cta-caret" aria-hidden="true"></span>
-              </a>
-              <a class="works-tg" href="https://t.me/slv_visual" target="_blank" rel="noopener noreferrer">→ TELEGRAM @slv_visual</a>
-            </div>
-          </div>
+      <!-- PRICE CALCULATOR — the site is assembled like a build manifest and
+           the estimate prints beside it. Deliberately not a card grid: the
+           options are terminal option rows, the receipt reuses the .term-window
+           chrome from the contact form. Option lists are rendered from
+           js/main.js §14 because every label is bilingual and the lists are long. -->
+      <section class="works-section calc" id="calc">
+        <h2 class="works-label">
+          <span data-lang-block="uk">&lt;РОЗРАХУЙ ВАРТІСТЬ СВОГО МАЙБУТНЬОГО САЙТУ&gt;</span><span data-lang-block="en">&lt;ESTIMATE YOUR FUTURE WEBSITE&gt;</span>
+        </h2>
 
-          <dl class="cta-specs">
-            <div>
-              <dt><span data-lang-block="uk">Брифінг</span><span data-lang-block="en">Briefing</span></dt>
-              <dd><span data-lang-block="uk">безкоштовно</span><span data-lang-block="en">free</span></dd>
+        <p class="calc-lead">
+          <span data-lang-block="uk">Зберіть сайт по деталях.<br><b>Ціну побачите за 30 секунд.</b></span>
+          <span data-lang-block="en">Assemble the site part by part.<br><b>See the price in 30 seconds.</b></span>
+        </p>
+        <p class="calc-sub">
+          <span data-lang-block="uk">Без дзвінків і без «залиште номер — менеджер передзвонить». Обираєте виконавця, тип сайту, блоки та інтеграції — і отримуєте чесний кошторис із розбивкою по пунктах.</span>
+          <span data-lang-block="en">No calls, no "leave your number and a manager will get back to you". Pick the developer, the type of site, the blocks and the integrations — and get an honest, itemised estimate.</span>
+        </p>
+
+        <div class="calc-shell">
+          <!-- ============ configurator ============ -->
+          <form class="calc-config" id="calc-config" autocomplete="off">
+
+            <fieldset class="calc-step">
+              <legend class="calc-step-key">&gt; <span data-lang-block="uk">ВИКОНАВЕЦЬ</span><span data-lang-block="en">DEVELOPER</span></legend>
+              <p class="calc-step-note">
+                <span data-lang-block="uk">Досвід не змінює планку якості — він змінює глибину опрацювання і швидкість.</span>
+                <span data-lang-block="en">Experience does not change the quality bar — it changes depth and speed.</span>
+              </p>
+              <div class="calc-devs" id="calc-devs"></div>
+            </fieldset>
+
+            <fieldset class="calc-step">
+              <legend class="calc-step-key">&gt; <span data-lang-block="uk">ТИП САЙТУ</span><span data-lang-block="en">TYPE OF SITE</span></legend>
+              <div class="calc-cats" id="calc-cats"></div>
+            </fieldset>
+
+            <fieldset class="calc-step">
+              <legend class="calc-step-key">&gt; <span data-lang-block="uk">СФЕРА ДІЯЛЬНОСТІ</span><span data-lang-block="en">YOUR INDUSTRY</span></legend>
+              <p class="calc-step-note">
+                <span data-lang-block="uk">На ціну не впливає — але ми одразу бачимо, з чим працюємо і що вже робили у вашій ніші.</span>
+                <span data-lang-block="en">Does not affect the price — it tells us what we are working with and what we have already built in your niche.</span>
+              </p>
+              <label class="calc-select-wrap">
+                <select class="calc-select" id="calc-niche"></select>
+              </label>
+            </fieldset>
+
+            <fieldset class="calc-step">
+              <legend class="calc-step-key">&gt; <span data-lang-block="uk">БЛОКИ САЙТУ</span><span data-lang-block="en">PAGE BLOCKS</span></legend>
+              <div class="calc-included" id="calc-included"></div>
+              <div class="calc-opts" id="calc-blocks"></div>
+            </fieldset>
+
+            <fieldset class="calc-step">
+              <legend class="calc-step-key">&gt; <span data-lang-block="uk">СЕРВІСИ ТА ІНТЕГРАЦІЇ</span><span data-lang-block="en">SERVICES &amp; INTEGRATIONS</span></legend>
+              <div class="calc-groups" id="calc-groups"></div>
+              <div class="calc-opts" id="calc-services"></div>
+            </fieldset>
+
+            <fieldset class="calc-step">
+              <legend class="calc-step-key">&gt; <span data-lang-block="uk">ПІДТРИМКА</span><span data-lang-block="en">SUPPORT</span></legend>
+              <p class="calc-step-note">
+                <span data-lang-block="uk">За бажанням. Правки, оновлення, моніторинг і бекапи щомісяця — щоб сайт не застигав після запуску.</span>
+                <span data-lang-block="en">Optional. Monthly edits, updates, monitoring and backups — so the site does not freeze after launch.</span>
+              </p>
+              <div class="calc-opts calc-opts-single" id="calc-support"></div>
+            </fieldset>
+          </form>
+
+          <!-- ============ the estimate printing beside it ============ -->
+          <aside class="calc-receipt">
+            <div class="term-window calc-paper" id="calc-paper">
+              <div class="term-bar">
+                <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
+                <span class="term-title">slv_visual:~/estimate</span>
+                <span class="calc-state" id="calc-state" aria-hidden="true"></span>
+              </div>
+
+              <div class="calc-paper-body">
+                <ul class="calc-lines" id="calc-lines"></ul>
+
+                <div class="calc-total">
+                  <span class="calc-total-key">
+                    <span data-lang-block="uk">РАЗОМ</span><span data-lang-block="en">TOTAL</span>
+                  </span>
+                  <span class="calc-total-val is-masked" id="calc-total">$•••</span>
+                </div>
+                <div class="calc-total-sub" id="calc-total-sub" hidden></div>
+
+                <p class="calc-eta" id="calc-eta" hidden></p>
+
+                <div class="calc-actions">
+                  <button type="button" class="cta-btn calc-go" id="calc-go">
+                    <span class="cta-btn-prompt" aria-hidden="true">&gt;</span>
+                    <span data-lang-block="uk">РОЗРАХУВАТИ ВАРТІСТЬ</span><span data-lang-block="en">CALCULATE THE PRICE</span>
+                    <span class="cta-caret" aria-hidden="true"></span>
+                  </button>
+
+                  <div class="calc-after" id="calc-after" hidden>
+                    <a class="cta-btn calc-send" href="#contact" id="calc-send">
+                      <span class="cta-btn-prompt" aria-hidden="true">&gt;</span>
+                      <span data-lang-block="uk">ЗАЛИШИТИ ЗАЯВКУ З ЦИМ РОЗРАХУНКОМ</span><span data-lang-block="en">SEND A REQUEST WITH THIS ESTIMATE</span>
+                    </a>
+                    <button type="button" class="calc-reset" id="calc-reset">
+                      <span data-lang-block="uk">↻ ПЕРЕЗІБРАТИ</span><span data-lang-block="en">↻ REBUILD IT</span>
+                    </button>
+                  </div>
+                </div>
+
+                <p class="calc-note">
+                  <span data-lang-block="uk">Це попередній кошторис, а не рахунок. Фінальну ціну ми фіксуємо після брифінгу — і вона не росте посеред роботи.</span>
+                  <span data-lang-block="en">This is a preliminary estimate, not an invoice. The final price is fixed after the briefing — and it never grows mid-project.</span>
+                </p>
+              </div>
             </div>
-            <div>
-              <dt><span data-lang-block="uk">Проєкти</span><span data-lang-block="en">Projects</span></dt>
-              <dd><span data-lang-block="uk">від $400</span><span data-lang-block="en">from $400</span></dd>
-            </div>
-            <div>
-              <dt><span data-lang-block="uk">Підтримка</span><span data-lang-block="en">Support</span></dt>
-              <dd><span data-lang-block="uk">30 днів після запуску</span><span data-lang-block="en">30 days after launch</span></dd>
-            </div>
-            <div>
-              <dt><span data-lang-block="uk">Мови</span><span data-lang-block="en">Languages</span></dt>
-              <dd>UA / EN</dd>
-            </div>
-          </dl>
+          </aside>
         </div>
       </section>
 
@@ -405,6 +481,52 @@
         </div>
       </section>
 
+      <!-- CTA — a command prompt with the offer's facts beside it, not a
+           centred block. Rides inside the team panel, directly after the
+           three developers, the same way the FAQ rides after the contact
+           form. Mirrored on /projects.html. -->
+      <section class="works-cta">
+        <div class="cta-inner">
+          <div class="cta-main">
+            <h2 class="cta-title">
+              <span data-lang-block="uk">Готові порахувати ваш проєкт?</span>
+              <span data-lang-block="en">Ready to scope your project?</span>
+            </h2>
+            <p class="cta-sub">
+              <span data-lang-block="uk">Брифінг безкоштовний і ні до чого не зобов'язує. Розкажіть задачу — ми скажемо, що реально потрібно і скільки це коштує.</span>
+              <span data-lang-block="en">The briefing is free and commits you to nothing. Tell us the task — we'll tell you what you actually need and what it costs.</span>
+            </p>
+            <div class="cta-actions">
+              <a class="cta-btn" href="#contact" data-tip="→ ЗАЛИШИТИ ЗАЯВКУ / SUBMIT A REQUEST">
+                <span class="cta-btn-prompt" aria-hidden="true">&gt;</span>
+                <span data-lang-block="uk">ЗАЛИШИТИ ЗАЯВКУ</span><span data-lang-block="en">SUBMIT A REQUEST</span>
+                <span class="cta-caret" aria-hidden="true"></span>
+              </a>
+              <a class="works-tg" href="https://t.me/slv_visual" target="_blank" rel="noopener noreferrer">→ TELEGRAM @slv_visual</a>
+            </div>
+          </div>
+
+          <dl class="cta-specs">
+            <div>
+              <dt><span data-lang-block="uk">Брифінг</span><span data-lang-block="en">Briefing</span></dt>
+              <dd><span data-lang-block="uk">безкоштовно</span><span data-lang-block="en">free</span></dd>
+            </div>
+            <div>
+              <dt><span data-lang-block="uk">Проєкти</span><span data-lang-block="en">Projects</span></dt>
+              <dd><span data-lang-block="uk">від $400</span><span data-lang-block="en">from $400</span></dd>
+            </div>
+            <div>
+              <dt><span data-lang-block="uk">Підтримка</span><span data-lang-block="en">Support</span></dt>
+              <dd><span data-lang-block="uk">30 днів після запуску</span><span data-lang-block="en">30 days after launch</span></dd>
+            </div>
+            <div>
+              <dt><span data-lang-block="uk">Мови</span><span data-lang-block="en">Languages</span></dt>
+              <dd>UA / EN</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
         </div>
         <div class="hpanel">
       <!-- SERVICES -->
@@ -435,10 +557,8 @@
           </div>
           <div class="term-body">
             <form id="contact-form" class="contact-form" autocomplete="off">
-              <label><span data-i18n="fName">&gt; YOUR NAME</span><input name="name" required /></label>
-              <label><span data-i18n="fEmail">&gt; YOUR EMAIL</span><input name="email" type="email" required /></label>
+              <label><span data-i18n="fContact">&gt; PHONE NUMBER OR TELEGRAM</span><input name="contact" required /></label>
               <label><span data-i18n="fBudget">&gt; WHAT IS YOUR BUDGET FOR THE PROJECT?</span><input name="budget" /></label>
-              <label><span data-i18n="fSource">&gt; WHERE DID YOU HEAR ABOUT US?</span><input name="source" /></label>
               <label><span data-i18n="fMessage">&gt; MESSAGE</span><textarea name="message" rows="4" required></textarea></label>
               <button type="submit" class="btn-orange" data-i18n="transmit">TRANSMIT</button>
               <pre id="terminal-log" class="terminal-log" aria-live="polite"></pre>

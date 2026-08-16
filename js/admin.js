@@ -96,6 +96,7 @@ function initApp() {
   });
 
   renderApplications();
+  renderEstimates();
   renderTeamList();
   buildPartnerForm();
   buildProjectForm();
@@ -112,7 +113,8 @@ async function renderApplications() {
   list.innerHTML = apps.map(a => `
     <div class="item">
       <div class="meta">
-        <b>${esc(a.name) || "—"}</b> &nbsp; <a href="mailto:${esc(a.email)}">${esc(a.email) || "—"}</a>
+        <b>${esc(a.contact) || esc(a.name) || "—"}</b>${
+          a.email ? ` &nbsp; <a href="mailto:${esc(a.email)}">${esc(a.email)}</a>` : ""}
         <small>${new Date(a.created_at).toLocaleString()}</small>
         ${a.budget ? `<div class="pill">BUDGET: ${esc(a.budget)}</div>` : ""}
         ${a.source ? `<div class="pill">SRC: ${esc(a.source)}</div>` : ""}
@@ -131,6 +133,65 @@ document.addEventListener("click", async e => {
   if (e.target.id === "apps-clear") {
     if (confirm("Delete ALL applications? This cannot be undone.")) {
       try { await api("DELETE", "/applications"); renderApplications(); flash("All applications cleared"); }
+      catch (_) { flash("Clear failed"); }
+    }
+  }
+});
+
+/* ---------- 2b. CALCULATOR ESTIMATES ---------- */
+/* Everything here came from a visitor's browser, so every value is escaped
+   before it reaches innerHTML — an estimate is untrusted input, not our data. */
+async function renderEstimates() {
+  const list = $("#est-list");
+  const stats = $("#est-stats");
+  let rows;
+  try { rows = await api("GET", "/estimates"); }
+  catch (_) { list.innerHTML = `<div class="empty">// could not load</div>`; return; }
+
+  if (!rows.length) {
+    stats.textContent = "";
+    list.innerHTML = `<div class="empty">// no estimates yet</div>`;
+    return;
+  }
+
+  const totals = rows.map(r => +r.total || 0);
+  const avg = Math.round(totals.reduce((a, b) => a + b, 0) / totals.length);
+  stats.textContent =
+    rows.length + " estimates · average " + fmt(avg) +
+    " · highest " + fmt(Math.max(...totals)) + " · lowest " + fmt(Math.min(...totals));
+
+  list.innerHTML = rows.map(r => {
+    let items = [];
+    try { items = JSON.parse(r.items || "[]"); } catch (_) {}
+    return `
+    <div class="item">
+      <div class="meta">
+        <b>${fmt(r.total)}</b>${+r.monthly ? ` &nbsp; <span class="pill">+${fmt(r.monthly)}/mo support</span>` : ""}
+        <small>${new Date(r.created_at).toLocaleString()} · ${esc(r.lang).toUpperCase()}</small>
+        <div class="pill">${esc(r.category) || "—"}</div>
+        <div class="pill">DEV: ${esc(r.developer) || "—"}</div>
+        ${r.niche ? `<div class="pill">${esc(r.niche)}</div>` : ""}
+        ${r.days ? `<div class="pill">${esc(r.days)} DAYS</div>` : ""}
+        <small style="margin-top:.5rem; line-height:1.7;">${
+          items.map(i => "· " + esc(i.label) + " — " + fmt(i.price)).join("<br>") || "—"
+        }</small>
+      </div>
+      <button class="btn danger" data-del-est="${esc(r.id)}" type="button">DEL</button>
+    </div>`;
+  }).join("");
+
+  $$("[data-del-est]", list).forEach(b => b.addEventListener("click", async () => {
+    try { await api("DELETE", "/estimates/" + encodeURIComponent(b.dataset.delEst)); renderEstimates(); flash("Estimate deleted"); }
+    catch (_) { flash("Delete failed"); }
+  }));
+}
+const fmt = n => "$" + (+n || 0).toLocaleString("en-US");
+
+document.addEventListener("click", async e => {
+  if (e.target.id === "est-refresh") { renderEstimates(); flash("Refreshed"); }
+  if (e.target.id === "est-clear") {
+    if (confirm("Delete ALL calculator estimates? This cannot be undone.")) {
+      try { await api("DELETE", "/estimates"); renderEstimates(); flash("All estimates cleared"); }
       catch (_) { flash("Clear failed"); }
     }
   }

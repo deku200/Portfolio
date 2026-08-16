@@ -283,6 +283,7 @@ async function api(request, env, path, method) {
     resource === "export" ||
     resource === "upload" ||
     (resource === "applications" && method !== "POST") ||
+    (resource === "estimates" && method !== "POST") ||
     (["projects", "team"].indexOf(resource) !== -1 && method !== "GET");
 
   let identity = null;
@@ -295,16 +296,18 @@ async function api(request, env, path, method) {
 
   /* one-click backup of every table, same shape as the Express version */
   if (resource === "export" && method === "GET") {
-    const [apps, projects, team] = await Promise.all([
+    const [apps, projects, team, estimates] = await Promise.all([
       env.DB.prepare("SELECT * FROM applications ORDER BY created_at ASC").all(),
       env.DB.prepare("SELECT * FROM projects ORDER BY id ASC").all(),
       env.DB.prepare("SELECT * FROM team_members ORDER BY sort_order ASC").all(),
+      env.DB.prepare("SELECT * FROM estimates ORDER BY created_at ASC").all(),
     ]);
     return json({
       exportedAt: new Date().toISOString(),
       applications: apps.results || [],
       projects: projects.results || [],
       team_members: team.results || [],
+      estimates: estimates.results || [],
     }, 200, { "Content-Disposition": 'attachment; filename="slv-visual-backup.json"' });
   }
 
@@ -451,21 +454,24 @@ async function api(request, env, path, method) {
         return json({ error: "too many requests, please try again later" }, 429);
       }
       const b = await request.json().catch(() => ({}));
-      const name = s(b.name).slice(0, 200);
-      const email = s(b.email).slice(0, 200);
+      /* The form asks for one way to reach someone — a phone number or a
+         Telegram handle — instead of a name and an email. name/email/source
+         stay in the table so applications taken before the change still read
+         correctly in the admin panel; they are simply no longer written. */
+      const contact = s(b.contact).slice(0, 200);
       const message = s(b.message).slice(0, 5000);
-      if (!name || !email || !message) {
-        return json({ error: "name, email and message are required" }, 400);
+      if (!contact || !message) {
+        return json({ error: "a contact and a message are required" }, 400);
       }
-      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-        return json({ error: "invalid email address" }, 400);
+      if (contact.length < 4) {
+        return json({ error: "invalid contact" }, 400);
       }
       const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
       await env.DB.prepare(
-        "INSERT INTO applications (id,name,email,budget,source,message,created_at)" +
-        " VALUES (?,?,?,?,?,?,?)"
+        "INSERT INTO applications (id,contact,budget,message,created_at)" +
+        " VALUES (?,?,?,?,?)"
       ).bind(
-        id, name, email, s(b.budget).slice(0, 100), s(b.source).slice(0, 200),
+        id, contact, s(b.budget).slice(0, 100),
         message, new Date().toISOString()
       ).run();
       return json({ ok: true }, 201);
@@ -482,6 +488,64 @@ async function api(request, env, path, method) {
     }
     if (method === "DELETE" && !rest.length) {
       await env.DB.prepare("DELETE FROM applications").run();
+      return json({ ok: true });
+    }
+  }
+
+  /* ----------------------------------------------------------- estimates */
+  /* Written by the price calculator on the home page. Everything here is
+     visitor-supplied and nothing downstream charges from it — the stored total
+     is a lead signal, not an invoice, and the real price is fixed after the
+     briefing. So the defence is containment rather than trust: every field is
+     length-capped, the item list is capped at 40 rows, and the total is
+     recomputed from those rows so a hand-crafted POST cannot store a total
+     that disagrees with its own line items. */
+  if (resource === "estimates") {
+    if (method === "POST" && !rest.length) {
+      const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+      if (await rateLimited(env, "estimate:" + ip, 60, 3600000)) {
+        return json({ error: "too many requests, please try again later" }, 429);
+      }
+      const b = await request.json().catch(() => ({}));
+
+      // the itemised list is display data only — cap it hard so a single
+      // request can never write an unbounded blob into D1
+      const items = (Array.isArray(b.items) ? b.items : []).slice(0, 40).map((it) => ({
+        label: s(it && it.label).slice(0, 120),
+        price: Math.max(0, Math.min(100000, Math.round(+(it && it.price) || 0))),
+      }));
+      const sum = items.reduce((a, it) => a + it.price, 0);
+
+      const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      await env.DB.prepare(
+        "INSERT INTO estimates (id,lang,developer,category,niche,total,monthly,days,items,created_at)" +
+        " VALUES (?,?,?,?,?,?,?,?,?,?)"
+      ).bind(
+        id,
+        b.lang === "en" ? "en" : "uk",
+        s(b.developer).slice(0, 80),
+        s(b.category).slice(0, 120),
+        s(b.niche).slice(0, 120),
+        sum, // recomputed from the line items, never taken from the client
+        Math.max(0, Math.min(100000, Math.round(+b.monthly || 0))),
+        s(b.days).slice(0, 40),
+        JSON.stringify(items),
+        new Date().toISOString()
+      ).run();
+      return json({ ok: true }, 201);
+    }
+    if (method === "GET" && !rest.length) {
+      const { results } = await env.DB.prepare(
+        "SELECT * FROM estimates ORDER BY created_at DESC LIMIT 500"
+      ).all();
+      return json(results || []);
+    }
+    if (method === "DELETE" && rest.length === 1) {
+      await env.DB.prepare("DELETE FROM estimates WHERE id = ?").bind(rest[0]).run();
+      return json({ ok: true });
+    }
+    if (method === "DELETE" && !rest.length) {
+      await env.DB.prepare("DELETE FROM estimates").run();
       return json({ ok: true });
     }
   }

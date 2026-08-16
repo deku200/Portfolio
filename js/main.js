@@ -110,9 +110,9 @@ const I18N = {
   enter:        { en: "CLICK TO ENTER", uk: "НАТИСНИ, ЩОБ УВІЙТИ" },
   tagline:      { en: "&lt;COMPREHENSIVE WEBSITE DEVELOPMENT<br>FOR THOSE WHO VALUE<br>QUALITY AND SPEED&gt;",
                   uk: "&lt;КОМПЛЕКСНА РОЗРОБКА САЙТІВ<br>ДЛЯ ТИХ, ХТО ЦІНУЄ<br>ЯКІСТЬ І ШВИДКІСТЬ&gt;" },
-  contactBtn:   { en: "SUBMIT A REQUEST", uk: "ЗАЛИШИТИ ЗАЯВКУ" },
-  heroLine:     { en: "&lt;WEBSITES THAT SELL YOUR BUSINESS — FROM $400.<br>FAST, POLISHED, BUILT TO CONVERT.<br><b>LEAVE A REQUEST NOW</b> — THE BRIEFING IS FREE.<br>LET'S LAUNCH YOUR PROJECT&gt;",
-                  uk: "&lt;САЙТИ, ЩО ПРОДАЮТЬ ТВІЙ БІЗНЕС — ВІД $400.<br>ШВИДКО, ЯКІСНО, ІЗ ФОКУСОМ НА РЕЗУЛЬТАТ.<br><b>ЗАЛИШ ЗАЯВКУ ЗАРАЗ</b> — БРИФІНГ БЕЗКОШТОВНИЙ.<br>ДАВАЙ ЗАПУСТИМО ТВІЙ ПРОЄКТ&gt;" },
+  calcBtn:      { en: "CALCULATE THE PRICE", uk: "РОЗРАХУВАТИ ВАРТІСТЬ" },
+  heroLine:     { en: "&lt;PRICE YOUR FUTURE WEBSITE IN 30 SECONDS.<br>PICK THE DEVELOPER, THE BLOCKS AND THE INTEGRATIONS —<br>AND <b>SEE AN HONEST FIGURE</b>, WITH NO CALLS AND NO WAITING.<br>WEBSITES FROM $400&gt;",
+                  uk: "&lt;РОЗРАХУЙ ВАРТІСТЬ СВОГО МАЙБУТНЬОГО САЙТУ ЗА 30 СЕКУНД.<br>ОБЕРИ РОЗРОБНИКА, БЛОКИ ТА ІНТЕГРАЦІЇ —<br>І <b>ПОБАЧ ЧЕСНУ ЦІНУ</b>, БЕЗ ДЗВІНКІВ І ОЧІКУВАННЯ.<br>САЙТИ — ВІД $400&gt;" },
   breakBtn:     { en: "CLICK TO BREAK", uk: "НАТИСНИ — РОЗБИЙ" },
   tgBtn:        { en: "→ TELEGRAM", uk: "→ ТЕЛЕГРАМ" },
   descGreening: { en: "LANDING PAGE FOR A COLLECTIVE REFORESTATION INITIATIVE.",
@@ -191,10 +191,8 @@ const I18N = {
                     ["ТЕСТУВАННЯ", "ШВИДКІСТЬ, МОБІЛЬНІ, ФОРМИ ТА БАЗОВЕ SEO — УСЕ ПЕРЕВІРЯЄТЬСЯ ДО РЕЛІЗУ."],
                     ["ЗАПУСК", "ДЕПЛОЙ, НАЛАШТУВАННЯ ДОМЕНУ ТА 30 ДНІВ БЕЗКОШТОВНОЇ ПІДТРИМКИ."],
                   ], "// ЯК МИ ПРАЦЮЄМО") },
-  fName:        { en: "&gt; YOUR NAME", uk: "&gt; ТВОЄ ІМ'Я" },
-  fEmail:       { en: "&gt; YOUR EMAIL", uk: "&gt; ТВІЙ EMAIL" },
+  fContact:     { en: "&gt; PHONE NUMBER OR TELEGRAM", uk: "&gt; НОМЕР ТЕЛЕФОНУ АБО НІК В ТЕЛЕГРАМ" },
   fBudget:      { en: "&gt; WHAT IS YOUR BUDGET FOR THE PROJECT?", uk: "&gt; ЯКИЙ БЮДЖЕТ ПРОЄКТУ?" },
-  fSource:      { en: "&gt; WHERE DID YOU HEAR ABOUT US?", uk: "&gt; ЗВІДКИ ТИ ПРО НАС ДІЗНАВСЯ?" },
   fMessage:     { en: "&gt; MESSAGE", uk: "&gt; ПОВІДОМЛЕННЯ" },
   transmit:     { en: "TRANSMIT", uk: "НАДІСЛАТИ" },
   viewAll:      { en: "VIEW ALL PROJECTS →", uk: "ДИВИТИСЯ ВСІ ПРОЄКТИ →" },
@@ -940,11 +938,23 @@ new IntersectionObserver((es, ob) => {
         (e.key === "ArrowLeft" && budget.selectionStart <= 1)) e.preventDefault();
   });
 
-  // email must contain @
-  const email = form.email;
-  email.addEventListener("input", () => {
-    email.setCustomValidity(email.value && !email.value.includes("@")
-      ? (lang === "uk" ? "Email має містити символ @" : "Email must contain the @ symbol")
+  /* One field now carries the whole way of reaching someone, so it has to
+     accept both shapes people actually type: a phone number in any punctuation,
+     or a Telegram handle with or without the @ / t.me prefix. Anything looser
+     would let a single stray character through as a valid contact. */
+  const contact = form.contact;
+  const contactOk = (v) => {
+    const t = v.trim();
+    if (!t) return false;
+    if (/^\+?[\d][\d\s().-]{6,}$/.test(t)) return true;            // phone
+    if (/^(https?:\/\/)?(t\.me|telegram\.me)\/\w{4,}$/i.test(t)) return true; // link
+    return /^@?[a-zA-Z0-9_]{4,32}$/.test(t);                        // @handle
+  };
+  contact.addEventListener("input", () => {
+    contact.setCustomValidity(contact.value.trim() && !contactOk(contact.value)
+      ? (lang === "uk"
+          ? "Вкажіть номер телефону або нік у Telegram"
+          : "Enter a phone number or a Telegram handle")
       : "");
   });
 
@@ -976,7 +986,7 @@ new IntersectionObserver((es, ob) => {
   };
 
   const filled = f =>
-    f === email ? f.value.includes("@")
+    f === contact ? contactOk(f.value)
     : f === budget ? budgetAmount() >= 400      // at least $400
     : !!f.value.trim();
 
@@ -1002,7 +1012,7 @@ new IntersectionObserver((es, ob) => {
     if (!e.target.closest(".lang-btn")) return;
     setTimeout(() => {
       // revalidate in the new language so error texts switch too
-      email.dispatchEvent(new Event("input"));
+      contact.dispatchEvent(new Event("input"));
       budget.dispatchEvent(new Event("input"));
       showErrors();
       render();
@@ -1017,7 +1027,7 @@ $("#contact-form").addEventListener("submit", async e => {
 
   const f = e.target.elements; // use .elements — form.name would shadow the field
   const val = n => (f[n] && f[n].value || "").trim();
-  const payload = { name: val("name"), email: val("email"), budget: val("budget"), source: val("source"), message: val("message") };
+  const payload = { contact: val("contact"), budget: val("budget"), message: val("message") };
 
   // submit to the backend; fall back to localStorage only if the API is unreachable
   try {
@@ -1306,4 +1316,483 @@ function applyLocalOverrides() {
     }
   }, { threshold: 0.18 });
   io.observe(el);
+})();
+
+/* ---------- 14. PRICE CALCULATOR ----------
+   Every label ships in both languages as [data-lang-block] spans, so switching
+   EN/UK is pure CSS and never wipes what the visitor has already selected.
+   `lang` is read only when building the payload we send to the admin panel.
+
+   The running line items are visible from the first click, but the TOTAL stays
+   masked until "calculate" is pressed — that press is what makes the estimate
+   real, sends it to the admin panel, and is worth an actual moment. Changing
+   anything afterwards re-masks it, so a stale number can never be on screen. */
+(function priceCalculator() {
+  const paper = document.getElementById("calc-paper");
+  if (!paper) return;
+
+  const bi = (uk, en) =>
+    `<span data-lang-block="uk">${uk}</span><span data-lang-block="en">${en}</span>`;
+  const money = (n) => "$" + n.toLocaleString("en-US");
+
+  /* ------------------------------------------------------------ the price list
+     One place to change a number. `only` restricts an option to one category. */
+  const DEVS = [
+    { id: "oleksandr", uk: "Олександр", en: "Oleksandr", years: 1, add: 0,
+      noteUk: "Рік у розробці. Робить чисто й за методичкою — найвигідніший варіант для простого проєкту.",
+      noteEn: "One year in. Clean, by-the-book work — the best value for a straightforward project." },
+    { id: "roman", uk: "Роман", en: "Roman", years: 3, add: 100,
+      noteUk: "Три роки в розробці. Складніша логіка, інтеграції, нестандартні задачі.",
+      noteEn: "Three years in. Heavier logic, integrations, non-standard tasks." },
+    { id: "yaroslav", uk: "Ярослав", en: "Yaroslav", years: 6, add: 300,
+      noteUk: "Шість років у розробці. Авторський дизайн, анімації та максимальна конверсія.",
+      noteEn: "Six years in. Original design, animation, and the highest conversion ceiling." },
+  ];
+
+  const CATS = [
+    { id: "landing", base: 400, support: 100, days: 7,
+      uk: "Лендінг / Корпоративний", en: "Landing / Corporate",
+      descUk: "Односторінковий сайт, який продає одну послугу або один товар. Уся аргументація, ціни та форма заявки — на одному екрані прокрутки.",
+      descEn: "A one-page site that sells a single service or product. The whole argument, the prices and the request form live on one scroll." },
+    { id: "shop", base: 900, support: 200, days: 18,
+      uk: "E-commerce / Інтернет-магазин", en: "E-commerce / Online store",
+      descUk: "Каталог товарів, картки, кошик і оформлення замовлення. Клієнт купує сам, без вашої участі.",
+      descEn: "A product catalogue, product pages, a cart and checkout. The customer buys on their own, without you in the loop." },
+  ];
+
+  // included in every build — shown so the base price reads as honest, not magic
+  const INCLUDED = [
+    ["Перший екран та оффер", "Hero screen & offer"],
+    ["Блок «Про нас» / переваги", "About / benefits block"],
+    ["Форма заявки та контакти", "Request form & contacts"],
+    ["Адаптив під телефон і планшет", "Phone & tablet layouts"],
+    ["Підключення домену і запуск", "Domain hookup & launch"],
+  ];
+
+  const BLOCKS = [
+    { id: "services", price: 60, uk: "Послуги і тарифи", en: "Services & pricing" },
+    { id: "catalog", price: 150, only: "shop", uk: "Каталог товарів", en: "Product catalogue" },
+    { id: "product", price: 120, only: "shop", uk: "Сторінка товару", en: "Product page" },
+    { id: "cart", price: 200, only: "shop", uk: "Кошик і оформлення замовлення", en: "Cart & checkout" },
+    { id: "filters", price: 150, only: "shop", uk: "Фільтри й пошук по каталогу", en: "Catalogue filters & search" },
+    { id: "portfolio", price: 90, uk: "Портфоліо / кейси", en: "Portfolio / case studies" },
+    { id: "reviews", price: 50, uk: "Відгуки клієнтів", en: "Client reviews" },
+    { id: "faq", price: 40, uk: "FAQ — відповіді на заперечення", en: "FAQ / objection handling" },
+    { id: "team", price: 50, uk: "Команда", en: "The team" },
+    { id: "gallery", price: 60, uk: "Галерея робіт", en: "Work gallery" },
+    { id: "blog", price: 120, uk: "Блог / новини", en: "Blog / news" },
+    { id: "map", price: 30, uk: "Карта проїзду і графік роботи", en: "Map & opening hours" },
+    { id: "promo", price: 40, uk: "Акція з таймером зворотного відліку", en: "Promo block with countdown" },
+    { id: "calc", price: 150, uk: "Калькулятор вартості (як цей)", en: "Price calculator (like this one)" },
+    { id: "lang", price: 150, uk: "Друга мова сайту", en: "Second site language" },
+    { id: "wow", price: 200, uk: "Преміум-анімації та ефекти", en: "Premium animation & effects" },
+  ];
+
+  /* mutually exclusive choices — two payment paths and two depths of SEO */
+  const GROUPS = [
+    { id: "pay", uk: "Оплата на сайті", en: "Payments on the site",
+      opts: [
+        { id: "none", price: 0, uk: "Не потрібна", en: "Not needed" },
+        { id: "simple", price: 100,
+          uk: "Проста: заявка падає в Telegram-бот", en: "Simple: the order lands in a Telegram bot",
+          noteUk: "Менеджер бачить замовлення в боті, передзвонює і домовляється про оплату.",
+          noteEn: "A manager sees the order in the bot, calls back and arranges payment." },
+        { id: "full", price: 400,
+          uk: "Повноцінна: картка, Google Pay, Apple Pay", en: "Full: card, Google Pay, Apple Pay",
+          noteUk: "Клієнт платить одразу на сайті, гроші йдуть на ваш рахунок без вашої участі.",
+          noteEn: "The customer pays on the spot and the money reaches your account with no manual step." },
+      ] },
+    { id: "seo", uk: "SEO", en: "SEO",
+      opts: [
+        { id: "base", price: 0, uk: "Базове — входить у ціну", en: "Basic — included in the price",
+          noteUk: "Заголовки, описи, швидкість, карта сайту, коректна індексація в Google.",
+          noteEn: "Titles, descriptions, speed, a sitemap, correct indexing in Google." },
+        { id: "full", price: 300, uk: "Повне по всьому сайту", en: "Full, across the whole site",
+          noteUk: "Збір ключових запитів, тексти під пошук, мікророзмітка, оптимізація кожної сторінки.",
+          noteEn: "Keyword research, search-driven copy, structured data, every page optimised." },
+      ] },
+  ];
+
+  const SERVICES = [
+    { id: "np", price: 200, uk: "Нова Пошта: відділення та ТТН", en: "Nova Poshta: branches & waybills" },
+    { id: "booking", price: 100, uk: "Онлайн-запис на послугу", en: "Online booking" },
+    { id: "admin", price: 300, uk: "Адмін-панель для правок без нас", en: "Admin panel — edit it without us" },
+    { id: "tgnotify", price: 50, uk: "Сповіщення про заявки в Telegram", en: "Telegram alerts for new requests" },
+    { id: "analytics", price: 50, uk: "Аналітика: GA4 + Meta Pixel", en: "Analytics: GA4 + Meta Pixel" },
+    { id: "chat", price: 50, uk: "Чат і месенджери на сайті", en: "On-site chat & messengers" },
+    { id: "mail", price: 100, uk: "Email-розсилка й збір бази", en: "Email campaigns & list building" },
+    { id: "crm", price: 150, uk: "Інтеграція з вашою CRM", en: "Integration with your CRM" },
+    { id: "multi", price: 120, uk: "Особистий кабінет клієнта", en: "Customer account area" },
+  ];
+
+  const NICHES = [
+    ["Барбершоп / перукарня", "Barbershop / hair salon"],
+    ["Салон краси", "Beauty salon"],
+    ["Нігтьова студія", "Nail studio"],
+    ["Косметологія", "Cosmetology"],
+    ["Стоматологія", "Dentistry"],
+    ["Медична клініка", "Medical clinic"],
+    ["Ветклініка / зоосалон", "Vet clinic / pet grooming"],
+    ["Психолог / терапевт", "Psychologist / therapist"],
+    ["Фітнес-клуб / зал", "Gym / fitness club"],
+    ["Студія танцю або йоги", "Dance or yoga studio"],
+    ["Кав'ярня / ресторан", "Cafe / restaurant"],
+    ["Доставка їжі", "Food delivery"],
+    ["Кондитерська / випічка", "Bakery / patisserie"],
+    ["Автосервіс", "Car service"],
+    ["Автомийка / детейлінг", "Car wash / detailing"],
+    ["Автосалон / підбір авто", "Car dealership / car sourcing"],
+    ["Шиномонтаж", "Tyre service"],
+    ["Будівництво / ремонт", "Construction / renovation"],
+    ["Меблі на замовлення", "Custom furniture"],
+    ["Вікна, двері, стелі", "Windows, doors, ceilings"],
+    ["Клінінг", "Cleaning services"],
+    ["Логістика / вантажоперевезення", "Logistics / freight"],
+    ["Юридичні послуги", "Legal services"],
+    ["Бухгалтерія / фінанси", "Accounting / finance"],
+    ["Нерухомість / агентство", "Real estate agency"],
+    ["Освіта / курси", "Education / courses"],
+    ["Школа іноземних мов", "Language school"],
+    ["Дитячий центр / садок", "Kids centre / preschool"],
+    ["Фотограф / відеограф", "Photographer / videographer"],
+    ["Організація свят / event", "Events / party planning"],
+    ["Весільні послуги", "Wedding services"],
+    ["Туризм / тури", "Travel / tours"],
+    ["Готель / хостел / оренда житла", "Hotel / hostel / short lets"],
+    ["Оренда обладнання чи авто", "Equipment or car rental"],
+    ["Магазин одягу", "Clothing store"],
+    ["Магазин взуття", "Shoe store"],
+    ["Ювелірні вироби / аксесуари", "Jewellery / accessories"],
+    ["Косметика і парфуми", "Cosmetics & perfume"],
+    ["Дитячі товари", "Kids products"],
+    ["Зоотовари", "Pet supplies"],
+    ["Квіти / флористика", "Flowers / florist"],
+    ["Handmade / вироби ручної роботи", "Handmade goods"],
+    ["3D-друк", "3D printing"],
+    ["Електроніка і гаджети", "Electronics & gadgets"],
+    ["Спортивні товари", "Sports goods"],
+    ["Продукти / фермерство", "Groceries / farming"],
+    ["Товари для дому", "Homeware"],
+    ["Мерч / власний бренд одягу", "Merch / own clothing brand"],
+    ["Digital-продукт / SaaS", "Digital product / SaaS"],
+    ["Маркетингове агентство", "Marketing agency"],
+    ["Блогер / особистий бренд", "Blogger / personal brand"],
+    ["Інфобізнес / онлайн-курси", "Info-business / online courses"],
+    ["Благодійний фонд", "Charity foundation"],
+    ["Виробництво / B2B", "Manufacturing / B2B"],
+    ["Інша сфера", "Something else"],
+  ];
+
+  /* ------------------------------------------------------------------- state */
+  const state = {
+    dev: "oleksandr",
+    cat: "landing",
+    niche: "",
+    blocks: new Set(),
+    groups: { pay: "none", seo: "base" },
+    services: new Set(),
+    support: false,
+  };
+
+  const dev = () => DEVS.find((d) => d.id === state.dev);
+  const cat = () => CATS.find((c) => c.id === state.cat);
+  const groupOpt = (g) => g.opts.find((o) => o.id === state.groups[g.id]);
+
+  /* ------------------------------------------------------------------ markup */
+  const el = (id) => document.getElementById(id);
+
+  el("calc-devs").innerHTML = DEVS.map((d) => `
+    <label class="calc-dev" data-add="${d.add}">
+      <input type="radio" name="calc-dev" value="${d.id}" class="sr-only"${d.id === state.dev ? " checked" : ""}>
+      <span class="cd-pick" aria-hidden="true"></span>
+      <span class="cd-body">
+        <span class="cd-name">${bi(d.uk, d.en)}</span>
+        <span class="cd-exp">
+          <i class="cd-bar" aria-hidden="true">${"█".repeat(d.years)}${"░".repeat(6 - d.years)}</i>
+          ${bi(d.years + (d.years === 1 ? " рік у розробці" : " роки в розробці"),
+               d.years + (d.years === 1 ? " year in development" : " years in development"))}
+        </span>
+        <span class="cd-note">${bi(d.noteUk, d.noteEn)}</span>
+      </span>
+      <span class="cd-add">${d.add ? "+" + money(d.add) : bi("без доплати", "no surcharge")}</span>
+    </label>`).join("");
+
+  el("calc-cats").innerHTML = CATS.map((c) => `
+    <label class="calc-cat">
+      <input type="radio" name="calc-cat" value="${c.id}" class="sr-only"${c.id === state.cat ? " checked" : ""}>
+      <span class="cc-pick" aria-hidden="true"></span>
+      <span class="cc-name">${bi(c.uk, c.en)}</span>
+      <span class="cc-desc">${bi(c.descUk, c.descEn)}</span>
+      <span class="cc-price">${bi("від ", "from ")}${money(c.base)}</span>
+    </label>`).join("");
+
+  /* <option> can't hold [data-lang-block] markup, so the niche list is the one
+     place that really has to be re-rendered when the language changes */
+  function renderNiches() {
+    const sel = el("calc-niche");
+    sel.innerHTML =
+      `<option value="">${lang === "uk" ? "— оберіть сферу —" : "— pick your industry —"}</option>` +
+      NICHES.map(([uk, en]) => `<option value="${uk}">${lang === "uk" ? uk : en}</option>`).join("");
+    sel.value = state.niche; // the value is always the Ukrainian label
+  }
+  renderNiches();
+  // runs after the existing .lang-btn handler, so `lang` is already the new one
+  document.addEventListener("click", (e) => {
+    if (e.target.closest(".lang-btn")) renderNiches();
+  });
+
+  el("calc-included").innerHTML =
+    `<p class="ci-key">${bi("Уже входить у базову ціну", "Already in the base price")}</p>` +
+    `<ul class="ci-list">${INCLUDED.map(([uk, en]) =>
+      `<li>${bi(uk, en)}</li>`).join("")}</ul>`;
+
+  const optRow = (kind, o) => `
+    <label class="calc-opt" data-only="${o.only || ""}">
+      <input type="checkbox" data-kind="${kind}" value="${o.id}" class="sr-only">
+      <span class="co-pick" aria-hidden="true"></span>
+      <span class="co-name">${bi(o.uk, o.en)}</span>
+      <span class="co-dots" aria-hidden="true"></span>
+      <span class="co-price">+${money(o.price)}</span>
+    </label>`;
+
+  el("calc-blocks").innerHTML = BLOCKS.map((b) => optRow("block", b)).join("");
+  el("calc-services").innerHTML = SERVICES.map((sv) => optRow("service", sv)).join("");
+
+  el("calc-groups").innerHTML = GROUPS.map((g) => `
+    <div class="calc-group">
+      <p class="cg-key">${bi(g.uk, g.en)}</p>
+      ${g.opts.map((o) => `
+        <label class="calc-opt is-radio">
+          <input type="radio" name="calc-g-${g.id}" data-group="${g.id}" value="${o.id}" class="sr-only"${o.id === state.groups[g.id] ? " checked" : ""}>
+          <span class="co-pick" aria-hidden="true"></span>
+          <span class="co-name">${bi(o.uk, o.en)}${o.noteUk ? `<em class="co-note">${bi(o.noteUk, o.noteEn)}</em>` : ""}</span>
+          <span class="co-dots" aria-hidden="true"></span>
+          <span class="co-price">${o.price ? "+" + money(o.price) : bi("безкоштовно", "free")}</span>
+        </label>`).join("")}
+    </div>`).join("");
+
+  function renderSupport() {
+    const c = cat();
+    el("calc-support").innerHTML = `
+      <label class="calc-opt">
+        <input type="checkbox" data-kind="support" value="support" class="sr-only"${state.support ? " checked" : ""}>
+        <span class="co-pick" aria-hidden="true"></span>
+        <span class="co-name">${bi("Щомісячна підтримка сайту", "Monthly site support")}</span>
+        <span class="co-dots" aria-hidden="true"></span>
+        <span class="co-price">${money(c.support)}${bi("/міс", "/mo")}</span>
+      </label>`;
+  }
+  renderSupport();
+
+  /* blocks that belong only to a shop appear only when a shop is selected */
+  function syncOnly() {
+    document.querySelectorAll("#calc-blocks .calc-opt[data-only]").forEach((label) => {
+      const only = label.dataset.only;
+      const hide = only && only !== state.cat;
+      label.hidden = !!hide;
+      if (hide) {
+        const input = label.querySelector("input");
+        if (input.checked) { input.checked = false; state.blocks.delete(input.value); }
+      }
+    });
+  }
+  syncOnly();
+
+  /* --------------------------------------------------------------- the maths */
+  function build() {
+    const d = dev(), c = cat();
+    const lines = [];
+    let total = 0;
+
+    const push = (uk, en, price, tag) => {
+      total += price;
+      lines.push({ uk, en, price, tag });
+    };
+
+    push(c.uk, c.en, c.base, "base");
+    if (d.add) push("Виконавець: " + d.uk, "Developer: " + d.en, d.add, "dev");
+
+    BLOCKS.forEach((b) => {
+      if (!state.blocks.has(b.id)) return;
+      if (b.only && b.only !== state.cat) return;
+      push(b.uk, b.en, b.price, "block");
+    });
+
+    GROUPS.forEach((g) => {
+      const o = groupOpt(g);
+      if (!o || !o.price) return;
+      push(g.uk + ": " + o.uk, g.en + ": " + o.en, o.price, "group");
+    });
+
+    SERVICES.forEach((sv) => {
+      if (state.services.has(sv.id)) push(sv.uk, sv.en, sv.price, "service");
+    });
+
+    // support is recurring — it is quoted beside the total, never inside it
+    const monthly = state.support ? c.support : 0;
+
+    const count = lines.filter((l) => l.tag === "block" || l.tag === "service").length;
+    let days = c.days + count * 2 - (d.years >= 6 ? 2 : 0);
+    days = Math.max(c.days, days);
+
+    return { lines, total, monthly, days, dayMax: days + Math.ceil(days * 0.35) };
+  }
+
+  /* --------------------------------------------------------------- rendering */
+  const totalEl = el("calc-total");
+  const subEl = el("calc-total-sub");
+  const etaEl = el("calc-eta");
+  const goBtn = el("calc-go");
+  const afterEl = el("calc-after");
+  const stateEl = el("calc-state");
+  let quote = build();
+  let locked = false; // true once "calculate" has been pressed
+
+  function renderLines() {
+    quote = build();
+    el("calc-lines").innerHTML = quote.lines.map((l) => `
+      <li class="calc-line">
+        <span class="cl-name">${bi(l.uk, l.en)}</span>
+        <span class="cl-dots" aria-hidden="true"></span>
+        <span class="cl-price">${money(l.price)}</span>
+      </li>`).join("") +
+      (quote.monthly ? `
+      <li class="calc-line is-monthly">
+        <span class="cl-name">${bi("Підтримка", "Support")}</span>
+        <span class="cl-dots" aria-hidden="true"></span>
+        <span class="cl-price">${money(quote.monthly)}${bi("/міс", "/mo")}</span>
+      </li>` : "");
+    stateEl.textContent = locked ? "● READY" : "● DRAFT";
+    stateEl.classList.toggle("is-ready", locked);
+  }
+
+  function unlock() {
+    if (!locked) { renderLines(); return; }
+    locked = false;
+    countGen++; // any in-flight counter must not repaint over the mask
+    totalEl.classList.add("is-masked");
+    totalEl.textContent = "$•••";
+    subEl.hidden = true;
+    etaEl.hidden = true;
+    afterEl.hidden = true;
+    goBtn.hidden = false;
+    paper.classList.remove("is-final");
+    renderLines();
+  }
+
+  /* --------------------------------------------------------------- listeners */
+  el("calc-config").addEventListener("change", (e) => {
+    const t = e.target;
+    if (t.name === "calc-dev") state.dev = t.value;
+    else if (t.name === "calc-cat") { state.cat = t.value; syncOnly(); renderSupport(); }
+    else if (t.id === "calc-niche") state.niche = t.value;
+    else if (t.dataset.group) state.groups[t.dataset.group] = t.value;
+    else if (t.dataset.kind === "block") t.checked ? state.blocks.add(t.value) : state.blocks.delete(t.value);
+    else if (t.dataset.kind === "service") t.checked ? state.services.add(t.value) : state.services.delete(t.value);
+    else if (t.dataset.kind === "support") state.support = t.checked;
+    unlock();
+  });
+
+  /* the payload the admin panel receives: Ukrainian labels, so an estimate
+     reads the same in the panel no matter which language the visitor used */
+  function payload() {
+    const d = dev(), c = cat();
+    return {
+      lang,
+      developer: d.uk,
+      category: c.uk,
+      niche: state.niche,
+      total: quote.total,
+      monthly: quote.monthly,
+      days: quote.days + "–" + quote.dayMax,
+      items: quote.lines.map((l) => ({ label: l.uk, price: l.price })),
+    };
+  }
+
+  /* The ticking counter is decoration; the figure it lands on is not. In a
+     background or non-compositing tab requestAnimationFrame can fire once and
+     then stop, which would strand a half-counted number — or a plain zero — on
+     screen as if it were the price. So the real figure is written before the
+     animation starts AND again on a timer that does not depend on frames, and
+     a generation token stops a late write from painting over a rebuild. */
+  let countGen = 0;
+  function countUp(to) {
+    const mine = ++countGen;
+    totalEl.textContent = money(to);
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const t0 = performance.now(), dur = 900;
+    (function step(now) {
+      if (mine !== countGen) return;              // superseded by a rebuild
+      const p = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      totalEl.textContent = money(Math.round(to * eased));
+      if (p < 1) requestAnimationFrame(step);
+    })(performance.now());
+
+    setTimeout(() => {
+      if (mine === countGen) totalEl.textContent = money(to);
+    }, dur + 80);
+  }
+
+  goBtn.addEventListener("click", async () => {
+    quote = build();
+    locked = true;
+    renderLines();
+
+    goBtn.hidden = true;
+    totalEl.classList.remove("is-masked");
+    paper.classList.add("is-final");
+    countUp(quote.total);
+
+    subEl.hidden = !quote.monthly;
+    if (quote.monthly) {
+      subEl.innerHTML = "+ " + money(quote.monthly) +
+        bi("/міс за підтримку — окремо від разової суми", "/mo for support — separate from the one-off total");
+    }
+    etaEl.hidden = false;
+    etaEl.innerHTML =
+      bi("Орієнтовний строк: ", "Estimated timeline: ") +
+      `<b>${quote.days}–${quote.dayMax}</b>` + bi(" днів", " days");
+    afterEl.hidden = false;
+
+    // the estimate reaches the admin panel even if the visitor never writes to
+    // us — a silent failure here must never break the number on screen
+    try {
+      await fetch("/api/estimates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload()),
+      });
+    } catch (_) { /* offline — the visitor still has their price */ }
+  });
+
+  el("calc-reset").addEventListener("click", () => {
+    unlock();
+    document.getElementById("calc").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  /* hand the estimate to the contact form instead of making them retype it */
+  el("calc-send").addEventListener("click", () => {
+    const form = document.getElementById("contact-form");
+    if (!form) return;
+    const p = payload();
+    const spec = quote.lines.map((l) => "· " + (lang === "uk" ? l.uk : l.en) + " — " + money(l.price)).join("\n");
+    form.budget.value = "$" + quote.total;
+    form.budget.dispatchEvent(new Event("input", { bubbles: true }));
+    form.message.value = (lang === "uk"
+      ? "Розрахунок з калькулятора:\n" + spec +
+        "\n\nРазом: " + money(p.total) +
+        (p.monthly ? "\nПідтримка: " + money(p.monthly) + "/міс" : "") +
+        "\nСфера: " + (p.niche || "не вказано") +
+        "\nВиконавець: " + p.developer
+      : "Estimate from the calculator:\n" + spec +
+        "\n\nTotal: " + money(p.total) +
+        (p.monthly ? "\nSupport: " + money(p.monthly) + "/mo" : "") +
+        "\nIndustry: " + (p.niche || "not specified") +
+        "\nDeveloper: " + p.developer);
+    form.message.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+
+  renderLines();
 })();

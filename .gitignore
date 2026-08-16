@@ -19,3 +19,6 @@ npm-debug.log*
 .claude/skills/
 .agents/
 skills-lock.json
+
+# wrangler dev local state (D1/KV emulation, build cache)
+.wrangler/
