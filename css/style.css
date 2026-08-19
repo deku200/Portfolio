@@ -859,6 +859,14 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
   max-width: 58ch; margin-bottom: 1.3rem;
 }
 
+/* Every selection glyph in the configurator, in one place.
+   "( )" and "[ ]" contain a real space, and a space is a line-break
+   opportunity: in a column this narrow the closing bracket dropped onto a
+   second line and the control read as broken. The chosen states "(*)" and
+   "[x]" have no space, so only the EMPTY ones ever split — which is precisely
+   what made it look like a rendering glitch instead of a layout bug. */
+.cd-pick, .cc-pick, .co-pick { white-space: nowrap; }
+
 /* ---- who builds it: three decisions, weighted like decisions ---- */
 .calc-devs { display: grid; gap: .5rem; }
 .calc-dev {
@@ -1057,6 +1065,9 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
   background: rgba(157, 255, 158, .07);
 }
 .calc-referral:has(input:focus-visible) { outline: 1px solid var(--green); outline-offset: 2px; }
+/* the referral reuses .co-pick but is not a .calc-opt, so it never picked up
+   the ticked glyph and sat on an empty box even when it was on */
+.calc-referral:has(input:checked) .co-pick::before { content: "[x]"; color: var(--green); }
 .cr-name { display: block; font-size: .8rem; font-weight: 700; letter-spacing: .04em; }
 .calc-referral:has(input:checked) .cr-name { color: var(--green); }
 .cr-note {
