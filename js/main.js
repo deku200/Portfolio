@@ -115,7 +115,7 @@ const CLI_ROWS = rows => rows.map(([year, name, type, note]) =>
 const I18N = {
   enter:        { en: "CLICK TO ENTER", uk: "НАТИСНИ, ЩОБ УВІЙТИ" },
   tagline:      { en: "&lt;COMPREHENSIVE WEBSITE DEVELOPMENT<br>FOR THOSE WHO VALUE<br>QUALITY AND SPEED&gt;",
-                  uk: "&lt;КОМПЛЕКСНА РОЗРОБКА САЙТІВ<br>ДЛЯ ТИХ, ХТО ЦІНУЄ<br>ЯКІСТЬ І ШВИДКІСТЬ&gt;" },
+                  uk: "&lt;РОЗРОБКА САЙТІВ ПІД КЛЮЧ<br>ДЛЯ ТИХ, ХТО ЦІНУЄ<br>ЯКІСТЬ І ШВИДКІСТЬ&gt;" },
   calcBtn:      { en: "CALCULATE THE PRICE", uk: "РОЗРАХУВАТИ ВАРТІСТЬ" },
   heroLine:     { en: "&lt;PRICE YOUR FUTURE WEBSITE IN 30 SECONDS.<br>PICK THE DEVELOPER, THE BLOCKS AND THE INTEGRATIONS —<br>AND <b>SEE AN HONEST FIGURE</b>, WITH NO CALLS AND NO WAITING.<br>WEBSITES FROM $400&gt;",
                   uk: "&lt;РОЗРАХУЙ ВАРТІСТЬ СВОГО МАЙБУТНЬОГО САЙТУ ЗА 30 СЕКУНД.<br>ОБЕРИ РОЗРОБНИКА, БЛОКИ ТА ІНТЕГРАЦІЇ —<br>І <b>ПОБАЧ ЧЕСНУ ЦІНУ</b>, БЕЗ ДЗВІНКІВ І ОЧІКУВАННЯ.<br>САЙТИ — ВІД $400&gt;" },
@@ -167,7 +167,7 @@ const I18N = {
                      "ЧАТ-БОТИ, ІНТЕГРАЦІЇ LLM ТА АВТОМАТИЗАЦІЯ ПРОЦЕСІВ, ЩО ВІДПОВІДАЮТЬ КЛІЄНТАМ, ЗАПОВНЮЮТЬ ТАБЛИЦІ Й ЕКОНОМЛЯТЬ ГОДИНИ ЩОТИЖНЯ."],
                   ]) },
   servicesCta:  { en: "→ START A PROJECT — FROM $400", uk: "→ ПОЧАТИ ПРОЄКТ — ВІД $400" },
-  clientsLabel: { en: "&lt;WE'RE BEING ELECTED&gt;", uk: "&lt;НАС ОБИРАЮТЬ&gt;" },
+  clientsLabel: { en: "&lt;THOSE WHO CHOSE US&gt;", uk: "&lt;НАС ОБИРАЮТЬ&gt;" },
   clientsList:  { en: CLI_ROWS([
                     ["2026", "MOCLAME HOME", "E-COMMERCE"],
                     ["2026", "MELMAN", "BRAND / LANDING PAGE"],

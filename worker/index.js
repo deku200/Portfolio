@@ -204,7 +204,7 @@ const PAGE_OF = {
 const META = {
   "index.html": {
     uk: {
-      title: "Розробка сайтів під ключ — slv_visual",
+      title: "Розробка сайтів під ключ — лендінги та магазини від $400",
       desc: "Студія веброзробки з України: лендінги, корпоративні сайти та інтернет-магазини. Розрахуйте вартість свого сайту за 30 секунд. Проєкти від $400.",
     },
     en: {
@@ -265,6 +265,77 @@ function routePage(path) {
 const redirect = (location) =>
   new Response(null, { status: 301, headers: { Location: location, ...SECURITY_HEADERS } });
 
+/* Structured data, per language. The entity @ids stay identical across the two
+   URLs on purpose — it is one studio, described twice, not two organisations. */
+const LD = {
+  uk: {
+    desc: "slv_visual — студія веброзробки з України: розробка сайтів під ключ, лендінги, корпоративні сайти та інтернет-магазини українською й англійською.",
+    slogan: "Розробка сайтів під ключ для тих, хто цінує якість і швидкість.",
+    jobTitle: "Веброзробник і продуктовий дизайнер",
+    siteDesc: "Сайт студії slv_visual — розробка сайтів, інтернет-магазинів і продуктовий дизайн.",
+    serviceType: ["Розробка сайтів", "Продуктовий дизайн", "Креативна розробка", "Розробка інтернет-магазинів", "Брендинг", "Автоматизація"],
+    knowsAbout: ["Розробка сайтів", "Продуктовий дизайн", "Frontend-розробка", "E-commerce", "Креативна розробка"],
+  },
+  en: {
+    desc: "slv_visual is a Ukraine-based web development and product design studio building fast, high-quality websites, online stores and brand experiences in English and Ukrainian.",
+    slogan: "Comprehensive website development for those who value quality and speed.",
+    jobTitle: "Web Developer & Product Designer",
+    siteDesc: "Portfolio and studio site of slv_visual — web development and product design.",
+    serviceType: ["Web development", "Product design", "Creative development", "E-commerce development", "Brand identity", "Automation"],
+    knowsAbout: ["Web development", "Product design", "Front-end engineering", "E-commerce", "Creative development"],
+  },
+};
+
+/* --------------------------------------------------------------- FAQ schema */
+/* Read out of the page's own FAQ markup rather than kept as a second copy of
+   the questions, so the two cannot drift apart. Parsed once when the isolate
+   boots — never per request, because the free plan caps CPU at 10ms. */
+function faqItems(html, lang) {
+  const strip = (t) => t
+    .replace(/<[^>]*>/g, "")
+    .replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ").trim();
+
+  const inLang = (chunk) => {
+    const re = new RegExp('<span data-lang-block="' + lang + '">([\\s\\S]*?)</span>', "g");
+    const out = [];
+    let m;
+    while ((m = re.exec(chunk))) out.push(strip(m[1]));
+    return out.filter(Boolean).join(" ");
+  };
+
+  const out = [];
+  for (const block of html.match(/<details class="faq-item"[^>]*>[\s\S]*?<\/details>/g) || []) {
+    const summary = (block.match(/<summary>([\s\S]*?)<\/summary>/) || [])[1] || "";
+    const answer = (block.match(/<div class="faq-a">([\s\S]*?)<\/div>/) || [])[1] || "";
+    const q = inLang(summary);
+    const a = inLang(answer);
+    if (q && a) out.push({ q, a });
+  }
+  return out;
+}
+
+function faqScript(lang) {
+  const items = faqItems(indexHtml, lang);
+  // never inject a half-parsed block: broken schema is worse than none
+  if (items.length < 2) return "";
+  const json = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": ORIGIN + (lang === "en" ? "/en/" : "/") + "#faq",
+    inLanguage: lang,
+    mainEntity: items.map((i) => ({
+      "@type": "Question",
+      name: i.q,
+      acceptedAnswer: { "@type": "Answer", text: i.a },
+    })),
+  }).replace(/</g, "\\u003c"); // cannot end the <script> early
+  return '  <script type="application/ld+json">' + json + "</script>";
+}
+
+const FAQ_LD = { uk: faqScript("uk"), en: faqScript("en") };
+
 /* ------------------------------------------------------------------ pages */
 function servePage(file, env, lang) {
   const version =
@@ -287,6 +358,16 @@ function servePage(file, env, lang) {
     .replace(/__OGLOCALE__/g, lang === "en" ? "en_US" : "uk_UA")
     .replace(/__OGALT__/g, lang === "en" ? "uk_UA" : "en_US");
   if (meta) html = html.replace(/__TITLE__/g, meta.title).replace(/__DESC__/g, meta.desc);
+
+  const ld = LD[lang] || LD.en;
+  html = html
+    .replace(/__LD_DESC__/g, ld.desc)
+    .replace(/__LD_SLOGAN__/g, ld.slogan)
+    .replace(/__LD_JOBTITLE__/g, ld.jobTitle)
+    .replace(/__LD_SITEDESC__/g, ld.siteDesc)
+    .replace(/__LD_SERVICETYPE__/g, JSON.stringify(ld.serviceType))
+    .replace(/__LD_KNOWSABOUT__/g, JSON.stringify(ld.knowsAbout))
+    .replace(/__FAQ_LD__/g, file === "index.html" ? FAQ_LD[lang] || "" : "");
 
   return new Response(html, {
     headers: {

@@ -265,7 +265,16 @@ html.is-gated { overflow: hidden; }
 
 /* ============ quote ============ */
 .quote-section { min-height: 90vh; padding: 20vh 8vw; }
+/* These are <h2> now, so the browser's bold default has to be pinned back —
+   the same reason .works-label pins it. */
+.quote-label, .services-label, .clients-label, .contact-label, .team-label { font-weight: 400; }
 .quote-label { font-size: .75rem; letter-spacing: .1em; margin-bottom: 3rem; color: var(--dim); }
+/* the team panel is a fixed 100vh box, so this heading has to earn its space
+   out of the gap rather than out of the dossier below it */
+.team-label {
+  font-size: .78rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 1rem;
+}
 .quote { font-size: clamp(1rem, 2.2vw, 1.6rem); line-height: 1.8; letter-spacing: .05em; max-width: 46ch; min-height: 9em; }
 .quote::after { content: "█"; color: var(--accent); animation: blink 1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: 0; } }

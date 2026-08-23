@@ -61,13 +61,13 @@
         "url": "https://www.slv-visual.online/",
         "image": "https://www.slv-visual.online/img/og-cover.png",
         "logo": "https://www.slv-visual.online/img/og-cover.png",
-        "description": "slv_visual is a Ukraine-based web development and product design studio building fast, high-quality websites, online stores and brand experiences in English and Ukrainian.",
-        "slogan": "Comprehensive website development for those who value quality and speed.",
+        "description": "__LD_DESC__",
+        "slogan": "__LD_SLOGAN__",
         "areaServed": "Worldwide",
         "availableLanguage": ["English", "Ukrainian"],
         "knowsLanguage": ["en", "uk"],
         "priceRange": "from $400",
-        "serviceType": ["Web development", "Product design", "Creative development", "E-commerce development", "Brand identity", "Automation"],
+        "serviceType": __LD_SERVICETYPE__,
         "founder": { "@id": "https://www.slv-visual.online/#yaroslav" },
         "sameAs": ["https://t.me/slv_visual"]
       },
@@ -76,11 +76,11 @@
         "@id": "https://www.slv-visual.online/#yaroslav",
         "name": "Yaroslav",
         "alternateName": "slv_visual",
-        "jobTitle": "Web Developer & Product Designer",
+        "jobTitle": "__LD_JOBTITLE__",
         "url": "https://www.slv-visual.online/",
         "nationality": "Ukrainian",
         "knowsLanguage": ["en", "uk"],
-        "knowsAbout": ["Web development", "Product design", "Front-end engineering", "E-commerce", "Creative development"],
+        "knowsAbout": __LD_KNOWSABOUT__,
         "worksFor": { "@id": "https://www.slv-visual.online/#studio" },
         "sameAs": ["https://t.me/slv_visual"]
       },
@@ -89,19 +89,20 @@
         "@id": "https://www.slv-visual.online/#website",
         "url": "https://www.slv-visual.online/",
         "name": "slv_visual",
-        "description": "Portfolio and studio site of slv_visual — web development and product design.",
-        "inLanguage": ["en", "uk"],
+        "description": "__LD_SITEDESC__",
+        "inLanguage": "__LANG__",
         "publisher": { "@id": "https://www.slv-visual.online/#studio" }
       }
     ]
   }
   </script>
+__FAQ_LD__
 </head>
 <body>
 
   <!-- Primary heading for search engines & assistive tech (visually hidden;
        the visual brand mark <SV> in the header is the on-screen equivalent) -->
-  <h1 class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;"><span data-lang-block="uk">slv_visual — студія веброзробки та продуктового дизайну: швидкі, якісні сайти, інтернет-магазини та лендінги українською й англійською.</span><span data-lang-block="en">slv_visual — web development &amp; product design studio building fast, high-quality websites and brand experiences in English and Ukrainian.</span></h1>
+  <h1 class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;"><span data-lang-block="uk">slv_visual — розробка сайтів під ключ: лендінги, корпоративні сайти та інтернет-магазини українською й англійською.</span><span data-lang-block="en">slv_visual — web development &amp; product design studio building fast, high-quality websites and brand experiences in English and Ukrainian.</span></h1>
 
   <!-- No-JavaScript / AI-crawler fallback: the core, citable facts about
        slv_visual live in the static HTML so crawlers and AI answer engines that
@@ -463,7 +464,7 @@
         <div class="hpanel">
       <!-- TESTIMONIAL -->
       <section class="quote-section">
-        <div class="quote-label" data-i18n="quoteLabel">&lt;STRAIGHT FROM THE CLIENT&gt;</div>
+        <h2 class="quote-label" data-i18n="quoteLabel">&lt;STRAIGHT FROM THE CLIENT&gt;</h2>
         <div class="q-meta">
           <span class="q-rec">●</span>
           <span data-i18n="qMeta">INCOMING TRANSMISSION // SRC: TIKTOK</span>
@@ -481,6 +482,9 @@
         <div class="hpanel">
       <!-- TEAM / ABOUT -->
       <section class="team">
+        <h2 class="team-label">
+          <span data-lang-block="uk">&lt;ХТО РОБИТИМЕ ВАШ САЙТ&gt;</span><span data-lang-block="en">&lt;WHO WILL BUILD YOUR SITE&gt;</span>
+        </h2>
         <nav class="team-tabs" id="team-tabs">
           <button class="team-tab is-active" data-member="0" data-i18n="member0">&lt;YAROSLAV&gt;</button>
           <button class="team-tab" data-member="1" data-i18n="member1">&lt;COLLABORATOR&gt;</button>
@@ -556,7 +560,7 @@
         <div class="hpanel">
       <!-- SERVICES -->
       <section class="services">
-        <div class="services-label" data-i18n="servicesLabel">&lt;THE WORK I DO&gt;</div>
+        <h2 class="services-label" data-i18n="servicesLabel">&lt;THE WORK I DO&gt;</h2>
         <ul class="services-list" data-i18n="servicesList"></ul>
         <a href="#contact" class="services-cta btn-orange" data-i18n="servicesCta" data-tip="→ CONTACT / КОНТАКТ">→ START A PROJECT — FROM $400</a>
       </section>
@@ -565,7 +569,7 @@
         <div class="hpanel">
       <!-- CLIENTS -->
       <section class="clients">
-        <div class="clients-label" data-i18n="clientsLabel">&lt;THOSE WHO CHOSE US&gt;</div>
+        <h2 class="clients-label" data-i18n="clientsLabel">&lt;THOSE WHO CHOSE US&gt;</h2>
         <ul class="clients-list" data-i18n="clientsList"></ul>
       </section>
 
@@ -573,7 +577,7 @@
         <div class="hpanel">
       <!-- CONTACT (terminal form) -->
       <section class="contact" id="contact">
-        <div class="contact-label" data-i18n="contactLabel">TELL US WHAT CAN WE DO FOR YOU?</div>
+        <h2 class="contact-label" data-i18n="contactLabel">TELL US WHAT CAN WE DO FOR YOU?</h2>
         <div class="contact-grid">
         <div class="term-window">
           <div class="term-bar">
@@ -599,9 +603,9 @@
 
       <!-- ===================== FAQ / OBJECTIONS ===================== -->
       <section class="works-section faq">
-        <div class="works-label">
+        <h2 class="works-label">
           <span data-lang-block="uk">&lt;ЧЕСНІ ВІДПОВІДІ&gt;</span><span data-lang-block="en">&lt;HONEST ANSWERS&gt;</span>
-        </div>
+        </h2>
 
         <details class="faq-item" open>
           <summary>
