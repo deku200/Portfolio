@@ -1,0 +1,51 @@
+# Cloudflare Workers Assets serves everything in this directory BEFORE the
+# Worker script runs, so worker/index.js never sees a request for /css, /js,
+# /img or the SEO text files and cannot set their headers. This file is the
+# only place those headers can come from.
+#
+# Without it every asset arrives as "max-age=0, must-revalidate": zero bytes on
+# a repeat visit, but a full round trip per file per navigation — and switching
+# language is a real navigation now.
+
+# Stylesheets and scripts are always requested as /css/style.css?v=<worker
+# version>. That token changes on every deploy, so the exact URL a page asks
+# for can never serve stale content and is safe to freeze for a year.
+# THIS DEPENDS ON THE ?v= TOKEN: if the version query is ever dropped from the
+# HTML, drop this rule in the same commit or visitors will be stuck for a year.
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images change only on deploy and are not versioned, so they get a day, then
+# stale-while-revalidate keeps the next visit instant while a fresh copy is
+# fetched behind it.
+/img/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/favicon.ico
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/favicon.svg
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+# Crawler-facing files: fresh enough to pick up a sitemap change the same day.
+/robots.txt
+  Cache-Control: public, max-age=3600
+
+/sitemap.xml
+  Cache-Control: public, max-age=3600
+
+/llms.txt
+  Cache-Control: public, max-age=3600
+
+/site.webmanifest
+  Cache-Control: public, max-age=86400
+
+# The security headers the Worker applies to the pages it serves itself. Assets
+# bypass the Worker, so they have to be repeated here.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
