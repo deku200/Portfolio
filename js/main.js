@@ -1373,6 +1373,12 @@ function applyLocalOverrides() {
     fetch("/api/team").then(r => r.ok ? r.json() : Promise.reject()),
     fetch("/api/projects").then(r => r.ok ? r.json() : Promise.reject()),
   ]).then(([team, projects]) => {
+    /* Normalise every stored path once, here, rather than at each render site:
+       the database holds a mix of "img/…" and "/uploads/…", and a relative one
+       resolves against /en/ and 404s. Missing one render site is exactly how
+       the team photos broke the first time. */
+    (team || []).forEach((m) => { m.photo = assetUrl(m.photo); });
+    (projects || []).forEach((p) => { p.image = assetUrl(p.image); });
     renderTeam(team);
     renderProjects(projects);
     setLang(lang); // re-render all [data-i18n] with the fresh server data
