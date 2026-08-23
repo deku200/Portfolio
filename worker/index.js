@@ -178,15 +178,120 @@ function sniffMime(b) {
   return null;
 }
 
+/* ------------------------------------------------------- language routing */
+/* Ukrainian lives at the root, English under /en/. Both are real URLs served
+   with their own <html lang>, <title>, description and canonical: a language a
+   crawler can only reach by running JavaScript and clicking a toggle is a
+   language it will not index as a separate page. Every page therefore exists
+   exactly twice, and each copy points at the other with hreflang. */
+const ORIGIN = "https://www.slv-visual.online";
+
+const PAGE_PATH = {
+  "index.html": "/",
+  "projects.html": "/projects",
+  "privacy.html": "/privacy",
+  "terms.html": "/terms",
+};
+const PAGE_OF = {
+  "": "index.html", "index": "index.html",
+  "projects": "projects.html",
+  "privacy": "privacy.html",
+  "terms": "terms.html",
+};
+
+/* Title and description are the two strongest on-page signals, so they are
+   written per language rather than translated by script after load. */
+const META = {
+  "index.html": {
+    uk: {
+      title: "Розробка сайтів під ключ — slv_visual",
+      desc: "Студія веброзробки з України: лендінги, корпоративні сайти та інтернет-магазини. Розрахуйте вартість свого сайту за 30 секунд. Проєкти від $400.",
+    },
+    en: {
+      title: "slv_visual — Product Design &amp; Creative Development",
+      desc: "Ukraine-based web development and product design studio building fast, high-quality websites, online stores and brand experiences. Price your site in 30 seconds. Projects from $400.",
+    },
+  },
+  "projects.html": {
+    uk: {
+      title: "Усі проєкти — slv_visual",
+      desc: "Усі проєкти slv_visual: сайти, інтернет-магазини та лендінги. А також — навіщо вашому бізнесу сайт і відповіді на головні запитання.",
+    },
+    en: {
+      title: "All projects — slv_visual",
+      desc: "Every slv_visual project: websites, online stores and landing pages — plus why your business needs a site, and answers to the questions clients actually ask.",
+    },
+  },
+  "privacy.html": {
+    uk: {
+      title: "Політика конфіденційності — slv_visual",
+      desc: "Політика конфіденційності slv_visual (slv-visual.online): які дані ми збираємо через форму заявки та як їх використовуємо, зберігаємо і захищаємо.",
+    },
+    en: {
+      title: "Privacy Policy — slv_visual",
+      desc: "Privacy Policy for slv_visual (slv-visual.online) — what data we collect through the contact form and how we use, store and protect it.",
+    },
+  },
+  "terms.html": {
+    uk: {
+      title: "Умови використання — slv_visual",
+      desc: "Умови використання сайту slv_visual (slv-visual.online): правила користування, інтелектуальна власність, заявки та відповідальність.",
+    },
+    en: {
+      title: "Terms of Use — slv_visual",
+      desc: "Terms of Use for slv_visual (slv-visual.online) — the rules for using this website, intellectual property, enquiries and liability.",
+    },
+  },
+};
+
+// the single URL each page+language is allowed to answer on
+const canonicalPath = (file, lang) =>
+  (lang === "en" ? "/en" : "") + (PAGE_PATH[file] || "/");
+
+/* Resolves a request path to a page and a language, accepting the shapes that
+   should merely redirect (/projects.html, /en) as well as the canonical ones. */
+function routePage(path) {
+  let lang = "uk";
+  let p = path;
+  if (p === "/en" || p.indexOf("/en/") === 0) {
+    lang = "en";
+    p = p.slice(3) || "/";
+  }
+  const slug = p.replace(/^\/+/, "").replace(/\.html$/, "");
+  const file = PAGE_OF[slug];
+  return file ? { file, lang } : null;
+}
+
+const redirect = (location) =>
+  new Response(null, { status: 301, headers: { Location: location, ...SECURITY_HEADERS } });
+
 /* ------------------------------------------------------------------ pages */
-function servePage(file, env) {
+function servePage(file, env, lang) {
   const version =
     (env.CF_VERSION && env.CF_VERSION.id ? String(env.CF_VERSION.id).slice(0, 8) : null) ||
     env.ASSET_V || "dev";
-  const html = PAGES[file].replace(/__V__/g, version);
+
+  const p = PAGE_PATH[file] || "/";
+  const altUk = ORIGIN + p;
+  const altEn = ORIGIN + "/en" + p;
+  const meta = (META[file] && META[file][lang]) || null;
+
+  let html = PAGES[file]
+    .replace(/__V__/g, version)
+    .replace(/__LANG__/g, lang)
+    // "" or "/en": turns every in-site link into the copy in the same language
+    .replace(/__BASE__/g, lang === "en" ? "/en" : "")
+    .replace(/__CANON__/g, lang === "en" ? altEn : altUk)
+    .replace(/__ALT_UK__/g, altUk)
+    .replace(/__ALT_EN__/g, altEn)
+    .replace(/__OGLOCALE__/g, lang === "en" ? "en_US" : "uk_UA")
+    .replace(/__OGALT__/g, lang === "en" ? "uk_UA" : "en_US");
+  if (meta) html = html.replace(/__TITLE__/g, meta.title).replace(/__DESC__/g, meta.desc);
+
   return new Response(html, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
+      "Content-Language": lang,
       "Cache-Control": "no-cache",
       ...SECURITY_HEADERS,
     },
@@ -225,11 +330,17 @@ export default {
       if (path.startsWith("/uploads/")) return await serveUpload(env, path);
 
       /* ---------------- pages + SEO files ---------------- */
-      if (path === "/" || path === "/index.html") return servePage("index.html", env);
-      if (path === "/admin" || path === "/admin.html") return servePage("admin.html", env);
-      if (path === "/projects" || path === "/projects.html") return servePage("projects.html", env);
-      if (path === "/privacy" || path === "/privacy.html") return servePage("privacy.html", env);
-      if (path === "/terms" || path === "/terms.html") return servePage("terms.html", env);
+      if (path === "/admin" || path === "/admin.html") return servePage("admin.html", env, "en");
+
+      const route = routePage(path);
+      if (route) {
+        /* One page, one URL. /projects.html and /en (without the slash) resolve
+           to the same content, so they are folded into the canonical form
+           rather than left as duplicates for Google to pick between. */
+        const canonical = canonicalPath(route.file, route.lang);
+        if (path !== canonical) return redirect(canonical + url.search);
+        return servePage(route.file, env, route.lang);
+      }
 
       if (path === "/robots.txt") return textResponse(robotsTxt, "text/plain; charset=utf-8");
       if (path === "/llms.txt") return textResponse(llmsTxt, "text/plain; charset=utf-8");

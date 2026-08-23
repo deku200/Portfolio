@@ -1,26 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Every page exists in Ukrainian at the root and in English under /en/.
+     Both copies are listed, and each one repeats the complete set of
+     alternates — Google only honours hreflang when the references are
+     reciprocal and self-referencing. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://www.slv-visual.online/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/" />
-    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/?lang=uk" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/" />
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/" />
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.slv-visual.online/projects.html</loc>
+    <loc>https://www.slv-visual.online/en/</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/" />
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.slv-visual.online/projects</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/projects" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/projects" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/projects" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.slv-visual.online/privacy.html</loc>
+    <loc>https://www.slv-visual.online/en/projects</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/projects" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/projects" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/projects" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.slv-visual.online/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/privacy" />
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.slv-visual.online/terms.html</loc>
+    <loc>https://www.slv-visual.online/en/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/privacy" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/privacy" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/privacy" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.slv-visual.online/terms</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/terms" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/terms" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/terms" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://www.slv-visual.online/en/terms</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/terms" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/terms" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/terms" />
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

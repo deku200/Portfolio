@@ -21,6 +21,12 @@ const DOSSIER = ({ rows, bio, skills }) =>
 // ---- team model (source of truth for the founder + partners) --------------
 const readLS = (k, fb) => { try { return JSON.parse(localStorage.getItem(k)) ?? fb; } catch (_) { return fb; } };
 
+// Any stored asset path, made safe to use from /en/ as well as from /
+const assetUrl = (u) => {
+  const s = String(u || "");
+  return (!s || s.charAt(0) === "/" || /^(https?:|data:)/i.test(s)) ? s : "/" + s;
+};
+
 // the three status states the admin can pick, with their dossier styling
 const STATUSES = {
   online:  { label: { en: "● ONLINE",  uk: "● ОНЛАЙН" },  cls: "d-online" },
@@ -45,7 +51,7 @@ const TEAM_DEFAULTS = [
     skills: [{ label: { en: "FRONTEND", uk: "FRONTEND" }, level: 9 }, { label: { en: "DESIGN", uk: "ДИЗАЙН" }, level: 10 },
              { label: { en: "BACKEND", uk: "BACKEND" }, level: 9 }, { label: { en: "AI / AUTOMATION", uk: "AI / АВТОМАТИЗАЦІЯ" }, level: 8 },
              { label: { en: "DEVOPS", uk: "DEVOPS" }, level: 10 }],
-    photo: "img/yaroslav.jpg" },
+    photo: "/img/yaroslav.jpg" },
   { name: { en: "OLEKSANDR", uk: "ОЛЕКСАНДР" }, id: "#SV-002",
     role: { en: "COLLABORATOR", uk: "ПАРТНЕР" },
     location: { en: "UKRAINE", uk: "УКРАЇНА" }, status: "online",
@@ -53,7 +59,7 @@ const TEAM_DEFAULTS = [
            uk: "FULL-STACK РОЗРОБНИК З ФОКУСОМ НА АВТОМАТИЗАЦІЮ ТА ЯКІСТЬ." },
     skills: [{ label: { en: "FRONTEND", uk: "FRONTEND" }, level: 7 }, { label: { en: "BACKEND", uk: "BACKEND" }, level: 8 },
              { label: { en: "DEVOPS", uk: "DEVOPS" }, level: 6 }, { label: { en: "DESIGN", uk: "ДИЗАЙН" }, level: 6 }],
-    photo: "img/oleksandr.jpg" },
+    photo: "/img/oleksandr.jpg" },
   { name: { en: "ROMAN", uk: "РОМАН" }, id: "#SV-003",
     role: { en: "PARTNER", uk: "ПАРТНЕР" },
     location: { en: "UKRAINE", uk: "УКРАЇНА" }, status: "online",
@@ -61,7 +67,7 @@ const TEAM_DEFAULTS = [
            uk: "FRONT-END РОЗРОБНИК, СТВОРЮЄ ШВИДКІ, ПІКСЕЛЬ-ПЕРФЕКТНІ ІНТЕРФЕЙСИ." },
     skills: [{ label: { en: "FRONTEND", uk: "FRONTEND" }, level: 10 }, { label: { en: "BACKEND", uk: "BACKEND" }, level: 8 },
              { label: { en: "DESIGN", uk: "ДИЗАЙН" }, level: 6 }, { label: { en: "DEVOPS", uk: "DEVOPS" }, level: 8 }],
-    photo: "img/roman.jpg" },
+    photo: "/img/roman.jpg" },
 ];
 
 // admin edits are single-language strings → apply to both en/uk when set
@@ -210,7 +216,21 @@ const TERMINAL_LINES = {
        "> ПОВІДОМЛЕННЯ НАДІСЛАНО. МИ НА ЗВ'ЯЗКУ."],
 };
 
-let lang = localStorage.getItem("lang") || "en";
+/* The URL decides the language, not localStorage. Ukrainian is served at /
+   and English at /en/, and the Worker has already stamped the answer onto
+   <html data-lang>. Letting a stale stored preference win would serve English
+   from a URL Google indexed as Ukrainian, which is the one thing separate
+   addresses exist to prevent. */
+let lang = document.documentElement.getAttribute("data-lang") === "en" ? "en" : "uk";
+
+/* Same page, other language. The two are genuinely different URLs now, so the
+   switch is a navigation rather than a repaint. */
+function langHref(next) {
+  const p = location.pathname;
+  const bare = p.indexOf("/en/") === 0 ? p.slice(3) : (p === "/en" ? "/" : p);
+  const target = next === "en" ? "/en" + bare : bare;
+  return target + location.search + location.hash;
+}
 let quoteTyped = false;
 function setLang(next) {
   lang = next;
@@ -231,7 +251,9 @@ function setLang(next) {
 }
 document.addEventListener("click", e => {
   const btn = e.target.closest(".lang-btn");
-  if (btn) setLang(btn.dataset.lang);
+  if (!btn || btn.dataset.lang === lang) return;
+  try { localStorage.setItem("lang", btn.dataset.lang); } catch (_) {}
+  location.href = langHref(btn.dataset.lang);
 });
 
 // generate the built-in members' i18n from TEAM_DEFAULTS + admin overrides,
@@ -249,10 +271,30 @@ renderBuiltinTeam();
 setLang(lang);
 
 /* ---------- 1. BOOT LOADER ---------- */
+/* The loader and splash are a first-impression, not a toll gate. Switching
+   language or opening another page is a real navigation now, and replaying the
+   whole boot sequence on each one would make the site feel slow and the
+   language toggle feel broken. Once someone has entered, the rest of the
+   session goes straight in. */
 const bootEl = $("#boot");
 const pctEl = $("#boot-pct");
+
+let alreadyIn = false;
+try { alreadyIn = sessionStorage.getItem("slv_entered") === "1"; } catch (_) {}
+
+if (alreadyIn) {
+  bootEl.hidden = true;
+  $("#splash").hidden = true;
+  const site = $("#site");
+  site.hidden = false;
+  site.classList.add("is-on");
+  /* These live further down the file and touch bindings that have not been
+     initialised yet, so let the current script finish before calling them. */
+  setTimeout(() => { startHero(); observeSections(); applyIncomingHash(); }, 0);
+}
+
 let pct = 0;
-const bootTimer = setInterval(() => {
+const bootTimer = alreadyIn ? null : setInterval(() => {
   pct = Math.min(100, pct + Math.ceil(Math.random() * 9));
   pctEl.textContent = pct;
   if (pct >= 100) {
@@ -302,6 +344,7 @@ function enterSite() {
   splash.classList.add("is-exiting");
   setTimeout(() => {
     splash.hidden = true;
+    try { sessionStorage.setItem("slv_entered", "1"); } catch (_) {}
     const site = $("#site");
     site.hidden = false;
     requestAnimationFrame(() => site.classList.add("is-on"));
@@ -1197,7 +1240,7 @@ function applyLocalOverrides() {
     if (!o || o.photo == null || o.photo === "") return;
     const panel = $$(".team-panel")[+k];
     const box = panel && $(".team-photo", panel);
-    if (box) box.innerHTML = `<img src="${esc(o.photo)}" alt="slv_visual team member" />`;
+    if (box) box.innerHTML = `<img src="${esc(assetUrl(o.photo))}" alt="slv_visual team member" />`;
   });
 
   // --- added partners: append a team tab + dossier panel for each ---------
@@ -1237,7 +1280,7 @@ function applyLocalOverrides() {
         const panel = document.createElement("div");
         panel.className = "team-panel";
         const photo = p.photo
-          ? `<img src="${p.photo}" alt="${(p.name || "Partner")} — slv_visual" />`
+          ? `<img src="${assetUrl(p.photo)}" alt="${(p.name || "Partner")} — slv_visual" />`
           : "[ PHOTO ]";
         panel.innerHTML =
           `<div class="team-photo halftone">${photo}</div>` +
@@ -1318,7 +1361,9 @@ function applyLocalOverrides() {
       const se = $(".w-status", art); if (se) { se.textContent = p.status; se.classList.toggle("is-live", /live/i.test(p.status)); }
       const tb = $(".w-tags", art);
       if (tb) tb.innerHTML = String(p.tags).split(",").map(t => t.trim()).filter(Boolean).map(t => `<span>${esc(t)}</span>`).join("");
-      const img = $(".work-media img", art); if (img && p.image) img.src = p.image;
+      // stored paths are a mix of "img/…" and "/uploads/…"; a relative one
+      // would resolve against /en/ and 404, so normalise on the way out
+      const img = $(".work-media img", art); if (img && p.image) img.src = assetUrl(p.image);
       const de = $(".work-desc", art), key = de && de.dataset.i18n;
       if (key && I18N[key] && p.desc) I18N[key] = { en: p.desc.en, uk: p.desc.uk };
     });
