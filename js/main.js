@@ -1,5 +1,5 @@
 /* ==========================================================
-   KVS-style portfolio — boot, splash, ascii hero, glitch,
+   KVS-style portfolio — ascii hero, glitch,
    scramble text, typewriter, tabs, terminal form.
    ========================================================== */
 
@@ -113,7 +113,6 @@ const CLI_ROWS = rows => rows.map(([year, name, type, note]) =>
   `<li><span class="c-year">${year}</span><span class="c-name">&lt;${name}&gt;</span>${note ? `<span class="muted c-note">${note}</span>` : ""}<span class="c-type">${type}</span><span class="c-id"></span></li>`).join("");
 
 const I18N = {
-  enter:        { en: "CLICK TO ENTER", uk: "НАТИСНИ, ЩОБ УВІЙТИ" },
   tagline:      { en: "&lt;COMPREHENSIVE WEBSITE DEVELOPMENT<br>FOR THOSE WHO VALUE<br>QUALITY AND SPEED&gt;",
                   uk: "&lt;РОЗРОБКА САЙТІВ ПІД КЛЮЧ<br>ДЛЯ ТИХ, ХТО ЦІНУЄ<br>ЯКІСТЬ І ШВИДКІСТЬ&gt;" },
   calcBtn:      { en: "CALCULATE THE PRICE", uk: "РОЗРАХУВАТИ ВАРТІСТЬ" },
@@ -263,50 +262,29 @@ function renderBuiltinTeam() {
 renderBuiltinTeam();
 setLang(lang);
 
-/* ---------- 1. BOOT LOADER ---------- */
-/* The loader and splash are a first impression, not a toll gate — in either
-   sense. They are opaque overlays over a page that is already rendered, and
-   they are switched on from here rather than being present in the markup.
+/* ---------- 1. STARTUP ---------- */
+/* There was a loading screen here: a percentage counting itself to 100 over
+   about two seconds, then an ASCII splash with a "click to enter" button. Both
+   are gone, and nothing replaced them — the site is simply on screen.
 
-   Two things depend on that. A crawler runs the JavaScript but never clicks
-   "enter", so anything hidden until the click is effectively not on the page:
-   this used to leave roughly eighteen indexable words. And switching language
-   is a real navigation now, so replaying the whole sequence every time would
-   make the toggle feel broken — once someone is in, the rest of the session
-   goes straight through. */
-const bootEl = $("#boot");
-const pctEl = $("#boot-pct");
+   The percentage was measuring nothing; the page behind it had already
+   rendered. And the gate cost us the visitors we spend the most effort on:
+   someone arriving from a search result has a question, not an appetite for a
+   title card, and a crawler runs this JavaScript but never clicks, so anything
+   behind the button was effectively not on the page at all.
 
-let alreadyIn = false;
-try { alreadyIn = sessionStorage.getItem("slv_entered") === "1"; } catch (_) {}
-
-/* The content is on screen from the first paint, so it has to be alive from the
-   first paint too — the hero and the section observers no longer wait for a
-   click. Deferred because these live further down the file and touch bindings
-   that have not been initialised yet. */
+   What survives is the part that did work — starting the hero and the section
+   observers, and honouring a deep link. Deferred by a tick because both live
+   further down this file and touch bindings that are not initialised yet. */
 setTimeout(() => {
   startHero();
   observeSections();
-  if (alreadyIn) applyIncomingHash(); // otherwise the gate would eat the scroll
+  applyIncomingHash();
 }, 0);
 
-if (!alreadyIn) {
-  bootEl.hidden = false;
-  document.documentElement.classList.add("is-gated");
-}
-
-let pct = 0;
-const bootTimer = alreadyIn ? null : setInterval(() => {
-  pct = Math.min(100, pct + Math.ceil(Math.random() * 9));
-  pctEl.textContent = pct;
-  if (pct >= 100) {
-    clearInterval(bootTimer);
-    setTimeout(showSplash, 400);
-  }
-}, 90);
-
-/* ---------- 2. SPLASH (ASCII logo + enter) ---------- */
-const SPLASH_LOGO = String.raw`
+/* The SV mark. The splash it was drawn for is gone; the spinning hero logo
+   still builds itself out of it. */
+const SV_LOGO = String.raw`
  ██████╗ ██╗   ██╗
 ██╔════╝ ██║   ██║
 ╚█████╗  ██║   ██║
@@ -316,49 +294,10 @@ const SPLASH_LOGO = String.raw`
     slv_visual
 `;
 
-function showSplash() {
-  bootEl.hidden = true;
-  const splash = $("#splash");
-  splash.hidden = false;
-  // halftone-ish reveal: draw logo line by line with noise chars
-  const target = SPLASH_LOGO;
-  const pre = $("#splash-logo");
-  let frame = 0;
-  const noise = "░▒▓█▚▞·:+*";
-  const anim = setInterval(() => {
-    frame++;
-    pre.textContent = target
-      .split("")
-      .map((c, i) =>
-        c === "\n" || c === " " ? c
-        : i < frame * 14 ? c
-        : noise[(Math.random() * noise.length) | 0])
-      .join("");
-    if (frame * 14 > target.length) { clearInterval(anim); pre.textContent = target; }
-  }, 40);
-}
-
-let entering = false;
-function enterSite() {
-  const splash = $("#splash");
-  if (splash.hidden || entering) return;
-  entering = true;
-  splash.classList.add("is-exiting");
-  setTimeout(() => {
-    splash.hidden = true;
-    document.documentElement.classList.remove("is-gated");
-    try { sessionStorage.setItem("slv_entered", "1"); } catch (_) {}
-    // the page was already running behind the overlay; only the hash still
-    // needs applying, because the scroll lock would have swallowed it
-    applyIncomingHash();
-  }, 650);
-}
-
 /* A deep link such as /#calc — which is where both buttons on the projects
-   page point — has its anchor jump swallowed by the splash: while the browser
-   is looking for the target, #site is still hidden, so there is nothing to
-   scroll to and the jump is silently dropped. Re-apply it by hand the moment
-   the site is actually on screen. */
+   page point — still needs applying by hand. The browser looks for the target
+   while the horizontal scroller has not worked out its panels yet, so the jump
+   either lands in the wrong place or is dropped. */
 function applyIncomingHash() {
   if (!location.hash || location.hash.length < 2) return;
   let target = null;
@@ -378,11 +317,6 @@ function applyIncomingHash() {
   jump();
   setTimeout(jump, 220);
 }
-$("#enter-btn").addEventListener("click", enterSite);
-addEventListener("keydown", e => {
-  if (e.key === "Enter" && !$("#splash").hidden) enterSite();
-});
-
 /* ---------- old-TV flicker: random bands, looping forever ---------- */
 {
   const band = document.createElement("div");
@@ -432,7 +366,6 @@ addEventListener("keydown", e => {
 
   (function draw() {
     ctx.clearRect(0, 0, cv.width, cv.height);
-    const onSplash = !$("#splash").hidden || !$("#boot").hidden;
     for (let i = parts.length - 1; i >= 0; i--) {
       const p = parts[i];
       p.life -= 0.016;
@@ -444,7 +377,7 @@ addEventListener("keydown", e => {
       p.y += p.vy;
       // +20% brighter than before (max ~36% alpha)
       const a = (p.life * 0.36).toFixed(3);
-      ctx.fillStyle = onSplash ? `rgba(20,20,20,${a})` : `rgba(232,60,50,${a})`;
+      ctx.fillStyle = `rgba(232,60,50,${a})`;
       ctx.font = `${p.size | 0}px monospace`;
       ctx.fillText(p.c, p.x, p.y);
     }
@@ -455,8 +388,8 @@ addEventListener("keydown", e => {
 /* ---------- 2c. SPINNING 3D LOGO on the hero ---------- */
 function startHeroLogo() {
   const pre = $("#hero-logo");
-  // the SV art from the splash, without the caption line
-  const target = SPLASH_LOGO
+  // the SV art without the caption line
+  const target = SV_LOGO
     .split("\n")
     .filter(l => l.trim() && !l.includes("slv_visual"))
     .join("\n");

@@ -87,58 +87,11 @@ button { font-family: inherit; cursor: pointer; }
   100% { transform: translate(2%,2%); }
 }
 
-/* ============ boot ============ */
-.boot {
-  position: fixed; inset: 0; z-index: 80; background: #eceee8; color: #111;
-  display: flex; align-items: center; justify-content: center;
-}
-
-/* old-TV look for the light screens: darkened corners + faint RGB scanlines */
-.boot::before, .splash::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
-  background:
-    repeating-linear-gradient(0deg,
-      rgba(255,0,60,.05) 0 1px, rgba(0,255,120,.05) 1px 2px,
-      rgba(60,80,255,.05) 2px 3px, transparent 3px 4px);
-}
-.boot::after, .splash::after {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(ellipse 75% 70% at 50% 48%,
-    transparent 0%, transparent 42%,
-    rgba(0,0,0,.18) 62%, rgba(0,0,0,.5) 82%, rgba(0,0,0,.88) 100%);
-}
-.boot > *, .splash > * { position: relative; z-index: 1; }
-.boot-name { letter-spacing: .12em; font-weight: 700; }
-.boot-pct { position: absolute; bottom: 7vh; left: 50%; transform: translateX(-50%); font-weight: 700; }
-
-/* ============ splash ============ */
-.splash {
-  position: fixed; inset: 0; z-index: 79; background: #f2f0ec; color: #111;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
-}
-.splash-logo { font-size: clamp(12px, 2.7vw, 27px); line-height: 1.02; letter-spacing: 0; user-select: none; }
-.splash-note { font-size: .8rem; letter-spacing: .1em; }
-
-/* CRT power-off: screen collapses to a bright line, then a dot */
-.splash.is-exiting { animation: crt-off .65s cubic-bezier(.7,0,.9,1) forwards; }
-.splash.is-exiting > * { opacity: 0; transition: opacity .12s; }
-@keyframes crt-off {
-  0%   { transform: scaleY(1)    scaleX(1);  filter: brightness(1); }
-  55%  { transform: scaleY(.008) scaleX(1);  filter: brightness(6); }
-  80%  { transform: scaleY(.006) scaleX(.25); filter: brightness(8); }
-  100% { transform: scaleY(.002) scaleX(0);  filter: brightness(10); opacity: 0; }
-}
-
-/* The site is visible from the start — the opaque splash sits over it, and
-   its CRT power-off collapse is the transition. It used to fade in from
-   opacity 0, but anything that hides the whole page until a click also hides it
-   from crawlers, which render JavaScript and never click. */
+/* The boot loader and the click-through splash used to live here, together
+   with the CRT power-off animation that dismissed them. All of it is gone: the
+   site is the first thing on screen. .site once faded in from opacity 0 behind
+   the overlay, so it stays pinned open in case anything still expects it. */
 .site { opacity: 1; }
-
-/* Nothing behind an opaque overlay should be able to scroll away underneath it.
-   On the root element only: on <body> this would make body a scroll container
-   and silently kill every position:sticky descendant. */
-html.is-gated { overflow: hidden; }
 
 /* ============ shared ============ */
 .btn-orange {
@@ -615,7 +568,6 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
   .site-footer { flex-direction: column; gap: 1.4rem; padding: 5vh 5vw 7vh; }
 
   .marquee-half { gap: 1.6rem; padding-right: 1.6rem; }
-  .splash-logo { font-size: 15px; }
 }
 
 /* ============ shared content blocks (home page + /projects.html) ============
