@@ -129,9 +129,16 @@ button { font-family: inherit; cursor: pointer; }
   100% { transform: scaleY(.002) scaleX(0);  filter: brightness(10); opacity: 0; }
 }
 
-/* site fades in from black after the power-off */
-.site { opacity: 0; }
-.site.is-on { opacity: 1; transition: opacity 1s ease .15s; }
+/* The site is visible from the start — the opaque splash sits over it, and
+   its CRT power-off collapse is the transition. It used to fade in from
+   opacity 0, but anything that hides the whole page until a click also hides it
+   from crawlers, which render JavaScript and never click. */
+.site { opacity: 1; }
+
+/* Nothing behind an opaque overlay should be able to scroll away underneath it.
+   On the root element only: on <body> this would make body a scroll container
+   and silently kill every position:sticky descendant. */
+html.is-gated { overflow: hidden; }
 
 /* ============ shared ============ */
 .btn-orange {

@@ -271,26 +271,35 @@ renderBuiltinTeam();
 setLang(lang);
 
 /* ---------- 1. BOOT LOADER ---------- */
-/* The loader and splash are a first-impression, not a toll gate. Switching
-   language or opening another page is a real navigation now, and replaying the
-   whole boot sequence on each one would make the site feel slow and the
-   language toggle feel broken. Once someone has entered, the rest of the
-   session goes straight in. */
+/* The loader and splash are a first impression, not a toll gate — in either
+   sense. They are opaque overlays over a page that is already rendered, and
+   they are switched on from here rather than being present in the markup.
+
+   Two things depend on that. A crawler runs the JavaScript but never clicks
+   "enter", so anything hidden until the click is effectively not on the page:
+   this used to leave roughly eighteen indexable words. And switching language
+   is a real navigation now, so replaying the whole sequence every time would
+   make the toggle feel broken — once someone is in, the rest of the session
+   goes straight through. */
 const bootEl = $("#boot");
 const pctEl = $("#boot-pct");
 
 let alreadyIn = false;
 try { alreadyIn = sessionStorage.getItem("slv_entered") === "1"; } catch (_) {}
 
-if (alreadyIn) {
-  bootEl.hidden = true;
-  $("#splash").hidden = true;
-  const site = $("#site");
-  site.hidden = false;
-  site.classList.add("is-on");
-  /* These live further down the file and touch bindings that have not been
-     initialised yet, so let the current script finish before calling them. */
-  setTimeout(() => { startHero(); observeSections(); applyIncomingHash(); }, 0);
+/* The content is on screen from the first paint, so it has to be alive from the
+   first paint too — the hero and the section observers no longer wait for a
+   click. Deferred because these live further down the file and touch bindings
+   that have not been initialised yet. */
+setTimeout(() => {
+  startHero();
+  observeSections();
+  if (alreadyIn) applyIncomingHash(); // otherwise the gate would eat the scroll
+}, 0);
+
+if (!alreadyIn) {
+  bootEl.hidden = false;
+  document.documentElement.classList.add("is-gated");
 }
 
 let pct = 0;
@@ -344,12 +353,10 @@ function enterSite() {
   splash.classList.add("is-exiting");
   setTimeout(() => {
     splash.hidden = true;
+    document.documentElement.classList.remove("is-gated");
     try { sessionStorage.setItem("slv_entered", "1"); } catch (_) {}
-    const site = $("#site");
-    site.hidden = false;
-    requestAnimationFrame(() => site.classList.add("is-on"));
-    startHero();
-    observeSections();
+    // the page was already running behind the overlay; only the hash still
+    // needs applying, because the scroll lock would have swallowed it
     applyIncomingHash();
   }, 650);
 }
@@ -1361,9 +1368,18 @@ function applyLocalOverrides() {
       const se = $(".w-status", art); if (se) { se.textContent = p.status; se.classList.toggle("is-live", /live/i.test(p.status)); }
       const tb = $(".w-tags", art);
       if (tb) tb.innerHTML = String(p.tags).split(",").map(t => t.trim()).filter(Boolean).map(t => `<span>${esc(t)}</span>`).join("");
-      // stored paths are a mix of "img/…" and "/uploads/…"; a relative one
-      // would resolve against /en/ and 404, so normalise on the way out
-      const img = $(".work-media img", art); if (img && p.image) img.src = assetUrl(p.image);
+      /* The slot's markup still carries the alt text of whatever project was
+         hard-coded there, so swapping only the src leaves every image described
+         as a different case study — wrong for search and wrong for a screen
+         reader. Stored paths are also a mix of "img/…" and "/uploads/…", and a
+         relative one would resolve against /en/ and 404. */
+      const img = $(".work-media img", art);
+      if (img && p.image) {
+        img.src = assetUrl(p.image);
+        img.alt = p.title + (lang === "uk"
+          ? " — сайт, розроблений slv_visual"
+          : " — website built by slv_visual");
+      }
       const de = $(".work-desc", art), key = de && de.dataset.i18n;
       if (key && I18N[key] && p.desc) I18N[key] = { en: p.desc.en, uk: p.desc.uk };
     });
