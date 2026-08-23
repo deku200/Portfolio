@@ -58,12 +58,19 @@ CREATE TABLE IF NOT EXISTS rate_hits (
 );
 CREATE INDEX IF NOT EXISTS idx_rate_hits ON rate_hits (bucket, ts);
 
+-- NOTE: `telegram` was added to a table that already existed in production,
+-- with: ALTER TABLE estimates ADD COLUMN telegram TEXT NOT NULL DEFAULT '';
+-- CREATE TABLE IF NOT EXISTS never revisits an existing table, so a column
+-- added here does NOT reach the live database on its own. Ship the ALTER
+-- before the Worker that writes the column, or every insert fails.
+--
 -- Estimates built with the price calculator on the home page. Stored even when
 -- the visitor never sends a request: which configurations people assemble (and
 -- abandon) is the most useful signal the site produces.
 CREATE TABLE IF NOT EXISTS estimates (
   id         TEXT PRIMARY KEY,
   lang       TEXT NOT NULL DEFAULT 'uk',
+  telegram   TEXT NOT NULL DEFAULT '',
   developer  TEXT NOT NULL DEFAULT '',
   category   TEXT NOT NULL DEFAULT '',
   niche      TEXT NOT NULL DEFAULT '',

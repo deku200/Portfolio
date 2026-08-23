@@ -1020,6 +1020,31 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
 .calc-eta { margin-top: .9rem; font-size: .72rem; letter-spacing: .06em; color: var(--dim); }
 .calc-eta b { color: var(--fg); }
 
+/* Contact, then the referral, then the button — the two things that change
+   what happens when it is pressed, in the order they are asked. */
+.calc-tg { margin-top: 1.3rem; }
+.calc-tg-label {
+  display: block; font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--dim); margin-bottom: .45rem;
+}
+.calc-tg-input {
+  width: 100%; padding: .7rem .8rem;
+  background: rgba(255, 255, 255, .02); border: 1px solid #2a2a2a;
+  color: var(--fg); font-family: inherit; font-size: .84rem; letter-spacing: .02em;
+  transition: border-color .3s ease, background .3s ease;
+}
+.calc-tg-input::placeholder { color: #4a4a4a; }
+.calc-tg-input:hover { border-color: #3d3d3d; }
+.calc-tg-input:focus {
+  outline: none; border-color: var(--green); background: rgba(157, 255, 158, .04);
+}
+.calc-tg-hint { margin-top: .4rem; font-size: .67rem; line-height: 1.65; color: var(--dim); }
+/* the error replaces the hint rather than stacking under it, so the panel does
+   not grow and shove the button down the moment someone gets it wrong */
+.calc-tg.is-bad .calc-tg-hint { display: none; }
+.calc-tg.is-bad .calc-tg-input { border-color: var(--accent); }
+.calc-tg-err { margin-top: .4rem; font-size: .67rem; line-height: 1.65; color: var(--accent); }
+
 /* the referral sits directly above the button it changes the outcome of */
 .calc-referral {
   display: grid; grid-template-columns: 1.6rem minmax(0, 1fr); gap: .5rem;

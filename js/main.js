@@ -1802,12 +1802,52 @@ function applyLocalOverrides() {
     unlock();
   });
 
+  /* ------------------------------------------------------- telegram handle */
+  /* Deliberately not part of `state`: state is the configuration the price is
+     computed from, and typing a contact detail must not unlock and re-mask an
+     estimate the way changing a block does. */
+  const tgWrap = document.querySelector(".calc-tg");
+  const tgInput = el("calc-telegram");
+  const tgErr = el("calc-tg-err");
+
+  /* Accepts what people actually paste: "@name", "name", "t.me/name" and the
+     full https URL all mean the same account. A phone number is let through
+     too — the field asks for Telegram, but someone who leaves a number wants
+     to be contacted just as much, and refusing it only loses the lead. */
+  function readTelegram() {
+    let v = tgInput.value.trim().replace(/\s+/g, "");
+    v = v.replace(/^(https?:\/\/)?(www\.)?(t\.me|telegram\.me)\//i, "");
+    v = v.replace(/^@+/, "");
+    if (!v) return { ok: false, why: "empty" };
+    if (/^\+?[\d\-()]{9,}$/.test(v)) return { ok: true, value: v };   // a phone
+    if (!/^[A-Za-z0-9_]{3,32}$/.test(v)) return { ok: false, why: "shape" };
+    return { ok: true, value: "@" + v };
+  }
+
+  function showTgError(why) {
+    tgErr.innerHTML = why === "empty"
+      ? bi("Вкажіть свій Телеграм — без нього ми не зможемо надіслати розрахунок.",
+           "Enter your Telegram — without it we cannot send you the estimate.")
+      : bi("Схоже на помилку. Введіть як @username або посилання t.me/username.",
+           "That does not look right. Enter it as @username or a t.me/username link.");
+    tgErr.hidden = false;
+    tgWrap.classList.add("is-bad");
+  }
+
+  function clearTgError() {
+    tgErr.hidden = true;
+    tgWrap.classList.remove("is-bad");
+  }
+
+  tgInput.addEventListener("input", clearTgError);
+
   /* the payload the admin panel receives: Ukrainian labels, so an estimate
      reads the same in the panel no matter which language the visitor used */
   function payload() {
     const d = dev(), c = cat();
     return {
       lang,
+      telegram: (readTelegram().value || ""),
       developer: d.uk,
       category: c.uk,
       niche: state.niche,
@@ -1845,6 +1885,16 @@ function applyLocalOverrides() {
   }
 
   goBtn.addEventListener("click", async () => {
+    // the handle is the price of the price: check it before anything is
+    // revealed, so a bad entry costs nothing but a corrected keystroke
+    const tg = readTelegram();
+    if (!tg.ok) {
+      showTgError(tg.why);
+      tgInput.focus();
+      return;
+    }
+    clearTgError();
+
     quote = build();
     locked = true;
     renderLines();
@@ -1887,6 +1937,11 @@ function applyLocalOverrides() {
     const form = document.getElementById("contact-form");
     if (!form) return;
     const p = payload();
+    // they have already typed it once — do not ask again in the form below
+    if (p.telegram && !form.contact.value.trim()) {
+      form.contact.value = p.telegram;
+      form.contact.dispatchEvent(new Event("input", { bubbles: true }));
+    }
     const spec = quote.lines.map((l) => "· " + (lang === "uk" ? l.uk : l.en) + " — " +
       (l.price < 0 ? "−" + money(-l.price) : money(l.price))).join("\n");
     form.budget.value = "$" + quote.total;

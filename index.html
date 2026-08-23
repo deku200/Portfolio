@@ -417,6 +417,20 @@ __FAQ_LD__
 
                 <p class="calc-eta" id="calc-eta" hidden></p>
 
+                <div class="calc-tg">
+                  <label class="calc-tg-label" for="calc-telegram">
+                    <span data-lang-block="uk">Телеграм (для зв'язку)</span><span data-lang-block="en">Telegram (so we can reach you)</span>
+                  </label>
+                  <input class="calc-tg-input" id="calc-telegram" type="text" maxlength="64"
+                         autocomplete="username" spellcheck="false" placeholder="@username"
+                         aria-describedby="calc-tg-hint" />
+                  <p class="calc-tg-hint" id="calc-tg-hint">
+                    <span data-lang-block="uk">Надішлемо розрахунок і відповімо на питання. Без дзвінків і без спаму.</span>
+                    <span data-lang-block="en">We'll send you the estimate and answer any questions. No calls, no spam.</span>
+                  </p>
+                  <p class="calc-tg-err" id="calc-tg-err" role="alert" hidden></p>
+                </div>
+
                 <label class="calc-referral">
                   <input type="checkbox" id="calc-melman" class="sr-only" />
                   <span class="co-pick" aria-hidden="true"></span>

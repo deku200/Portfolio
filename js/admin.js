@@ -170,6 +170,7 @@ async function renderEstimates() {
         <small>${new Date(r.created_at).toLocaleString()} · ${esc(r.lang).toUpperCase()}</small>
         <div class="pill">${esc(r.category) || "—"}</div>
         <div class="pill">DEV: ${esc(r.developer) || "—"}</div>
+        ${r.telegram ? `<div class="pill">${esc(r.telegram)}</div>` : ""}
         ${r.niche ? `<div class="pill">${esc(r.niche)}</div>` : ""}
         ${r.days ? `<div class="pill">${esc(r.days)} DAYS</div>` : ""}
         <small style="margin-top:.5rem; line-height:1.7;">${

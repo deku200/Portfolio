@@ -962,11 +962,14 @@ async function api(request, env, path, method) {
 
       const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
       await env.DB.prepare(
-        "INSERT INTO estimates (id,lang,developer,category,niche,total,monthly,days,items,created_at)" +
-        " VALUES (?,?,?,?,?,?,?,?,?,?)"
+        "INSERT INTO estimates (id,lang,telegram,developer,category,niche,total,monthly,days,items,created_at)" +
+        " VALUES (?,?,?,?,?,?,?,?,?,?,?)"
       ).bind(
         id,
         b.lang === "en" ? "en" : "uk",
+        // the calculator normalises this to "@handle" or a phone before sending;
+        // capped here anyway, because the endpoint is public
+        s(b.telegram).slice(0, 64),
         s(b.developer).slice(0, 80),
         s(b.category).slice(0, 120),
         s(b.niche).slice(0, 120),
