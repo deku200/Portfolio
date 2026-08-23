@@ -23,11 +23,7 @@
     var b = e.target.closest && e.target.closest("[data-set-lang]");
     if (!b) return;
     var l = b.getAttribute("data-set-lang");
-    if (l === current) return;
+    // the href already points at the other language's copy of this page
     try { localStorage.setItem("lang", l); } catch (e2) {}
-    // each language is its own URL, so switching means going there
-    var p = location.pathname;
-    var bare = p.indexOf("/en/") === 0 ? p.slice(3) : (p === "/en" ? "/" : p);
-    location.href = (l === "en" ? "/en" + bare : bare) + location.hash;
   });
 })();

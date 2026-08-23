@@ -205,41 +205,41 @@ const META = {
   "index.html": {
     uk: {
       title: "Розробка сайтів під ключ — лендінги та магазини від $400",
-      desc: "Студія веброзробки з України: лендінги, корпоративні сайти та інтернет-магазини. Розрахуйте вартість свого сайту за 30 секунд. Проєкти від $400.",
+      desc: "Розробка сайтів під ключ: лендінги, корпоративні сайти та інтернет-магазини. Порахуйте вартість за 30 секунд — від $400, перший місяць підтримки безкоштовно.",
     },
     en: {
       title: "slv_visual — Product Design &amp; Creative Development",
-      desc: "Ukraine-based web development and product design studio building fast, high-quality websites, online stores and brand experiences. Price your site in 30 seconds. Projects from $400.",
+      desc: "Ukraine-based studio building landing pages, corporate sites and online stores. Price your own build in 30 seconds — from $400, first month of support free.",
     },
   },
   "projects.html": {
     uk: {
       title: "Усі проєкти — slv_visual",
-      desc: "Усі проєкти slv_visual: сайти, інтернет-магазини та лендінги. А також — навіщо вашому бізнесу сайт і відповіді на головні запитання.",
+      desc: "Усі проєкти slv_visual: сайти, інтернет-магазини та лендінги. А також — навіщо бізнесу сайт і відповіді на головні запитання. Розрахунок вартості онлайн.",
     },
     en: {
       title: "All projects — slv_visual",
-      desc: "Every slv_visual project: websites, online stores and landing pages — plus why your business needs a site, and answers to the questions clients actually ask.",
+      desc: "Every slv_visual project: websites, online stores and landing pages — plus why your business needs a site and honest answers to the questions clients ask.",
     },
   },
   "privacy.html": {
     uk: {
       title: "Політика конфіденційності — slv_visual",
-      desc: "Політика конфіденційності slv_visual (slv-visual.online): які дані ми збираємо через форму заявки та як їх використовуємо, зберігаємо і захищаємо.",
+      desc: "Політика конфіденційності slv_visual (slv-visual.online): які дані ми збираємо через форму заявки й калькулятор вартості, як зберігаємо і захищаємо їх.",
     },
     en: {
       title: "Privacy Policy — slv_visual",
-      desc: "Privacy Policy for slv_visual (slv-visual.online) — what data we collect through the contact form and how we use, store and protect it.",
+      desc: "Privacy Policy for slv_visual (slv-visual.online) — what data the contact form and the price calculator collect, and how we use, store and protect it.",
     },
   },
   "terms.html": {
     uk: {
       title: "Умови використання — slv_visual",
-      desc: "Умови використання сайту slv_visual (slv-visual.online): правила користування, інтелектуальна власність, заявки та відповідальність.",
+      desc: "Умови використання сайту slv_visual (slv-visual.online): правила користування, інтелектуальна власність, заявки, розрахунки вартості й відповідальність.",
     },
     en: {
       title: "Terms of Use — slv_visual",
-      desc: "Terms of Use for slv_visual (slv-visual.online) — the rules for using this website, intellectual property, enquiries and liability.",
+      desc: "Terms of Use for slv_visual (slv-visual.online) — the rules for using this site, intellectual property, enquiries, cost estimates and our liability to you.",
     },
   },
 };
@@ -355,6 +355,10 @@ function servePage(file, env, lang) {
     .replace(/__CANON__/g, lang === "en" ? altEn : altUk)
     .replace(/__ALT_UK__/g, altUk)
     .replace(/__ALT_EN__/g, altEn)
+    // anchors use the path alone: absolute URLs in an href would send anyone on
+    // a preview or a staging host straight to production
+    .replace(/__PATH_UK__/g, p)
+    .replace(/__PATH_EN__/g, "/en" + p)
     .replace(/__OGLOCALE__/g, lang === "en" ? "en_US" : "uk_UA")
     .replace(/__OGALT__/g, lang === "en" ? "uk_UA" : "en_US");
   if (meta) html = html.replace(/__TITLE__/g, meta.title).replace(/__DESC__/g, meta.desc);

@@ -27,12 +27,14 @@
 .works-header .logo:hover { color: var(--green); }
 .works-nav { display: flex; align-items: center; gap: 1rem; }
 .works-lang { display: flex; gap: .35rem; }
-.works-lang button {
+/* targets the attribute, not the element: these are links now, so that the
+   other language is crawlable rather than only reachable by script */
+.works-lang [data-set-lang] {
   background: transparent; border: 1px solid #2a2a2a; color: var(--dim);
   font-family: inherit; font-size: .68rem; padding: .25rem .5rem;
   text-transform: uppercase; letter-spacing: .06em;
 }
-.works-lang button.is-active { color: #000; background: var(--green); border-color: var(--green); }
+.works-lang [data-set-lang].is-active { color: #000; background: var(--green); border-color: var(--green); }
 
 /* ---------- hero ---------- */
 .works-hero { padding: clamp(3rem, 9vw, 7rem) clamp(1.1rem, 5vw, 4rem) clamp(2rem, 5vw, 4rem); }

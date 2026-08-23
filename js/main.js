@@ -51,7 +51,7 @@ const TEAM_DEFAULTS = [
     skills: [{ label: { en: "FRONTEND", uk: "FRONTEND" }, level: 9 }, { label: { en: "DESIGN", uk: "ДИЗАЙН" }, level: 10 },
              { label: { en: "BACKEND", uk: "BACKEND" }, level: 9 }, { label: { en: "AI / AUTOMATION", uk: "AI / АВТОМАТИЗАЦІЯ" }, level: 8 },
              { label: { en: "DEVOPS", uk: "DEVOPS" }, level: 10 }],
-    photo: "/img/yaroslav.jpg" },
+    photo: "/img/yaroslav.webp" },
   { name: { en: "OLEKSANDR", uk: "ОЛЕКСАНДР" }, id: "#SV-002",
     role: { en: "COLLABORATOR", uk: "ПАРТНЕР" },
     location: { en: "UKRAINE", uk: "УКРАЇНА" }, status: "online",
@@ -59,7 +59,7 @@ const TEAM_DEFAULTS = [
            uk: "FULL-STACK РОЗРОБНИК З ФОКУСОМ НА АВТОМАТИЗАЦІЮ ТА ЯКІСТЬ." },
     skills: [{ label: { en: "FRONTEND", uk: "FRONTEND" }, level: 7 }, { label: { en: "BACKEND", uk: "BACKEND" }, level: 8 },
              { label: { en: "DEVOPS", uk: "DEVOPS" }, level: 6 }, { label: { en: "DESIGN", uk: "ДИЗАЙН" }, level: 6 }],
-    photo: "/img/oleksandr.jpg" },
+    photo: "/img/oleksandr.webp" },
   { name: { en: "ROMAN", uk: "РОМАН" }, id: "#SV-003",
     role: { en: "PARTNER", uk: "ПАРТНЕР" },
     location: { en: "UKRAINE", uk: "УКРАЇНА" }, status: "online",
@@ -67,7 +67,7 @@ const TEAM_DEFAULTS = [
            uk: "FRONT-END РОЗРОБНИК, СТВОРЮЄ ШВИДКІ, ПІКСЕЛЬ-ПЕРФЕКТНІ ІНТЕРФЕЙСИ." },
     skills: [{ label: { en: "FRONTEND", uk: "FRONTEND" }, level: 10 }, { label: { en: "BACKEND", uk: "BACKEND" }, level: 8 },
              { label: { en: "DESIGN", uk: "ДИЗАЙН" }, level: 6 }, { label: { en: "DEVOPS", uk: "DEVOPS" }, level: 8 }],
-    photo: "/img/roman.jpg" },
+    photo: "/img/roman.webp" },
 ];
 
 // admin edits are single-language strings → apply to both en/uk when set
@@ -223,14 +223,6 @@ const TERMINAL_LINES = {
    addresses exist to prevent. */
 let lang = document.documentElement.getAttribute("data-lang") === "en" ? "en" : "uk";
 
-/* Same page, other language. The two are genuinely different URLs now, so the
-   switch is a navigation rather than a repaint. */
-function langHref(next) {
-  const p = location.pathname;
-  const bare = p.indexOf("/en/") === 0 ? p.slice(3) : (p === "/en" ? "/" : p);
-  const target = next === "en" ? "/en" + bare : bare;
-  return target + location.search + location.hash;
-}
 let quoteTyped = false;
 function setLang(next) {
   lang = next;
@@ -251,9 +243,10 @@ function setLang(next) {
 }
 document.addEventListener("click", e => {
   const btn = e.target.closest(".lang-btn");
-  if (!btn || btn.dataset.lang === lang) return;
+  if (!btn) return;
+  // the href already points at the other language's copy of this page, so the
+  // browser handles the navigation; this only remembers the choice
   try { localStorage.setItem("lang", btn.dataset.lang); } catch (_) {}
-  location.href = langHref(btn.dataset.lang);
 });
 
 // generate the built-in members' i18n from TEAM_DEFAULTS + admin overrides,
@@ -1287,7 +1280,7 @@ function applyLocalOverrides() {
         const panel = document.createElement("div");
         panel.className = "team-panel";
         const photo = p.photo
-          ? `<img src="${assetUrl(p.photo)}" alt="${(p.name || "Partner")} — slv_visual" />`
+          ? `<img src="${assetUrl(p.photo)}" alt="${(p.name || "Partner")} — slv_visual" loading="lazy" decoding="async" />`
           : "[ PHOTO ]";
         panel.innerHTML =
           `<div class="team-photo halftone">${photo}</div>` +
@@ -1340,7 +1333,9 @@ function applyLocalOverrides() {
       tabs[i].dataset.member = i; tabs[i].dataset.i18n = "member" + i;
       panels[i].querySelector(".team-dossier").dataset.i18n = "bio" + i;
       const box = panels[i].querySelector(".team-photo");
-      box.innerHTML = sm.photo ? `<img src="${esc(sm.photo)}" alt="${esc(sm.name.en)} — slv_visual" />` : "[ PHOTO ]";
+      box.innerHTML = sm.photo
+        ? `<img src="${esc(assetUrl(sm.photo))}" alt="${esc(sm.name.en)} — slv_visual" loading="lazy" decoding="async" />`
+        : "[ PHOTO ]";
     });
     if (!tabsNav.querySelector(".team-tab.is-active")) tabs[0].classList.add("is-active");
     if (!panelsWrap.querySelector(".team-panel.is-active")) panels[0].classList.add("is-active");

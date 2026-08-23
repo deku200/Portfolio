@@ -39,7 +39,7 @@
       .filter(Boolean).map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("");
     var live = /live/i.test(p.status || "") ? " is-live" : "";
     var media = p.image
-      ? '<div class="work-card-media"><img src="' + esc(p.image.charAt(0) === "/" || /^https?:/i.test(p.image) ? p.image : "/" + p.image) + '" alt="' + esc(p.title) + ' — slv_visual" loading="lazy" /></div>'
+      ? '<div class="work-card-media"><img src="' + esc(p.image.charAt(0) === "/" || /^https?:/i.test(p.image) ? p.image : "/" + p.image) + '" alt="' + esc(p.title) + ' — slv_visual" loading="lazy" decoding="async" /></div>'
       : '<div class="work-card-media is-empty">[ NO IMAGE ]</div>';
 
     return '<article class="work-card">' + media +
@@ -71,12 +71,8 @@
     var b = e.target.closest && e.target.closest("[data-set-lang]");
     if (!b) return;
     var l = b.getAttribute("data-set-lang");
-    if (l === current) return;
+    // the href already points at the other language's copy of this page
     try { localStorage.setItem("lang", l); } catch (e2) {}
-    // each language is its own URL, so switching means going there
-    var p = location.pathname;
-    var bare = p.indexOf("/en/") === 0 ? p.slice(3) : (p === "/en" ? "/" : p);
-    location.href = (l === "en" ? "/en" + bare : bare) + location.hash;
   });
 
   fetch("/api/projects")

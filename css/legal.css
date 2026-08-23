@@ -34,7 +34,8 @@
 .legal-header .logo:hover { color: var(--green, #9dff9e); }
 
 .legal-lang { display: flex; gap: 0.4rem; align-items: center; }
-.legal-lang button {
+/* targets the attribute, not the element: these are links now */
+.legal-lang [data-set-lang] {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--dim, #8a8a8a);
@@ -44,7 +45,7 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
-.legal-lang button.is-active {
+.legal-lang [data-set-lang].is-active {
   color: var(--bg, #000);
   background: var(--green, #9dff9e);
   border-color: var(--green, #9dff9e);
