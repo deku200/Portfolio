@@ -1,23 +1,53 @@
 # slv_visual
 
-> Ukraine-based web development and product design studio led by Yaroslav. Builds fast, high-quality websites, online stores and brand experiences in English and Ukrainian. Custom projects start from $400.
+> Ukrainian web development studio building landing pages from $400 and online stores from $900, end to end. Design, code, domain, launch, SEO basics and the first month of support are included in the base price. Works in Ukrainian and English, remotely, across Ukraine and abroad.
 
-slv_visual (brand mark "SV") is a one-person studio combining web development and product design. The focus is quality, speed and automation for business. Working languages are English and Ukrainian.
+slv_visual (brand mark "SV") is a small team led by Yaroslav that combines web development and product design. It publishes its full price list rather than quoting "individually", and the site carries a calculator that produces an itemised estimate and a timeline in about thirty seconds, with no call and no form to fill in first.
 
 ## Services
 - Website development — landing pages, corporate sites, web apps
-- E-commerce and online stores
+- E-commerce and online stores, including for Instagram and TikTok sellers
 - Product and UI/UX design
 - Brand identity and creative development
-- Automation for business
+- Automation for business (Telegram bots, CRM, delivery and payment integrations)
+
+## Pricing
+Published in full at https://www.slv-visual.online/price. All figures in USD and all are floors, not ceilings.
+
+- Landing / corporate site: from $400, from 4 days
+- Online store / e-commerce: from $900, from 9 days
+- Developer premium by experience: $0 (1 year) / +$100 (3 years) / +$300 (6 years)
+- Included in every build: hero and offer, about block, request form, phone and tablet layouts, domain hookup, launch, SEO basics, and the first month of support free
+- Payments on the site: $100 simple (order into a Telegram bot) / $400 full (card, Google Pay, Apple Pay) / $600 foreign payment provider
+- Nova Poshta delivery integration: $200
+- Admin panel for self-service edits: $300
+- Full SEO across the site: $300 (basic SEO is included at no cost)
+- Copywriting: $100, plus $2 per product description on a store
+- AI or human business assistant: $400
+- Ongoing support after the free first month: $100/month landing, $200/month store
+- Referral from Melman: 10% off the whole project
+
+A worked example, a 30-product clothing store with catalogue, product pages, cart, filters, card payments, Nova Poshta and an admin panel, comes to $2,420.
+
+## Pages
+- [Home and price calculator](https://www.slv-visual.online/): the calculator lives at /#calc
+- [Website pricing](https://www.slv-visual.online/price): the complete price list and cost FAQ
+- [Landing page development](https://www.slv-visual.online/landing): one-page sites, what they suit, what they cost
+- [Online store development](https://www.slv-visual.online/online-store): e-commerce, Instagram and TikTok sellers, a worked estimate
+- [All projects](https://www.slv-visual.online/projects): the portfolio
+
+Every page also exists in English under /en/ — for example https://www.slv-visual.online/en/price.
 
 ## Selected work
 - [Master the Blade](https://ronin-forge.store): one-page store selling custom-made katanas on order.
-- [МЕЛМАН](https://melman.shop/): merch store for the #1 ostrich in Ukrainian TikTok.
+- [МЕЛМАН](https://melman.shop/): merch store for the best-known ostrich on Ukrainian TikTok.
 - MOCLAME HOME: e-commerce for 3D-printed home decor with live 3D previews (in development).
 
-## Pricing
-- Custom projects start from $400. Final scope and price are agreed after a briefing.
+## Where it works
+Remote, with no in-person meeting required. Clients across Ukraine — Kyiv, Kharkiv, Odesa, Dnipro, Lviv, Zaporizhzhia, Vinnytsia — and abroad in Europe, the United States and Canada. Sites can be built in Ukrainian, in English, or bilingual.
+
+## What it does not do
+Six-month corporate portals, and replacing a marketing department. Storefronts on Shopify, Horoshop or Prom are not what it builds either: stores are written in custom code, so there is no monthly platform fee and no template limit, but a website builder is cheaper to start with and slv_visual says so when that is the better fit.
 
 ## Contact
 - Website: https://www.slv-visual.online/

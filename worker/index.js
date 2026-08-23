@@ -16,6 +16,9 @@ import adminHtml from "../admin.html";
 import projectsHtml from "../projects.html";
 import privacyHtml from "../privacy.html";
 import termsHtml from "../terms.html";
+import priceHtml from "../price.html";
+import landingHtml from "../landing.html";
+import storeHtml from "../online-store.html";
 import robotsTxt from "../robots.txt";
 import llmsTxt from "../llms.txt";
 import sitemapXml from "../sitemap.xml";
@@ -27,6 +30,9 @@ const PAGES = {
   "projects.html": projectsHtml,
   "privacy.html": privacyHtml,
   "terms.html": termsHtml,
+  "price.html": priceHtml,
+  "landing.html": landingHtml,
+  "online-store.html": storeHtml,
 };
 
 /* ---------------------------------------------------------------- helpers */
@@ -191,12 +197,18 @@ const PAGE_PATH = {
   "projects.html": "/projects",
   "privacy.html": "/privacy",
   "terms.html": "/terms",
+  "price.html": "/price",
+  "landing.html": "/landing",
+  "online-store.html": "/online-store",
 };
 const PAGE_OF = {
   "": "index.html", "index": "index.html",
   "projects": "projects.html",
   "privacy": "privacy.html",
   "terms": "terms.html",
+  "price": "price.html",
+  "landing": "landing.html",
+  "online-store": "online-store.html",
 };
 
 /* Title and description are the two strongest on-page signals, so they are
@@ -204,22 +216,56 @@ const PAGE_OF = {
 const META = {
   "index.html": {
     uk: {
-      title: "Розробка сайтів під ключ — лендінги та магазини від $400",
-      desc: "Розробка сайтів під ключ: лендінги, корпоративні сайти та інтернет-магазини. Порахуйте вартість за 30 секунд — від $400, перший місяць підтримки безкоштовно.",
+      title: "Розробка та створення сайтів під ключ від $400 — slv_visual",
+      desc: "Створення сайтів під ключ по всій Україні: лендінг від $400, інтернет-магазин від $900. Порахуйте вартість за 30 секунд — без дзвінків. Перший місяць підтримки безкоштовно.",
     },
     en: {
-      title: "slv_visual — Product Design &amp; Creative Development",
-      desc: "Ukraine-based studio building landing pages, corporate sites and online stores. Price your own build in 30 seconds — from $400, first month of support free.",
+      title: "Website Development from $400 — Landing Pages &amp; Online Stores",
+      desc: "Ukrainian studio building landing pages from $400 and online stores from $900. Price your own build in 30 seconds, no call needed. First month of support free.",
     },
   },
   "projects.html": {
     uk: {
-      title: "Усі проєкти — slv_visual",
-      desc: "Усі проєкти slv_visual: сайти, інтернет-магазини та лендінги. А також — навіщо бізнесу сайт і відповіді на головні запитання. Розрахунок вартості онлайн.",
+      title: "Портфоліо: наші сайти, лендінги та інтернет-магазини — slv_visual",
+      desc: "Портфоліо slv_visual: розробка сайтів, лендінгів та інтернет-магазинів під ключ. Реальні кейси, запущені в роботу. Розрахуйте вартість свого сайту онлайн за 30 секунд.",
     },
     en: {
-      title: "All projects — slv_visual",
-      desc: "Every slv_visual project: websites, online stores and landing pages — plus why your business needs a site and honest answers to the questions clients ask.",
+      title: "Portfolio: Websites, Landing Pages &amp; Online Stores — slv_visual",
+      desc: "The slv_visual portfolio: websites, landing pages and online stores built end to end, all live in production. Price a build like these in 30 seconds with the calculator.",
+    },
+  },
+  /* The three search-landing pages. Their titles lead with the phrase people
+     actually type — "скільки коштує сайт", "лендінг під ключ", "створення
+     інтернет-магазину" — and carry the price, because a visible figure is
+     what earns the click against agencies that all say "індивідуально". */
+  "price.html": {
+    uk: {
+      title: "Скільки коштує сайт — ціни на створення сайту під ключ від $400",
+      desc: "Скільки коштує створення сайту в Україні: лендінг від $400, інтернет-магазин від $900. Повний прайс на блоки, оплату, SEO та інтеграції. Розрахунок за 30 секунд.",
+    },
+    en: {
+      title: "How Much Does a Website Cost? Full Price List from $400",
+      desc: "Website development pricing, itemised: landing pages from $400, online stores from $900. Every block, payment option and integration priced. Estimate in 30 seconds.",
+    },
+  },
+  "landing.html": {
+    uk: {
+      title: "Лендінг під ключ — створення односторінкового сайту від $400",
+      desc: "Замовити лендінг під ключ: дизайн, код, тексти, домен і запуск від $400, строк від 4 днів. Перший місяць підтримки безкоштовно. Порахуйте ціну за 30 секунд.",
+    },
+    en: {
+      title: "Landing Page Development — One-Page Sites from $400",
+      desc: "Landing page development end to end: design, code, copy, domain and launch from $400, live in 4 days. First month of support free. Price it yourself in 30 seconds.",
+    },
+  },
+  "online-store.html": {
+    uk: {
+      title: "Створення інтернет-магазину під ключ — розробка від $900",
+      desc: "Розробка інтернет-магазину під ключ від $900: каталог, кошик, оплата карткою, Нова Пошта, адмін-панель. Сайт для Instagram- і TikTok-магазину. Ціна за 30 секунд.",
+    },
+    en: {
+      title: "Online Store Development — E-commerce Sites from $900",
+      desc: "Custom online store development from $900: catalogue, cart, card payments, delivery and an admin panel. Built for Instagram and TikTok sellers. Price it in 30 seconds.",
     },
   },
   "privacy.html": {
@@ -273,8 +319,8 @@ const LD = {
     slogan: "Розробка сайтів під ключ для тих, хто цінує якість і швидкість.",
     jobTitle: "Веброзробник і продуктовий дизайнер",
     siteDesc: "Сайт студії slv_visual — розробка сайтів, інтернет-магазинів і продуктовий дизайн.",
-    serviceType: ["Розробка сайтів", "Продуктовий дизайн", "Креативна розробка", "Розробка інтернет-магазинів", "Брендинг", "Автоматизація"],
-    knowsAbout: ["Розробка сайтів", "Продуктовий дизайн", "Frontend-розробка", "E-commerce", "Креативна розробка"],
+    serviceType: ["Розробка сайтів", "Створення сайтів під ключ", "Створення лендінгів", "Створення інтернет-магазинів", "Продуктовий дизайн", "SEO-оптимізація", "Брендинг", "Автоматизація бізнесу"],
+    knowsAbout: ["Розробка сайтів", "Створення сайтів під ключ", "Лендінги", "Інтернет-магазини", "Продуктовий дизайн", "Frontend-розробка", "E-commerce", "SEO"],
   },
   en: {
     desc: "slv_visual is a Ukraine-based web development and product design studio building fast, high-quality websites, online stores and brand experiences in English and Ukrainian.",
@@ -336,6 +382,201 @@ function faqScript(lang) {
 
 const FAQ_LD = { uk: faqScript("uk"), en: faqScript("en") };
 
+/* ------------------------------------------- structured data: service pages */
+/* Everything a rich result or an AI answer needs about the three commercial
+   pages: what the service is, what it costs, and the questions the page already
+   answers. The prices are stated here as well as in the page's own tables —
+   unavoidable, because a table is prose to a parser — so if a price changes,
+   both move together. The FAQ, by contrast, is read back out of the page so it
+   cannot drift; see pageFaq(). */
+
+/* Where we actually take work. Named explicitly rather than left as
+   "Worldwide", which tells a search engine nothing: the cities are the ones
+   people put in the query ("розробка сайтів Київ"), and everything is remote,
+   so this is a statement about clients served, not about offices held. */
+const AREA_SERVED = [
+  { "@type": "Country", name: "Ukraine" },
+  { "@type": "City", name: "Kyiv" },
+  { "@type": "City", name: "Kharkiv" },
+  { "@type": "City", name: "Odesa" },
+  { "@type": "City", name: "Dnipro" },
+  { "@type": "City", name: "Lviv" },
+  { "@type": "City", name: "Zaporizhzhia" },
+  { "@type": "City", name: "Vinnytsia" },
+  { "@type": "Country", name: "Poland" },
+  { "@type": "Country", name: "Germany" },
+  { "@type": "Country", name: "United States" },
+  { "@type": "Country", name: "Canada" },
+  { "@type": "Country", name: "United Kingdom" },
+];
+
+const SERVICE_LD = {
+  "price.html": {
+    uk: {
+      name: "Розробка сайтів під ключ",
+      desc: "Створення сайтів під ключ: лендінги від $400 та інтернет-магазини від $900. Дизайн, розробка, домен, запуск, базове SEO і перший місяць підтримки безкоштовно.",
+      crumb: "Ціни на створення сайту",
+      offers: [
+        ["Лендінг / корпоративний сайт під ключ", 400],
+        ["Інтернет-магазин під ключ", 900],
+        ["Повна SEO-оптимізація сайту", 300],
+        ["Підключення оплати на сайті", 400],
+        ["Адмін-панель для самостійних правок", 300],
+        ["Щомісячна підтримка сайту", 100],
+      ],
+    },
+    en: {
+      name: "Website development",
+      desc: "Custom website development: landing pages from $400 and online stores from $900. Design, build, domain, launch, SEO basics and the first month of support free.",
+      crumb: "Website pricing",
+      offers: [
+        ["Landing / corporate website", 400],
+        ["Online store", 900],
+        ["Full SEO optimisation", 300],
+        ["Online payment integration", 400],
+        ["Admin panel for self-service edits", 300],
+        ["Monthly website support", 100],
+      ],
+    },
+  },
+  "landing.html": {
+    uk: {
+      name: "Створення лендінга під ключ",
+      desc: "Розробка односторінкового сайту (лендінга) під ключ від $400: дизайн, верстка, тексти, домен, запуск і перший місяць підтримки безкоштовно. Строк від 4 днів.",
+      crumb: "Лендінг під ключ",
+      offers: [["Лендінг під ключ", 400], ["Копірайтинг для лендінга", 100], ["Онлайн-запис на послугу", 100]],
+    },
+    en: {
+      name: "Landing page development",
+      desc: "One-page landing site built end to end from $400: design, build, copy, domain, launch and the first month of support free. Live in four days.",
+      crumb: "Landing page development",
+      offers: [["Landing page", 400], ["Landing page copywriting", 100], ["Online booking", 100]],
+    },
+  },
+  "online-store.html": {
+    uk: {
+      name: "Створення інтернет-магазину під ключ",
+      desc: "Розробка інтернет-магазину під ключ від $900: каталог товарів, кошик, оформлення замовлення, оплата карткою, Нова Пошта та адмін-панель.",
+      crumb: "Інтернет-магазин під ключ",
+      offers: [
+        ["Інтернет-магазин під ключ", 900],
+        ["Оплата карткою, Google Pay, Apple Pay", 400],
+        ["Інтеграція Нової Пошти", 200],
+        ["Адмін-панель магазину", 300],
+      ],
+    },
+    en: {
+      name: "Online store development",
+      desc: "Custom e-commerce store from $900: product catalogue, cart, checkout, card payments, delivery integration and an admin panel.",
+      crumb: "Online store development",
+      offers: [
+        ["Online store", 900],
+        ["Card, Google Pay and Apple Pay payments", 400],
+        ["Delivery integration", 200],
+        ["Store admin panel", 300],
+      ],
+    },
+  },
+};
+
+/* The service pages keep each language in one big [data-lang-block] wrapper
+   rather than per-sentence spans, so the two halves are split on the comment
+   banners in the markup — a fixed anchor we control — instead of trying to
+   regex-match a closing tag across nested divs. */
+function pageFaq(html, lang) {
+  const UK = "<!-- ==================== УКРАЇНСЬКА ==================== -->";
+  const EN = "<!-- ==================== ENGLISH ==================== -->";
+  const iUk = html.indexOf(UK);
+  const iEn = html.indexOf(EN);
+  if (iUk === -1 || iEn === -1) return [];
+  const part = lang === "en"
+    ? html.slice(iEn, html.indexOf("</main>", iEn))
+    : html.slice(iUk, iEn);
+
+  const strip = (t) => t
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/g, " ").replace(/&mdash;/g, "—")
+    .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ").trim();
+
+  const out = [];
+  for (const d of part.match(/<details[^>]*>[\s\S]*?<\/details>/g) || []) {
+    const q = strip((d.match(/<summary>([\s\S]*?)<\/summary>/) || [])[1] || "");
+    const a = (d.match(/<p>[\s\S]*?<\/p>/g) || []).map(strip).filter(Boolean).join(" ");
+    if (q && a) out.push({ q, a });
+  }
+  return out;
+}
+
+function pageLd(file, lang) {
+  const cfg = SERVICE_LD[file] && SERVICE_LD[file][lang];
+  if (!cfg) return "";
+  const base = ORIGIN + (lang === "en" ? "/en" : "");
+  const self = base + (PAGE_PATH[file] || "/");
+  const graph = [
+    {
+      "@type": "Service",
+      "@id": self + "#service",
+      name: cfg.name,
+      description: cfg.desc,
+      serviceType: cfg.name,
+      provider: { "@id": ORIGIN + "/#studio" },
+      areaServed: AREA_SERVED,
+      availableLanguage: ["uk", "en"],
+      url: self,
+      offers: cfg.offers.map(([name, price]) => ({
+        "@type": "Offer",
+        name,
+        price: String(price),
+        priceCurrency: "USD",
+        priceSpecification: {
+          "@type": "PriceSpecification",
+          price: String(price),
+          priceCurrency: "USD",
+          valueAddedTaxIncluded: false,
+          // every figure on these pages is a floor, never a ceiling
+          minPrice: String(price),
+        },
+        availability: "https://schema.org/InStock",
+        url: self,
+      })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": self + "#crumbs",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "slv_visual", item: base + "/" },
+        { "@type": "ListItem", position: 2, name: cfg.crumb, item: self },
+      ],
+    },
+  ];
+
+  const faq = pageFaq(PAGES[file], lang);
+  if (faq.length >= 2) {
+    graph.push({
+      "@type": "FAQPage",
+      "@id": self + "#faq",
+      inLanguage: lang,
+      mainEntity: faq.map((i) => ({
+        "@type": "Question",
+        name: i.q,
+        acceptedAnswer: { "@type": "Answer", text: i.a },
+      })),
+    });
+  }
+
+  const json = JSON.stringify({ "@context": "https://schema.org", "@graph": graph })
+    .replace(/</g, "\\u003c");
+  return '  <script type="application/ld+json">' + json + "</script>";
+}
+
+/* Built once per isolate: the free plan caps CPU at 10ms per request, which is
+   nowhere near enough to re-serialise this on every hit. */
+const PAGE_LD = {};
+for (const file of Object.keys(SERVICE_LD)) {
+  PAGE_LD[file] = { uk: pageLd(file, "uk"), en: pageLd(file, "en") };
+}
+
 /* ------------------------------------------------------------------ pages */
 function servePage(file, env, lang) {
   const version =
@@ -361,7 +602,11 @@ function servePage(file, env, lang) {
     .replace(/__PATH_EN__/g, "/en" + p)
     .replace(/__OGLOCALE__/g, lang === "en" ? "en_US" : "uk_UA")
     .replace(/__OGALT__/g, lang === "en" ? "uk_UA" : "en_US");
-  if (meta) html = html.replace(/__TITLE__/g, meta.title).replace(/__DESC__/g, meta.desc);
+  // function replacements, not strings: every title here contains "$400", and
+  // String.replace reads "$4" in a replacement as a capture-group reference.
+  if (meta) {
+    html = html.replace(/__TITLE__/g, () => meta.title).replace(/__DESC__/g, () => meta.desc);
+  }
 
   const ld = LD[lang] || LD.en;
   html = html
@@ -371,7 +616,9 @@ function servePage(file, env, lang) {
     .replace(/__LD_SITEDESC__/g, ld.siteDesc)
     .replace(/__LD_SERVICETYPE__/g, JSON.stringify(ld.serviceType))
     .replace(/__LD_KNOWSABOUT__/g, JSON.stringify(ld.knowsAbout))
-    .replace(/__FAQ_LD__/g, file === "index.html" ? FAQ_LD[lang] || "" : "");
+    .replace(/__LD_AREA__/g, () => JSON.stringify(AREA_SERVED))
+    .replace(/__FAQ_LD__/g, file === "index.html" ? FAQ_LD[lang] || "" : "")
+    .replace(/__PAGE_LD__/g, () => (PAGE_LD[file] && PAGE_LD[file][lang]) || "");
 
   return new Response(html, {
     headers: {

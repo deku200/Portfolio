@@ -2,7 +2,11 @@
 <!-- Every page exists in Ukrainian at the root and in English under /en/.
      Both copies are listed, and each one repeats the complete set of
      alternates — Google only honours hreflang when the references are
-     reciprocal and self-referencing. -->
+     reciprocal and self-referencing.
+
+     Generated: keep it that way. Adding a page means adding it to PAGE_PATH in
+     worker/index.js AND here; a URL the sitemap does not name is a URL Google
+     finds late, or not at all. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
@@ -10,6 +14,7 @@
     <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/" />
+    <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -18,15 +23,71 @@
     <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/" />
+    <lastmod>2026-08-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.slv-visual.online/price</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/price" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/price" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/price" />
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.slv-visual.online/en/price</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/price" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/price" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/price" />
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.slv-visual.online/landing</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/landing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/landing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/landing" />
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.slv-visual.online/en/landing</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/landing" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/landing" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/landing" />
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.slv-visual.online/online-store</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/online-store" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/online-store" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/online-store" />
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.slv-visual.online/en/online-store</loc>
+    <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/online-store" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/online-store" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/online-store" />
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.slv-visual.online/projects</loc>
     <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/projects" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/projects" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/projects" />
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
@@ -34,7 +95,8 @@
     <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/projects" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/projects" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/projects" />
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-08-23</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
@@ -42,6 +104,7 @@
     <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/privacy" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/privacy" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/privacy" />
+    <lastmod>2026-08-23</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -50,6 +113,7 @@
     <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/privacy" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/privacy" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/privacy" />
+    <lastmod>2026-08-23</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -58,6 +122,7 @@
     <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/terms" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/terms" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/terms" />
+    <lastmod>2026-08-23</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -66,6 +131,7 @@
     <xhtml:link rel="alternate" hreflang="uk" href="https://www.slv-visual.online/terms" />
     <xhtml:link rel="alternate" hreflang="en" href="https://www.slv-visual.online/en/terms" />
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.slv-visual.online/en/terms" />
+    <lastmod>2026-08-23</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
