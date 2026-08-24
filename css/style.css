@@ -887,20 +887,76 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
 }
 
 /* ---- industry ---- */
-.calc-select-wrap { display: block; position: relative; max-width: 34rem; }
-.calc-select {
-  width: 100%; appearance: none; -webkit-appearance: none;
-  background: #050505; border: 1px solid #2a2a2a; color: var(--fg);
-  font-family: inherit; font-size: .84rem; letter-spacing: .04em;
-  padding: .85rem 2.6rem .85rem 1rem;
+/* A native <select> hands its popup to the operating system, which draws it in
+   the OS's own chrome — a white sheet with a blue highlight, in the middle of a
+   black terminal — and no stylesheet can reach inside it. So this is a combobox
+   we draw ourselves. It keeps the keyboard contract of a select and adds the
+   two things fifty-five options need: groups, and a search box. */
+.calc-combo { position: relative; display: block; max-width: 34rem; }
+
+.cb-trigger {
+  width: 100%; display: flex; align-items: center; gap: 1rem;
+  background: #050505; border: 1px solid #2a2a2a; color: #6a6a6a;
+  font-family: inherit; font-size: .84rem; letter-spacing: .04em; text-align: left;
+  padding: .85rem 1rem; cursor: pointer;
+  transition: border-color .25s ease, color .25s ease;
 }
-.calc-select:focus { outline: none; border-color: var(--accent); }
-.calc-select option { background: #050505; color: var(--fg); }
-.calc-select-wrap::after {
-  content: "\25BC"; position: absolute; right: 1.05rem; top: 50%;
-  transform: translateY(-50%); color: var(--accent); font-size: .55rem;
-  pointer-events: none;
+.cb-trigger:hover { border-color: #3d3d3d; }
+.calc-combo.is-set .cb-trigger { color: var(--fg); }
+.calc-combo.is-open .cb-trigger,
+.cb-trigger:focus-visible { outline: none; border-color: var(--accent); }
+.cb-value { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cb-caret { color: var(--accent); font-size: .55rem; transition: transform .25s ease; }
+.calc-combo.is-open .cb-caret { transform: rotate(180deg); }
+
+/* overlaps the trigger's bottom border by a pixel so the two read as one shape */
+.cb-panel {
+  position: absolute; z-index: 40; top: calc(100% - 1px); left: 0; right: 0;
+  background: #050505; border: 1px solid var(--accent);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, .8);
 }
+.cb-search {
+  width: 100%; background: transparent; border: 0; border-bottom: 1px solid #1f1f1f;
+  color: var(--fg); font-family: inherit; font-size: .8rem; letter-spacing: .04em;
+  padding: .75rem 1rem;
+}
+.cb-search::placeholder { color: #4a4a4a; }
+.cb-search:focus { outline: none; border-bottom-color: var(--green); }
+
+.cb-list {
+  list-style: none; margin: 0; padding: .3rem 0 .4rem;
+  max-height: min(46vh, 21rem); overflow-y: auto; overscroll-behavior: contain;
+  scrollbar-width: thin; scrollbar-color: #2f2f2f transparent;
+}
+.cb-list::-webkit-scrollbar { width: 8px; }
+.cb-list::-webkit-scrollbar-track { background: transparent; }
+.cb-list::-webkit-scrollbar-thumb { background: #2f2f2f; }
+
+.cb-group {
+  padding: .8rem 1rem .35rem; font-size: .6rem; letter-spacing: .16em;
+  text-transform: uppercase; color: #5e5e5e;
+}
+.cb-group::before { content: "// "; }
+.cb-list > .cb-group:first-child { padding-top: .45rem; }
+
+.cb-opt {
+  position: relative; padding: .5rem 1rem .5rem 1.75rem;
+  font-size: .82rem; color: var(--fg); cursor: pointer;
+}
+/* one marker column shared by every state: centred on the row rather than
+   sat on the text baseline, so changing the glyph size cannot shift it */
+.cb-opt::before {
+  content: "\00B7"; position: absolute; left: 1rem; top: 50%;
+  transform: translateY(-50%); color: #3a3a3a; line-height: 1;
+}
+.cb-opt[aria-selected="true"] { color: var(--green); }
+.cb-opt[aria-selected="true"]::before { content: "\25CF"; color: var(--green); font-size: .5em; }
+/* after the selected rule on purpose: where a row is both, the pointer wins */
+.cb-opt.is-active { background: rgba(157, 255, 158, .09); color: var(--green); }
+.cb-opt.is-active::before { content: "\203A"; color: var(--green); font-size: 1em; }
+.cb-clear { color: #6a6a6a; }
+
+.cb-empty { padding: .85rem 1rem 1rem; font-size: .78rem; color: var(--dim); }
 
 /* ---- what the base price already covers ---- */
 .calc-included {

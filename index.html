@@ -356,9 +356,19 @@ __FAQ_LD__
                 <span data-lang-block="uk">На ціну не впливає — але ми одразу бачимо, з чим працюємо і що вже робили у вашій ніші.</span>
                 <span data-lang-block="en">Does not affect the price — it tells us what we are working with and what we have already built in your niche.</span>
               </p>
-              <label class="calc-select-wrap">
-                <select class="calc-select" id="calc-niche"></select>
-              </label>
+              <div class="calc-combo" id="calc-niche">
+                <button type="button" class="cb-trigger" aria-haspopup="listbox" aria-expanded="false">
+                  <span class="cb-value"></span>
+                  <span class="cb-caret" aria-hidden="true">&#9660;</span>
+                </button>
+                <div class="cb-panel" hidden>
+                  <input class="cb-search" type="text" role="combobox" autocomplete="off"
+                         spellcheck="false" aria-expanded="true" aria-controls="cb-list"
+                         aria-autocomplete="list" />
+                  <ul class="cb-list" id="cb-list" role="listbox"></ul>
+                  <p class="cb-empty" hidden></p>
+                </div>
+              </div>
             </fieldset>
 
             <fieldset class="calc-step">

@@ -1469,63 +1469,93 @@ function applyLocalOverrides() {
     { id: "multi", price: 120, uk: "Особистий кабінет клієнта", en: "Customer account area" },
   ];
 
-  const NICHES = [
-    ["Барбершоп / перукарня", "Barbershop / hair salon"],
-    ["Салон краси", "Beauty salon"],
-    ["Нігтьова студія", "Nail studio"],
-    ["Косметологія", "Cosmetology"],
-    ["Стоматологія", "Dentistry"],
-    ["Медична клініка", "Medical clinic"],
-    ["Ветклініка / зоосалон", "Vet clinic / pet grooming"],
-    ["Психолог / терапевт", "Psychologist / therapist"],
-    ["Фітнес-клуб / зал", "Gym / fitness club"],
-    ["Студія танцю або йоги", "Dance or yoga studio"],
-    ["Кав'ярня / ресторан", "Cafe / restaurant"],
-    ["Доставка їжі", "Food delivery"],
-    ["Кондитерська / випічка", "Bakery / patisserie"],
-    ["Автосервіс", "Car service"],
-    ["Автомийка / детейлінг", "Car wash / detailing"],
-    ["Автосалон / підбір авто", "Car dealership / car sourcing"],
-    ["Шиномонтаж", "Tyre service"],
-    ["Будівництво / ремонт", "Construction / renovation"],
-    ["Меблі на замовлення", "Custom furniture"],
-    ["Вікна, двері, стелі", "Windows, doors, ceilings"],
-    ["Клінінг", "Cleaning services"],
-    ["Логістика / вантажоперевезення", "Logistics / freight"],
-    ["Юридичні послуги", "Legal services"],
-    ["Бухгалтерія / фінанси", "Accounting / finance"],
-    ["Нерухомість / агентство", "Real estate agency"],
-    ["Освіта / курси", "Education / courses"],
-    ["Школа іноземних мов", "Language school"],
-    ["Дитячий центр / садок", "Kids centre / preschool"],
-    ["Фотограф / відеограф", "Photographer / videographer"],
-    ["Організація свят / event", "Events / party planning"],
-    ["Весільні послуги", "Wedding services"],
-    ["Туризм / тури", "Travel / tours"],
-    ["Готель / хостел / оренда житла", "Hotel / hostel / short lets"],
-    ["Оренда обладнання чи авто", "Equipment or car rental"],
-    ["Магазин одягу", "Clothing store"],
-    ["Магазин взуття", "Shoe store"],
-    ["Ювелірні вироби / аксесуари", "Jewellery / accessories"],
-    ["Косметика і парфуми", "Cosmetics & perfume"],
-    ["Дитячі товари", "Kids products"],
-    ["Зоотовари", "Pet supplies"],
-    ["Квіти / флористика", "Flowers / florist"],
-    ["Handmade / вироби ручної роботи", "Handmade goods"],
-    ["3D-друк", "3D printing"],
-    ["Електроніка і гаджети", "Electronics & gadgets"],
-    ["Спортивні товари", "Sports goods"],
-    ["Продукти / фермерство", "Groceries / farming"],
-    ["Товари для дому", "Homeware"],
-    ["Мерч / власний бренд одягу", "Merch / own clothing brand"],
-    ["Digital-продукт / SaaS", "Digital product / SaaS"],
-    ["Маркетингове агентство", "Marketing agency"],
-    ["Блогер / особистий бренд", "Blogger / personal brand"],
-    ["Інфобізнес / онлайн-курси", "Info-business / online courses"],
-    ["Благодійний фонд", "Charity foundation"],
-    ["Виробництво / B2B", "Manufacturing / B2B"],
-    ["Інша сфера", "Something else"],
+  /* Fifty-five industries in one flat alphabetical run is a scroll, not a
+     choice, so they are grouped by the kind of business rather than listed.
+     Within a group the order is NOT fixed here: renderNiches sorts with
+     localeCompare in the language on screen, so both lists come out
+     alphabetical and neither has to be re-sorted by hand when one changes. */
+  const NICHE_GROUPS = [
+    { uk: "Краса та здоров'я", en: "Beauty & health", items: [
+      ["Барбершоп / перукарня", "Barbershop / hair salon"],
+      ["Салон краси", "Beauty salon"],
+      ["Нігтьова студія", "Nail studio"],
+      ["Косметологія", "Cosmetology"],
+      ["Стоматологія", "Dentistry"],
+      ["Медична клініка", "Medical clinic"],
+      ["Ветклініка / зоосалон", "Vet clinic / pet grooming"],
+      ["Психолог / терапевт", "Psychologist / therapist"],
+    ] },
+    { uk: "Спорт і активності", en: "Sport & activities", items: [
+      ["Фітнес-клуб / зал", "Gym / fitness club"],
+      ["Студія танцю або йоги", "Dance or yoga studio"],
+    ] },
+    { uk: "Їжа та напої", en: "Food & drink", items: [
+      ["Кав'ярня / ресторан", "Cafe / restaurant"],
+      ["Доставка їжі", "Food delivery"],
+      ["Кондитерська / випічка", "Bakery / patisserie"],
+    ] },
+    { uk: "Авто", en: "Automotive", items: [
+      ["Автосервіс", "Car service"],
+      ["Автомийка / детейлінг", "Car wash / detailing"],
+      ["Автосалон / підбір авто", "Car dealership / car sourcing"],
+      ["Шиномонтаж", "Tyre service"],
+    ] },
+    { uk: "Дім і ремонт", en: "Home & renovation", items: [
+      ["Будівництво / ремонт", "Construction / renovation"],
+      ["Меблі на замовлення", "Custom furniture"],
+      ["Вікна, двері, стелі", "Windows, doors, ceilings"],
+      ["Клінінг", "Cleaning services"],
+    ] },
+    { uk: "Послуги для бізнесу", en: "Business services", items: [
+      ["Юридичні послуги", "Legal services"],
+      ["Бухгалтерія / фінанси", "Accounting / finance"],
+      ["Логістика / вантажоперевезення", "Logistics / freight"],
+      ["Нерухомість / агентство", "Real estate agency"],
+      ["Маркетингове агентство", "Marketing agency"],
+      ["Виробництво / B2B", "Manufacturing / B2B"],
+    ] },
+    { uk: "Освіта", en: "Education", items: [
+      ["Освіта / курси", "Education / courses"],
+      ["Школа іноземних мов", "Language school"],
+      ["Дитячий центр / садок", "Kids centre / preschool"],
+      ["Інфобізнес / онлайн-курси", "Info-business / online courses"],
+    ] },
+    { uk: "Події та подорожі", en: "Events & travel", items: [
+      ["Фотограф / відеограф", "Photographer / videographer"],
+      ["Організація свят / event", "Events / party planning"],
+      ["Весільні послуги", "Wedding services"],
+      ["Туризм / тури", "Travel / tours"],
+      ["Готель / хостел / оренда житла", "Hotel / hostel / short lets"],
+      ["Оренда обладнання чи авто", "Equipment or car rental"],
+    ] },
+    { uk: "Магазин", en: "Retail", items: [
+      ["Магазин одягу", "Clothing store"],
+      ["Магазин взуття", "Shoe store"],
+      ["Мерч / власний бренд одягу", "Merch / own clothing brand"],
+      ["Ювелірні вироби / аксесуари", "Jewellery / accessories"],
+      ["Косметика і парфуми", "Cosmetics & perfume"],
+      ["Дитячі товари", "Kids products"],
+      ["Зоотовари", "Pet supplies"],
+      ["Квіти / флористика", "Flowers / florist"],
+      ["Handmade / вироби ручної роботи", "Handmade goods"],
+      ["3D-друк", "3D printing"],
+      ["Електроніка і гаджети", "Electronics & gadgets"],
+      ["Спортивні товари", "Sports goods"],
+      ["Продукти / фермерство", "Groceries / farming"],
+      ["Товари для дому", "Homeware"],
+    ] },
+    { uk: "Онлайн та медіа", en: "Online & media", items: [
+      ["Digital-продукт / SaaS", "Digital product / SaaS"],
+      ["Блогер / особистий бренд", "Blogger / personal brand"],
+    ] },
+    { uk: "Інше", en: "Other", items: [
+      ["Благодійний фонд", "Charity foundation"],
+      ["Інша сфера", "Something else"],
+    ] },
   ];
+
+  // flat lookup; the value stored in state is always the Ukrainian label
+  const NICHES = NICHE_GROUPS.reduce((all, g) => all.concat(g.items), []);
 
   /* ------------------------------------------------------------------- state */
   const state = {
@@ -1572,20 +1602,159 @@ function applyLocalOverrides() {
       <span class="cc-price">${bi("від ", "from ")}${money(c.base)}</span>
     </label>`).join("");
 
-  /* <option> can't hold [data-lang-block] markup, so the niche list is the one
-     place that really has to be re-rendered when the language changes */
-  function renderNiches() {
-    const sel = el("calc-niche");
-    sel.innerHTML =
-      `<option value="">${lang === "uk" ? "— оберіть сферу —" : "— pick your industry —"}</option>` +
-      NICHES.map(([uk, en]) => `<option value="${uk}">${lang === "uk" ? uk : en}</option>`).join("");
-    sel.value = state.niche; // the value is always the Ukrainian label
+  /* ------------------------------------------------ industry combobox ---- */
+  /* A native <select> renders its popup in the operating system's own chrome,
+     which no stylesheet can reach — a white sheet with a blue highlight, in the
+     middle of a black terminal. This replaces it with a listbox we draw, and
+     adds the search fifty-five options need.
+
+     The keyboard contract of the thing it replaces is kept: arrows move,
+     Home/End jump, Enter picks, Escape closes and hands focus back. State
+     still stores the Ukrainian label, so nothing downstream changed. */
+  function nicheCombo() {
+    const root = el("calc-niche");
+    const trigger = root.querySelector(".cb-trigger");
+    const valueEl = root.querySelector(".cb-value");
+    const panel = root.querySelector(".cb-panel");
+    const search = root.querySelector(".cb-search");
+    const list = root.querySelector(".cb-list");
+    const emptyEl = root.querySelector(".cb-empty");
+    const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+    const PLACEHOLDER = lang === "uk" ? "— оберіть сферу —" : "— pick your industry —";
+    search.placeholder = lang === "uk" ? "почніть вводити…" : "start typing…";
+    search.setAttribute("aria-label", lang === "uk" ? "Пошук сфери" : "Search industries");
+    emptyEl.textContent = lang === "uk"
+      ? "// нічого не знайшлося — виберіть «Інша сфера»"
+      : "// nothing matched — pick \"Something else\"";
+
+    let rows = [];    // values of the options currently on screen, in view order
+    let active = -1;
+
+    // people type the apostrophe three different ways, and "кав'ярня" is
+    // unfindable if the one they used is not the one in the data
+    const norm = (t) => t.toLowerCase().replace(/['\u2019\u02BC`]/g, "'").trim();
+    const nameOf = (v) => {
+      const hit = NICHES.find((x) => x[0] === v);
+      return hit ? (lang === "uk" ? hit[0] : hit[1]) : v;
+    };
+
+    function paint(query) {
+      const needle = norm(query || "");
+      rows = [];
+      let html = "";
+
+      const opt = (value, text, cls) => {
+        const i = rows.length;
+        rows.push(value);
+        html += '<li class="cb-opt' + (cls ? " " + cls : "") + '" role="option"' +
+          ' id="cb-o' + i + '" data-v="' + esc(value) + '"' +
+          ' aria-selected="' + (state.niche === value) + '">' + esc(text) + "</li>";
+      };
+
+      // the way back to "not chosen", which the old <select> got for free;
+      // hidden while filtering, where it would only be noise
+      if (!needle) opt("", PLACEHOLDER, "cb-clear");
+
+      for (const g of NICHE_GROUPS) {
+        const hits = g.items
+          .filter(([uk, en]) => !needle || norm(uk).includes(needle) || norm(en).includes(needle))
+          .sort((a, b) => lang === "uk"
+            ? a[0].localeCompare(b[0], "uk")
+            : a[1].localeCompare(b[1], "en"));
+        if (!hits.length) continue;
+        html += '<li class="cb-group" role="presentation">' +
+          esc(lang === "uk" ? g.uk : g.en) + "</li>";
+        for (const [uk, en] of hits) opt(uk, lang === "uk" ? uk : en);
+      }
+
+      list.innerHTML = html;
+      emptyEl.hidden = rows.length > 0;
+      setActive(rows.length ? 0 : -1);
+    }
+
+    function setActive(i) {
+      const opts = list.querySelectorAll(".cb-opt");
+      opts.forEach((o) => o.classList.remove("is-active"));
+      active = i;
+      if (i < 0 || !opts[i]) { search.removeAttribute("aria-activedescendant"); return; }
+      const o = opts[i];
+      o.classList.add("is-active");
+      search.setAttribute("aria-activedescendant", o.id);
+      // scroll the list, never the page: scrollIntoView here would drag the
+      // whole calculator out from under the open panel
+      const lr = list.getBoundingClientRect(), orr = o.getBoundingClientRect();
+      if (orr.top < lr.top) list.scrollTop -= lr.top - orr.top;
+      else if (orr.bottom > lr.bottom) list.scrollTop += orr.bottom - lr.bottom;
+    }
+
+    function open() {
+      if (!panel.hidden) return;
+      search.value = "";
+      paint("");
+      panel.hidden = false;
+      root.classList.add("is-open");
+      trigger.setAttribute("aria-expanded", "true");
+      search.focus();
+      const i = rows.indexOf(state.niche);   // start on the current choice
+      if (i >= 0) setActive(i);
+    }
+
+    function close(refocus) {
+      if (panel.hidden) return;
+      panel.hidden = true;
+      root.classList.remove("is-open");
+      trigger.setAttribute("aria-expanded", "false");
+      if (refocus) trigger.focus();
+    }
+
+    function choose(v) {
+      state.niche = v;
+      show();
+      close(true);
+      unlock();
+    }
+
+    function show() {
+      valueEl.textContent = state.niche ? nameOf(state.niche) : PLACEHOLDER;
+      root.classList.toggle("is-set", !!state.niche);
+    }
+
+    trigger.addEventListener("click", () => (panel.hidden ? open() : close(true)));
+    trigger.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); open(); }
+    });
+
+    search.addEventListener("input", () => paint(search.value));
+    search.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown") { e.preventDefault(); setActive(Math.min(active + 1, rows.length - 1)); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); setActive(Math.max(active - 1, 0)); }
+      else if (e.key === "Home") { e.preventDefault(); setActive(0); }
+      else if (e.key === "End") { e.preventDefault(); setActive(rows.length - 1); }
+      else if (e.key === "Enter") { e.preventDefault(); if (active >= 0) choose(rows[active]); }
+      else if (e.key === "Escape") { e.preventDefault(); close(true); }
+      else if (e.key === "Tab") close(false);
+    });
+
+    // mousedown, not click: the search input still holds focus, and letting it
+    // blur first would close the panel out from under the pointer
+    list.addEventListener("mousedown", (e) => {
+      const o = e.target.closest(".cb-opt");
+      if (!o) return;
+      e.preventDefault();
+      choose(o.dataset.v);
+    });
+    list.addEventListener("mousemove", (e) => {
+      const o = e.target.closest(".cb-opt");
+      if (o) setActive([].indexOf.call(list.querySelectorAll(".cb-opt"), o));
+    });
+
+    document.addEventListener("click", (e) => { if (!root.contains(e.target)) close(false); });
+
+    show();
   }
-  renderNiches();
-  // runs after the existing .lang-btn handler, so `lang` is already the new one
-  document.addEventListener("click", (e) => {
-    if (e.target.closest(".lang-btn")) renderNiches();
-  });
+  nicheCombo();
 
   el("calc-included").innerHTML =
     `<p class="ci-key">${bi("Уже входить у базову ціну", "Already in the base price")}</p>` +
@@ -1776,7 +1945,6 @@ function applyLocalOverrides() {
     const t = e.target;
     if (t.name === "calc-dev") state.dev = t.value;
     else if (t.name === "calc-cat") { state.cat = t.value; syncOnly(); renderSupport(); syncCopy(); }
-    else if (t.id === "calc-niche") state.niche = t.value;
     else if (t.dataset.group) state.groups[t.dataset.group] = t.value;
     else if (t.dataset.kind === "block") t.checked ? state.blocks.add(t.value) : state.blocks.delete(t.value);
     else if (t.dataset.kind === "service") {
