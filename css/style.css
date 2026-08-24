@@ -182,6 +182,26 @@ button { font-family: inherit; cursor: pointer; }
   right: 4vw; bottom: 6vh;
   display: flex; flex-direction: column; align-items: flex-end; gap: .7rem;
 }
+/* Telegram and "click to break" are secondary to "calculate the price", and
+   three solid accent blocks on one screen means none of them is the one to
+   press. These two drop to outlines: still findable in the corner, no longer
+   competing with the CTA. They light up on hover, which is where someone who
+   was looking for them will already be. */
+.hero-corner-bottom-right .btn-orange {
+  background: transparent;
+  color: var(--dim);
+  border: 1px solid #262626;
+  font-weight: 400;
+  transition: color .3s ease, border-color .3s ease, background .3s ease, transform .3s ease;
+}
+.hero-corner-bottom-right .btn-orange:hover {
+  background: transparent;
+  color: var(--fg);
+  border-color: #4a4a4a;
+  transform: translateY(-2px);
+}
+/* the break control is a <span>, so it has no pointer of its own to inherit */
+#break-btn { cursor: pointer; }
 
 /* ============ work ============ */
 .work { padding: 10vh 0; background: #000; }
