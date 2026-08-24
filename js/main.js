@@ -333,16 +333,42 @@ function applyIncomingHash() {
 /* ---------- 2b. CURSOR TRAIL (sparse dim symbols following the mouse) ---------- */
 {
   const cv = document.createElement("canvas");
-  cv.style.cssText = "position:fixed;inset:0;z-index:85;pointer-events:none;";
+  /* width/height in the style, not just inset:0. A <canvas> is a replaced
+     element: with width:auto its layout box comes from the bitmap attribute,
+     and "left:0;right:0" is quietly dropped as over-constrained. So the box was
+     as wide as innerWidth happened to be the last time fit() ran — and if that
+     was ever wider than the screen (a WebView reporting the pre-toolbar width,
+     a rotation, a resize the listener missed) the canvas widened the layout
+     viewport with it. overflow-x:hidden on <html> hides that horizontally, but
+     the fixed header is laid out against the widened viewport, which is how the
+     language switch ended up past the right edge of a phone. */
+  cv.style.cssText =
+    "position:fixed;top:0;left:0;width:100%;height:100%;z-index:85;pointer-events:none;";
   document.body.appendChild(cv);
   const ctx = cv.getContext("2d");
   const TRAIL_CHARS = "·:;+*x%#?!<>[]{}=~^";
   const parts = [];
   let lastSpawn = 0;
 
-  function fit() { cv.width = innerWidth; cv.height = innerHeight; }
+  /* Size the bitmap from the element's own box, not from innerWidth. The trail
+     is drawn in clientX/clientY, which only line up with canvas coordinates
+     while the two are equal — and now that the box is width:100% rather than
+     the bitmap's intrinsic size, innerWidth is no longer guaranteed to be it.
+     A ResizeObserver rather than the resize event, because the box also changes
+     when a mobile toolbar collapses, which fires no resize at all. */
+  function fit() {
+    const r = cv.getBoundingClientRect();
+    const w = Math.max(1, Math.round(r.width));
+    const h = Math.max(1, Math.round(r.height));
+    if (cv.width !== w) cv.width = w;     // assigning clears the canvas, so
+    if (cv.height !== h) cv.height = h;   // only do it when it really changed
+  }
   fit();
+  if (typeof ResizeObserver === "function") new ResizeObserver(fit).observe(cv);
+  // and the window events too: two independent triggers, so a throttled or
+  // missing observer callback cannot be the single thing this depends on
   addEventListener("resize", fit);
+  addEventListener("orientationchange", fit);
 
   addEventListener("pointermove", e => {
     const now = performance.now();
