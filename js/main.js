@@ -330,6 +330,40 @@ function applyIncomingHash() {
   })();
 }
 
+/* ---------- 2a2. PIN THE HEADER TO THE PAGE'S WIDTH ---------- */
+/* The header is the only position:fixed element on the page, and on a phone it
+   was the only thing overflowing to the right: every element in normal flow sat
+   correctly inside the 5vw padding while the language switch hung off the edge
+   of the screen.
+
+   That difference is the whole diagnosis. A fixed element is sized against the
+   browser's layout viewport, not against the document, and a mobile browser is
+   free to make the layout viewport wider than the screen — which it does, for
+   its own reasons, in in-app WebViews especially. Everything in flow is bounded
+   by <body>; only the fixed header follows the wider box, so the menu drifts
+   right by half the excess and the switch, pinned right, by all of it.
+
+   No engine available here reproduces it, so rather than guess at which
+   browser behaviour widens the viewport, the header is told to be exactly as
+   wide as the element the rest of the page is laid out in. Then the two cannot
+   disagree, whatever the viewport is doing. */
+{
+  const header = $(".site-header");
+  if (header) {
+    const pin = () => {
+      const w = document.body.clientWidth;
+      if (w > 0) header.style.width = w + "px";
+    };
+    pin();
+    addEventListener("resize", pin);
+    addEventListener("orientationchange", pin);
+    // the toolbar collapsing on a phone resizes the body without firing resize
+    if (typeof ResizeObserver === "function") new ResizeObserver(pin).observe(document.body);
+    // fonts land after first paint and can change the body's scrollbar state
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(pin);
+  }
+}
+
 /* ---------- 2b. CURSOR TRAIL (sparse dim symbols following the mouse) ---------- */
 {
   const cv = document.createElement("canvas");
