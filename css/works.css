@@ -26,6 +26,19 @@
 .works-header .logo { font-weight: 700; font-size: 1.05rem; letter-spacing: .04em; color: var(--fg); text-decoration: none; }
 .works-header .logo:hover { color: var(--green); }
 .works-nav { display: flex; align-items: center; gap: 1rem; }
+/* the menu sits left of the language switch and the calculate button */
+.works-header-nav { margin-right: .4rem; }
+
+@media (max-width: 860px) {
+  .works-header { flex-wrap: wrap; row-gap: .55rem; }
+  .works-header .logo { order: 1; }
+  .works-nav { order: 2; margin-left: auto; }
+  .works-header-nav {
+    order: 3; flex-basis: 100%; margin-right: 0;
+    gap: .3rem .85rem; font-size: .6rem;
+  }
+  .works-header-nav a + a::before { content: none; }
+}
 .works-lang { display: flex; gap: .35rem; }
 /* targets the attribute, not the element: these are links now, so that the
    other language is crawlable rather than only reachable by script */

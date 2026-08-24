@@ -290,6 +290,30 @@ const META = {
   },
 };
 
+/* The header menu. Written once here rather than six times across the page
+   files: four <a> elements copied into every header is four chances for one of
+   them to be forgotten when a page is added or renamed. Each page drops it in
+   through __NAV__ and wraps it in whatever its own header calls a nav. */
+const NAV = [
+  ["/price", "ЦІНИ", "PRICING"],
+  ["/landing", "ЛЕНДІНГ", "LANDING PAGES"],
+  ["/online-store", "ІНТЕРНЕТ-МАГАЗИН", "ONLINE STORES"],
+  ["/projects", "ПРОЄКТИ", "PROJECTS"],
+];
+
+function navHtml(file, lang) {
+  const base = lang === "en" ? "/en" : "";
+  const here = PAGE_PATH[file];
+  return NAV.map(([path, uk, en]) => {
+    // a menu that never says where you are is a list of links, not a menu
+    const current = path === here;
+    return '<a href="' + base + path + '"' +
+      (current ? ' class="is-current" aria-current="page"' : "") + ">" +
+      '<span data-lang-block="uk">' + uk + "</span>" +
+      '<span data-lang-block="en">' + en + "</span></a>";
+  }).join("");
+}
+
 // the single URL each page+language is allowed to answer on
 const canonicalPath = (file, lang) =>
   (lang === "en" ? "/en" : "") + (PAGE_PATH[file] || "/");
@@ -601,7 +625,9 @@ function servePage(file, env, lang) {
     .replace(/__PATH_UK__/g, p)
     .replace(/__PATH_EN__/g, "/en" + p)
     .replace(/__OGLOCALE__/g, lang === "en" ? "en_US" : "uk_UA")
-    .replace(/__OGALT__/g, lang === "en" ? "uk_UA" : "en_US");
+    .replace(/__OGALT__/g, lang === "en" ? "uk_UA" : "en_US")
+    // already carries resolved hrefs, so it must not be fed back through __BASE__
+    .replace(/__NAV__/g, () => navHtml(file, lang));
   // function replacements, not strings: every title here contains "$400", and
   // String.replace reads "$4" in a replacement as a capture-group reference.
   if (meta) {

@@ -33,6 +33,10 @@
 }
 .legal-header .logo:hover { color: var(--green, #9dff9e); }
 
+/* logo | menu | language. The menu takes the slack so the other two stay
+   pinned to the edges. */
+.legal-header .header-nav { flex: 1 1 auto; justify-content: center; }
+
 .legal-lang { display: flex; gap: 0.4rem; align-items: center; }
 /* targets the attribute, not the element: these are links now */
 .legal-lang [data-set-lang] {
@@ -113,6 +117,19 @@
 .legal-footer a { color: var(--dim, #8a8a8a); text-decoration: none; }
 .legal-footer a:hover { color: var(--green, #9dff9e); }
 .legal-footer .sep { opacity: 0.4; }
+
+/* Narrow: the three-across header stops fitting, so the menu drops to its own
+   row under the logo and the language switch. */
+@media (max-width: 720px) {
+  .legal-header { flex-wrap: wrap; row-gap: .55rem; padding-bottom: .8rem; }
+  .legal-header .logo { order: 1; }
+  .legal-lang { order: 2; margin-left: auto; }
+  .legal-header .header-nav {
+    order: 3; flex-basis: 100%; justify-content: flex-start;
+    gap: .3rem .85rem; font-size: .6rem;
+  }
+  .legal-header .header-nav a + a::before { content: none; }
+}
 
 /* bilingual toggle: show only the active language's blocks */
 [data-lang="en"] [data-lang-block="uk"],

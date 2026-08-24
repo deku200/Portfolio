@@ -109,19 +109,42 @@ button { font-family: inherit; cursor: pointer; }
 /* ============ header ============ */
 .site-header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-  /* logo | tagline | language — the CTA now lives in the hero, above the copy */
-  display: grid; grid-template-columns: 1fr 2fr auto;
-  gap: 2rem; align-items: start; padding: 2.2rem 4vw 1rem;
+  /* logo | menu | language — the tagline that used to sit in the middle said
+     nothing a visitor could act on, and the middle of the header is the one
+     place every page can afford to spend on navigation */
+  display: grid; grid-template-columns: auto 1fr auto;
+  gap: 1.6rem; align-items: center; padding: 1.5rem 4vw 1.1rem;
   font-size: .72rem; letter-spacing: .06em; text-transform: uppercase;
   mix-blend-mode: normal;
   transition: transform .38s ease;
 }
+.site-header .header-nav { justify-self: center; }
 /* slides up out of view when scrolling down; returns on scroll up / at top */
 .site-header.is-hidden { transform: translateY(-115%); }
 .logo { font-weight: 700; font-size: 1rem; }
 .site-header .lang { justify-self: end; text-align: right; }
 .lang-btn { background: none; border: none; color: var(--dim); font-size: .72rem; letter-spacing: .06em; padding: 0; margin-right: .6em; }
 .lang-btn.is-active { color: var(--accent); }
+
+/* ---- the header menu, shared by every page ----
+   Lives in style.css because that is the one stylesheet all three header
+   shells load: the home page's fixed .site-header, the sticky .works-header on
+   /projects, and .legal-header on the content pages. The middot separators are
+   drawn rather than marked up, so the Worker emits four plain anchors. */
+.header-nav {
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: .35rem 0;
+  font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+}
+.header-nav a {
+  color: var(--dim); text-decoration: none; white-space: nowrap;
+  transition: color .25s ease;
+}
+.header-nav a:hover { color: var(--fg); }
+.header-nav a.is-current { color: var(--accent); }
+.header-nav a + a::before {
+  content: "·"; color: #3a3a3a; margin: 0 .85em;
+}
 
 /* ============ hero ============ */
 .hero { position: relative; height: 100vh; }
@@ -506,7 +529,9 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
 
 /* --- tablet --- */
 @media (max-width: 1024px) {
-  .site-header { grid-template-columns: auto 1fr auto; gap: 1.4rem; padding: 1.6rem 4vw 1rem; }
+  .site-header { gap: 1.1rem; padding: 1.2rem 4vw .9rem; }
+  .site-header .header-nav { font-size: .64rem; }
+  .site-header .header-nav a + a::before { margin: 0 .6em; }
   .services, .clients { grid-template-columns: 1fr; gap: 2.5rem; }
   .services-cta { justify-self: start; white-space: normal; }
   .quote-section { padding: 14vh 8vw; }
@@ -517,13 +542,20 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
 /* --- mobile --- */
 @media (max-width: 768px) {
   .site-header {
-    /* only the logo and the language switch remain once the tagline is hidden */
-    grid-template-columns: auto auto; justify-content: space-between; gap: 1rem;
-    align-items: center; padding: 1.2rem 5vw .8rem;
-    background: linear-gradient(180deg, rgba(0,0,0,.85), transparent);
+    grid-template-columns: auto auto;
+    grid-template-areas: "logo lang" "nav nav";
+    justify-content: space-between; gap: .55rem 1rem;
+    align-items: center; padding: 1rem 5vw .7rem;
+    background: linear-gradient(180deg, rgba(0,0,0,.92), rgba(0,0,0,.8) 55%, transparent);
   }
-  .site-header .header-col:not(.lang) { display: none; } /* hide tagline */
-  .site-header .lang { text-align: right; }
+  .site-header .logo { grid-area: logo; }
+  .site-header .lang { grid-area: lang; text-align: right; }
+  .site-header .header-nav {
+    grid-area: nav; justify-self: start;
+    gap: .3rem .85rem; font-size: .6rem;
+  }
+  /* dots would land at the start of a wrapped line, which reads as a bullet */
+  .site-header .header-nav a + a::before { content: none; }
 
   /* hero: smaller logo, higher up; corner texts can't collide */
   .hero-logo-wrap { top: calc(30% + 60px); }
