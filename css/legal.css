@@ -125,7 +125,7 @@
   .legal-header .logo { order: 1; }
   .legal-lang { order: 2; margin-left: auto; }
   .legal-header .header-nav {
-    order: 3; flex-basis: 100%; justify-content: flex-start;
+    order: 3; flex-basis: 100%; justify-content: center;
     gap: .3rem .85rem; font-size: .6rem;
   }
   .legal-header .header-nav a + a::before { content: none; }

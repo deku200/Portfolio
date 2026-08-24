@@ -543,17 +543,24 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
 @media (max-width: 768px) {
   .site-header {
     grid-template-columns: auto auto;
-    grid-template-areas: "logo lang" "nav nav";
+    /* Flex, not grid. As a grid this was "logo lang" over a "nav nav" row, and
+       a row-spanning item feeds its own width back into the two columns it
+       spans: the menu is wider than logo + language, so it pushed the columns
+       apart until the language switch hung off the right edge of the screen.
+       Wrapping flex items carry no such obligation to each other. */
+    display: flex; flex-wrap: wrap; align-items: center;
     justify-content: space-between; gap: .55rem 1rem;
-    align-items: center; padding: 1rem 5vw .7rem;
+    padding: 1rem 5vw .7rem;
     background: linear-gradient(180deg, rgba(0,0,0,.92), rgba(0,0,0,.8) 55%, transparent);
   }
-  .site-header .logo { grid-area: logo; }
-  .site-header .lang { grid-area: lang; text-align: right; }
+  .site-header .logo { order: 1; }
+  .site-header .lang { order: 2; text-align: right; }
   .site-header .header-nav {
-    grid-area: nav; justify-self: start;
-    gap: .3rem .85rem; font-size: .6rem;
+    order: 3; flex-basis: 100%; min-width: 0;
+    justify-content: center; gap: .3rem .85rem; font-size: .6rem;
   }
+  /* the switch is the last thing on its line, so its trailing gap is overhang */
+  .site-header .lang .lang-btn:last-child { margin-right: 0; }
   /* dots would land at the start of a wrapped line, which reads as a bullet */
   .site-header .header-nav a + a::before { content: none; }
 
