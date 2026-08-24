@@ -38,7 +38,7 @@
     <!-- ==================== ENGLISH ==================== -->
     <div data-lang-block="en">
       <h1>Privacy Policy</h1>
-      <p class="legal-updated">Last updated: 17 July 2026</p>
+      <p class="legal-updated">Last updated: 24 August 2026</p>
 
       <p class="legal-intro">This policy explains what personal data slv_visual collects through this website, why we collect it, and the choices you have. We keep data collection to the minimum needed to reply to your enquiries and run the site.</p>
 
@@ -52,13 +52,14 @@
         <li><strong>Technical/server data.</strong> Like any website, our hosting and security providers automatically process standard technical information (such as IP address, browser type and timestamps) to deliver the site, keep it secure and prevent abuse.</li>
         <li><strong>Browser storage.</strong> We store your <strong>language preference</strong> and minor interface state in your browser's local storage. These are not advertising or tracking cookies. The only cookie we set is a session cookie for our private admin area, which ordinary visitors never receive.</li>
       </ul>
-      <p>We do <strong>not</strong> use third-party advertising or analytics trackers, and we do not build marketing profiles of visitors.</p>
+      <p>We do <strong>not</strong> use advertising trackers and we do not build marketing profiles of visitors. We do use one analytics tool, <strong>Plerdy</strong>, described below.</p>
 
       <h2>Third-party services</h2>
       <ul>
         <li><strong>Cloudflare</strong> — content delivery and security (DDoS/bot protection). It processes request metadata to protect the site.</li>
         <li><strong>Cloudflare Workers, D1 and KV</strong> — the application, its database and uploaded images. Contact submissions and calculator estimates are stored here.</li>
         <li><strong>Google Fonts</strong> — the site loads its typeface from Google Fonts; Google may receive your IP address as part of serving the font files.</li>
+        <li><strong>Plerdy</strong> — website analytics. It records how pages are used in aggregate: where visitors click, how far they scroll and which parts of a page get attention. This is used to make the site clearer, not to identify anyone. Plerdy receives standard technical data (such as IP address, browser and screen size) and the pages you view; it does not receive your name, your contact details or anything you type into the request form. See <a href="https://plerdy.com/privacy-policy/" target="_blank" rel="noopener noreferrer">Plerdy's privacy policy</a>.</li>
       </ul>
 
       <h2>How we use your data</h2>
@@ -86,7 +87,7 @@
     <!-- ==================== УКРАЇНСЬКА ==================== -->
     <div data-lang-block="uk">
       <h1>Політика конфіденційності</h1>
-      <p class="legal-updated">Останнє оновлення: 17 липня 2026</p>
+      <p class="legal-updated">Останнє оновлення: 24 серпня 2026</p>
 
       <p class="legal-intro">Ця політика пояснює, які персональні дані slv_visual збирає через цей сайт, навіщо ми їх збираємо та які у вас є можливості. Ми збираємо мінімум даних, потрібний лише для відповіді на ваші запити та роботи сайту.</p>
 
@@ -100,13 +101,14 @@
         <li><strong>Технічні/серверні дані.</strong> Як і будь-який сайт, наші провайдери хостингу та безпеки автоматично обробляють стандартну технічну інформацію (наприклад, IP-адресу, тип браузера та час запиту), щоб працював сайт і задля захисту від зловживань.</li>
         <li><strong>Сховище браузера.</strong> Ми зберігаємо ваш <strong>вибір мови</strong> та незначні налаштування інтерфейсу в локальному сховищі браузера. Це не рекламні та не трекінгові файли. Єдиний cookie, який ми встановлюємо, — сесійний для приватної адмін-панелі, і звичайні відвідувачі його не отримують.</li>
       </ul>
-      <p>Ми <strong>не</strong> використовуємо сторонні рекламні чи аналітичні трекери й не створюємо маркетингових профілів відвідувачів.</p>
+      <p>Ми <strong>не</strong> використовуємо рекламні трекери й не створюємо маркетингових профілів відвідувачів. Один інструмент аналітики ми таки використовуємо — <strong>Plerdy</strong>, він описаний нижче.</p>
 
       <h2>Сторонні сервіси</h2>
       <ul>
         <li><strong>Cloudflare</strong> — доставка контенту та безпека (захист від DDoS/ботів). Обробляє метадані запитів для захисту сайту.</li>
         <li><strong>Cloudflare Workers, D1 і KV</strong> — застосунок, база даних і завантажені зображення. Тут зберігаються заявки з форми та розрахунки з калькулятора.</li>
         <li><strong>Google Fonts</strong> — сайт завантажує шрифт із Google Fonts; Google може отримати вашу IP-адресу під час надання файлів шрифту.</li>
+        <li><strong>Plerdy</strong> — аналітика сайту. Фіксує, як користуються сторінками загалом: куди натискають, як далеко гортають і які частини сторінки привертають увагу. Це потрібно, щоб зробити сайт зрозумілішим, а не щоб когось ідентифікувати. Plerdy отримує стандартні технічні дані (IP-адресу, браузер, розмір екрана) і сторінки, які ви переглядаєте; він не отримує ваше ім'я, контакти чи те, що ви вводите у форму заявки. Див. <a href="https://plerdy.com/privacy-policy/" target="_blank" rel="noopener noreferrer">політику конфіденційності Plerdy</a>.</li>
       </ul>
 
       <h2>Як ми використовуємо дані</h2>
@@ -153,5 +155,8 @@
   </footer>
 
   <script src="/js/legal.js?v=__V__"></script>
+  <!-- Plerdy — heatmaps / click tracking. Externalised because the CSP
+       forbids inline scripts; the snippet itself is verbatim in the file. -->
+  <script data-plerdy_code="1" src="/js/plerdy.js?v=__V__" defer></script>
 </body>
 </html>

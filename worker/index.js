@@ -36,11 +36,23 @@ const PAGES = {
 };
 
 /* ---------------------------------------------------------------- helpers */
+/* Plerdy is the one third party allowed to run script here. It is named by
+   host rather than by opening the policy up: 'unsafe-inline' would have let its
+   pasted snippet run, but it would also have let through anything else that
+   ever managed to get an inline <script> onto a page, which is the whole class
+   of attack this header exists to stop. The snippet lives in /js/plerdy.js
+   instead, and only the host it fetches from is listed.
+
+   The wildcard covers a.plerdy.com and whatever sibling endpoints it calls for
+   reporting; Plerdy publishes no list. If tracking breaks, the console will say
+   which domain was refused before it says anything else. */
 const CSP =
-  "default-src 'self'; script-src 'self'; " +
+  "default-src 'self'; script-src 'self' https://*.plerdy.com; " +
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-  "font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; " +
-  "connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; " +
+  "font-src 'self' https://fonts.gstatic.com; " +
+  "img-src 'self' data: https://*.plerdy.com; " +
+  "connect-src 'self' https://*.plerdy.com; " +
+  "object-src 'none'; base-uri 'self'; form-action 'self'; " +
   "frame-ancestors 'self'";
 
 const SECURITY_HEADERS = {
