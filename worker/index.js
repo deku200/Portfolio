@@ -700,7 +700,17 @@ export default {
       if (path.startsWith("/uploads/")) return await serveUpload(env, path);
 
       /* ---------------- pages + SEO files ---------------- */
-      if (path === "/admin" || path === "/admin.html") return servePage("admin.html", env, "en");
+      /* One URL for the panel, and it is the one Cloudflare Access protects.
+         Access is configured against the path "admin", which covers /admin and
+         anything under /admin/ — but NOT /admin.html, which is a sibling path.
+         Served directly, that URL handed the panel's shell to anyone who
+         guessed it: no data, since every admin API route checks the Access JWT
+         itself, but no reason to publish it either. And /admin/ with the
+         trailing slash matched neither branch, so it fell through to the 404.
+         Both now fold into /admin, the way every other page folds into its
+         canonical form. */
+      if (path === "/admin/" || path === "/admin.html") return redirect("/admin");
+      if (path === "/admin") return servePage("admin.html", env, "en");
 
       const route = routePage(path);
       if (route) {
