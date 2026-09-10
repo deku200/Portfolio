@@ -166,21 +166,20 @@ button { font-family: inherit; cursor: pointer; }
    share of the width, and what the height leaves once the header and the copy
    have theirs. top then pins the lid just under the header, whatever the
    screen height. svh, where supported, so a phone's URL bar does not count. */
-/* On a desktop it sits right of centre, beside the copy rather than over the
-   column it stands in, which is what lets it be this big: the copy is pinned
-   to the bottom-left, so only its top edge limits how far down the deck may
-   reach. That is the height term, from measurements rather than guesses: the
-   laptop stands 0.862 lw tall from a lid top 84px down (12px under the
-   header), and the copy block's top edge is at 0.94vh - 149px (measured with
-   offsetTop — its reveal animation slides it, so a bounding-rect reading
-   depends on the moment). Keeping 12px between them gives
-   lw <= 1.09vh - 285px. The 820px ceiling and 52vw only bite on big screens,
-   where that height allows more than the laptop should take. */
+/* On a desktop it sits right of centre with the phone beside it, and is
+   big: 1.2x the size it had when only the copy's top edge could limit it. At
+   that size the deck reaches under the right-hand end of the copy — the copy
+   is lifted above it and shadowed so it still reads (see the min-width:1025px
+   block below). What bounds it now is the hero's own bottom: the deck, and
+   the phone standing level with it, end at least 24px above it
+   (84px + 0.862 lw <= 100vh - 24px). left keeps the laptop-and-phone pair
+   24px off the right edge: the pair reaches 0.63 lw right of the centre. */
 .lap-stage {
-  --lw: min(820px, 52vw, max(300px, calc(109vh - 285px)));
-  --lw: min(820px, 52vw, max(300px, calc(109svh - 285px)));
+  --lw: min(984px, 62.4vw, max(300px, calc(130.8vh - 342px)), calc(116vh - 125px));
+  --lw: min(984px, 62.4vw, max(300px, calc(130.8svh - 342px)), calc(116svh - 125px));
   --lh: calc(var(--lw) * .64);
-  position: absolute; left: 63%; top: calc(87px + var(--lw) * .32); z-index: 2;
+  position: absolute; left: min(63%, calc(100% - 24px - var(--lw) * .63));
+  top: calc(87px + var(--lw) * .32); z-index: 2;
   width: var(--lw); height: var(--lh);
   transform: translate(-50%, -50%);
   perspective: calc(var(--lw) * 3.4);
@@ -318,14 +317,15 @@ button { font-family: inherit; cursor: pointer; }
 .lap-view-link { display: block; cursor: pointer; }
 .lap-shot { display: block; width: 100%; height: auto; will-change: transform; transition: opacity .25s ease; }
 .lap-shot.is-swapping { opacity: 0; }
-.lap-shot.is-scrolling, .lap-shot.is-rewinding {
+.lap-shot.is-scrolling {
   animation: lap-scroll var(--dur, 12s) cubic-bezier(.45, .05, .55, .95) var(--delay, 1.6s) both;
 }
-.lap-shot.is-rewinding { animation-direction: reverse; }
-.lap-view:hover .lap-shot { animation-play-state: paused; }
+/* From wherever the capture is to wherever it is going. A starting point other
+   than the top is what lets it pick up where someone left it after scrolling
+   it by hand. */
 @keyframes lap-scroll {
-  from { transform: translateY(0); }
-  to   { transform: translateY(var(--travel, 0px)); }
+  from { transform: translateY(var(--from, 0px)); }
+  to   { transform: translateY(var(--to, 0px)); }
 }
 
 @media (max-width: 1024px) {
@@ -336,17 +336,90 @@ button { font-family: inherit; cursor: pointer; }
     left: 50%; top: calc(90px + var(--lw) * .32);
   }
 }
+/* Desktop only. The laptop now reaches under the right-hand end of the copy,
+   so the copy sits above it and carries a shadow that keeps it legible over
+   the keyboard. The two quiet buttons move from the bottom-right corner into
+   a row under the copy: the phone stands where they were. */
+@media (min-width: 1025px) {
+  .hero-corner { z-index: 3; }
+  .hero-line { text-shadow: 0 1px 2px #000, 0 0 14px rgba(0, 0, 0, .95); }
+  /* .hero in front on purpose: this block sits earlier in the file than the
+     corners own rules, and at equal weight the later rule wins */
+  .hero .hero-corner-bottom-left { bottom: calc(6vh + 52px); }
+  .hero .hero-corner-bottom-right {
+    left: 6vw; right: auto; bottom: 6vh;
+    flex-direction: row; align-items: center;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lap, .lap-lid, .lap-screen { transition: none; }
-  .lap-shot.is-scrolling, .lap-shot.is-rewinding { animation: none; }
+  .lap-shot.is-scrolling { animation: none; }
 }
 
 /* ---- the phone ----
-   The same showcase below 768px, on a phone showing each site's mobile
-   version. A phone has nothing to open, so it wakes instead: it rises from
-   lying back to standing, and the screen powers on. Sized from its height
-   (--ph), because on a phone the room that runs out first is vertical: the
-   band between the header and the copy. */
+   Two appearances, one look. Below 768px it replaces the laptop, showing each
+   site's mobile version with the tabs as chips underneath. On a desktop it
+   stands beside the laptop (.lap-phone), showing the mobile version of
+   whichever project the laptop has open. A phone has nothing to open, so it
+   wakes instead: it rises from lying back, and the screen powers on. Every
+   size comes from --ph, which the container holding it sets. */
+.ph {
+  position: relative; flex: none; width: var(--pw); height: var(--ph);
+  transform-style: preserve-3d;
+  transform: rotateX(55deg) translateY(10%) scale(.9);   /* lying back, asleep */
+  opacity: 0;
+  transition: transform 1.2s cubic-bezier(.2, .9, .25, 1.08) .15s, opacity .5s ease .15s;
+}
+.ph.is-on { opacity: 1; }
+.ph.is-open { transform: rotateY(-16deg) rotateX(5deg); }
+/* only the parts meant to be pressed take the pointer, so no invisible plane
+   of the rotated body can sit over them */
+.ph, .ph * { pointer-events: none; }
+.ph-view, .ph-view-link, .ph-urlbar { pointer-events: auto; }
+/* the body's thickness: its outline again, pushed back */
+.ph-side {
+  position: absolute; inset: 0; border-radius: calc(var(--pw) * .17);
+  background: #0a0a0a; box-shadow: 0 0 0 1px #262626 inset;
+  transform: translateZ(calc(var(--pw) * -.06));
+}
+.ph-body {
+  position: absolute; inset: 0; border-radius: calc(var(--pw) * .17);
+  padding: calc(var(--pw) * .035);
+  background: linear-gradient(145deg, #2c2c2c, #111 45%, #1c1c1c);
+  box-shadow: 0 0 0 1px #343434 inset, 0 28px 60px rgba(0, 0, 0, .75);
+}
+.ph-screen {
+  position: relative; width: 100%; height: 100%; overflow: hidden;
+  border-radius: calc(var(--pw) * .135); background: #000;
+  opacity: 0; filter: brightness(2.6);
+  transition: opacity .35s ease 1s, filter .9s ease 1s;
+}
+.ph.is-open .ph-screen { opacity: 1; filter: brightness(1); }
+.ph-island {
+  position: absolute; top: 2%; left: 50%; z-index: 2;
+  width: 32%; height: 3.4%; border-radius: 99px; background: #000;
+  transform: translateX(-50%);
+}
+.ph-view { position: absolute; inset: 0; overflow: hidden; background: #0d0d0d; }
+.ph-view-link { display: block; }
+.ph-shot { display: block; width: 100%; height: auto; will-change: transform; transition: opacity .25s ease; }
+.ph-shot.is-swapping { opacity: 0; }
+.ph-shot.is-scrolling {
+  animation: lap-scroll var(--dur, 12s) cubic-bezier(.45, .05, .55, .95) var(--delay, 1.6s) both;
+}
+/* the address bar sits at the bottom, the way phone browsers put it now */
+.ph-urlbar {
+  position: absolute; left: 9%; right: 9%; bottom: 2.6%; z-index: 2;
+  padding: .45em .9em; border-radius: 99px;
+  background: rgba(18, 18, 18, .88); box-shadow: 0 0 0 1px #2a2a2a inset;
+  font-size: calc(var(--pw) * .06); text-align: center; text-decoration: none;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #8a8a8a;
+}
+.ph-url span { display: none; }            /* no https:// on a bar this size */
+.ph-url b { color: var(--green); font-weight: 400; }
+
+/* below 768px the phone is the showcase, with its chips underneath */
 .ph-stage { display: none; }
 @media (max-width: 768px) {
   .ph-stage {
@@ -361,64 +434,6 @@ button { font-family: inherit; cursor: pointer; }
     perspective: calc(var(--ph) * 3);
     font-size: .6rem;
   }
-  .ph {
-    position: relative; flex: none; width: var(--pw); height: var(--ph);
-    transform-style: preserve-3d;
-    transform: rotateX(55deg) translateY(10%) scale(.9);   /* lying back, asleep */
-    opacity: 0;
-    transition: transform 1.2s cubic-bezier(.2, .9, .25, 1.08) .15s, opacity .5s ease .15s;
-  }
-  .ph.is-on { opacity: 1; }
-  .ph.is-open { transform: rotateY(-16deg) rotateX(5deg); }
-  /* the same rule as the laptop: only the parts meant to be pressed take the
-     pointer, so no invisible plane of the rotated body can sit over them */
-  .ph, .ph * { pointer-events: none; }
-  .ph-view, .ph-view-link, .ph-urlbar { pointer-events: auto; }
-  /* the body's thickness: its outline again, pushed back */
-  .ph-side {
-    position: absolute; inset: 0; border-radius: calc(var(--pw) * .17);
-    background: #0a0a0a; box-shadow: 0 0 0 1px #262626 inset;
-    transform: translateZ(calc(var(--pw) * -.06));
-  }
-  .ph-body {
-    position: absolute; inset: 0; border-radius: calc(var(--pw) * .17);
-    padding: calc(var(--pw) * .035);
-    background: linear-gradient(145deg, #2c2c2c, #111 45%, #1c1c1c);
-    box-shadow: 0 0 0 1px #343434 inset, 0 28px 60px rgba(0, 0, 0, .75);
-  }
-  .ph-screen {
-    position: relative; width: 100%; height: 100%; overflow: hidden;
-    border-radius: calc(var(--pw) * .135); background: #000;
-    opacity: 0; filter: brightness(2.6);
-    transition: opacity .35s ease 1s, filter .9s ease 1s;
-  }
-  .ph.is-open .ph-screen { opacity: 1; filter: brightness(1); }
-  .ph-island {
-    position: absolute; top: 2%; left: 50%; z-index: 2;
-    width: 32%; height: 3.4%; border-radius: 99px; background: #000;
-    transform: translateX(-50%);
-  }
-  .ph-view { position: absolute; inset: 0; overflow: hidden; background: #0d0d0d; }
-  .ph-view-link { display: block; }
-  .ph-shot { display: block; width: 100%; height: auto; will-change: transform; transition: opacity .25s ease; }
-  .ph-shot.is-swapping { opacity: 0; }
-  .ph-shot.is-scrolling, .ph-shot.is-rewinding {
-    animation: lap-scroll var(--dur, 12s) cubic-bezier(.45, .05, .55, .95) var(--delay, 1.6s) both;
-  }
-  .ph-shot.is-rewinding { animation-direction: reverse; }
-  /* the address bar sits at the bottom, the way phone browsers put it now */
-  .ph-urlbar {
-    position: absolute; left: 9%; right: 9%; bottom: 2.6%; z-index: 2;
-    padding: .45em .9em; border-radius: 99px;
-    background: rgba(18, 18, 18, .88); box-shadow: 0 0 0 1px #2a2a2a inset;
-    font-size: calc(var(--pw) * .06); text-align: center; text-decoration: none;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #8a8a8a;
-  }
-  .ph-url span { display: none; }            /* no https:// on a bar this size */
-  .ph-url b { color: var(--green); font-weight: 400; }
-
-  /* tabs as a row of chips under the phone; scrolls sideways if it must,
-     inside itself, never the page */
   /* all five in one row, always: five equal columns that shrink with the
      screen, instead of a strip that scrolls sideways and hides the last one */
   .ph-tabs {
@@ -438,9 +453,30 @@ button { font-family: inherit; cursor: pointer; }
   .ph-tab.is-active { color: var(--fg); border-color: var(--accent); background: rgba(232, 35, 26, .12); }
   .ph-tab:focus-visible { outline: 1px solid var(--green); outline-offset: 1px; }
 }
-@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
-  .ph, .ph-screen { transition: none; }
-  .ph-shot.is-scrolling, .ph-shot.is-rewinding { animation: none; }
+
+/* On a desktop: standing in front of the laptop's right-hand corner, level
+   with the front of the deck and reaching over the keyboard by 0.145 lw.
+   Everything is in --lw, so it scales with the laptop as one object. It wakes
+   a beat after the lid starts opening, and casts a shadow onto the deck. */
+.lap-phone {
+  --ph: calc(var(--lw) * .36);
+  --pw: calc(var(--ph) * .47);
+  position: absolute; z-index: 3;
+  left: calc(var(--lw) * .96);
+  top: calc(var(--lw) * .862 - 3px - var(--ph));
+  width: var(--pw); height: var(--ph);
+  perspective: calc(var(--ph) * 3);
+  font-size: .6rem;
+}
+.lap-phone .ph { transition-delay: .9s; }
+.lap-phone .ph-screen { transition-delay: 1.9s; }
+.lap-phone .ph-body {
+  box-shadow: 0 0 0 1px #343434 inset, -18px 26px 44px rgba(0, 0, 0, .85);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ph, .ph-screen, .lap-phone .ph, .lap-phone .ph-screen { transition: none; }
+  .ph-shot.is-scrolling { animation: none; }
 }
 #ascii-floor { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .hero-corner { position: absolute; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }

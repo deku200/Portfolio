@@ -467,14 +467,18 @@ function makeShowcase(o) {
   let current = -1;
   let ratio = 0;         // height / width of the current capture
   let dir = 1;           // 1 = reading down, -1 = back up
-  let autoplay = !REDUCED;
+  let autoplay = !REDUCED && !o.follower;   // a follower never moves on by itself
+  let want = 0;          // the project to open with: a follower is told which
   let visible = true;
-  let timer = 0, t0 = 0, left = 0, paused = false;
+  let timer = 0;
+  let offset = 0;        // where the capture sits, in px: 0 is the top, negative is scrolled
+  let travel = 0;        // how far it can go: capture height minus screen height
+  let endAt = 0;         // where the running pass is headed
+  let manual = false;    // true while the pointer is on the screen and scrolls it
   let firstRun = true;
   let tabs = [];
 
-  function build() {
-    built = true;
+  function buildTabs() {
     o.tabsEl.setAttribute("aria-label", lang === "uk" ? "Наші проєкти" : "Our projects");
     if (o.openLabel) o.openEl.textContent = lang === "uk" ? "ВІДКРИТИ ↗" : "OPEN ↗";
     // the accessible name is always the full project name; the phone shows a
@@ -501,19 +505,45 @@ function makeShowcase(o) {
       show(i, true);
       tabs[current].focus();
     });
+  }
 
-    // hovering the screen is someone reading: hold still, and stop autoplay
+  function build() {
+    built = true;
+    // a follower has no tabs of its own: it shows whatever its leader shows
+    if (o.tabsEl) buildTabs();
+
+    /* Pointer on the screen: the capture stops where it is and the wheel
+       scrolls it, the way a real page would. At either end the wheel is let
+       through, so the page itself can still scroll past the laptop. When the
+       pointer leaves, autoplay does not come back — they have started reading
+       — but the capture carries on scrolling from where they left it. */
     o.view.addEventListener("mouseenter", () => {
       autoplay = false;
-      if (!running || paused) return;
-      paused = true;
+      if (!running) return;
+      manual = true;
       clearTimeout(timer);
-      left = Math.max(0, left - (Date.now() - t0));
+      offset = currentOffset();
+      measure();
+      o.shot.classList.remove("is-scrolling");
+      o.shot.style.transform = "translateY(" + offset + "px)";
     });
+    o.view.addEventListener("wheel", (e) => {
+      if (!manual) return;
+      // lines (Firefox) and pages come in other units than pixels
+      const dy = e.deltaMode === 1 ? e.deltaY * 16
+        : e.deltaMode === 2 ? e.deltaY * o.view.clientHeight : e.deltaY;
+      const next = Math.max(-travel, Math.min(0, offset - dy));
+      if (next === offset) return;                 // at an end: the page may have it
+      e.preventDefault();
+      offset = next;
+      o.shot.style.transform = "translateY(" + offset + "px)";
+    }, { passive: false });
     o.view.addEventListener("mouseleave", () => {
-      if (!paused) return;
-      paused = false;
-      if (running) arm(left);
+      if (!manual) return;
+      manual = false;
+      if (!running) return;
+      dir = offset <= -travel + 1 ? -1 : 1;       // on, in whichever direction has room
+      cycle();
     });
 
     if ("IntersectionObserver" in window) {
@@ -522,7 +552,7 @@ function makeShowcase(o) {
     let resizeT = 0;
     addEventListener("resize", () => {
       clearTimeout(resizeT);
-      resizeT = setTimeout(() => { if (running && ratio) cycle(); }, 250);
+      resizeT = setTimeout(() => { if (running && ratio && !manual) cycle(); }, 250);
     });
 
     // lean toward the pointer — laptop, desktop pointer only
@@ -546,19 +576,43 @@ function makeShowcase(o) {
      scrolling itself is a CSS animation; what happens after it is a timer,
      because an animation event is the kind of thing a background or
      non-compositing tab never delivers, and the tab switch is not decoration. */
+  function measure() {
+    travel = Math.max(0, o.view.clientWidth * ratio - o.view.clientHeight);
+  }
+
+  // where the capture is at this instant — mid-animation included
+  function currentOffset() {
+    const m = getComputedStyle(o.shot).transform;
+    const v = m && m !== "none" && m.match(/matrix(?:3d)?\(([^)]+)\)/);
+    if (!v) return offset;
+    const a = v[1].split(",").map(Number);
+    const y = a.length === 16 ? a[13] : a[5];
+    return isFinite(y) ? y : offset;
+  }
+
+  /* One pass, from wherever the capture is to one end or the other, with a
+     still moment at each end. The movement is a CSS animation; what happens
+     after it is a timer, because an animation event is the kind of thing a
+     background or non-compositing tab never delivers, and the tab switch is
+     not decoration. */
   function cycle() {
     clearTimeout(timer);
-    const travel = Math.max(0, o.view.clientWidth * ratio - o.view.clientHeight);
-    const scroll = travel / o.speed;
+    measure();
+    offset = Math.max(-travel, Math.min(0, offset));
+    const to = dir > 0 ? -travel : 0;
+    const scroll = Math.abs(to - offset) / o.speed;
     const delay = HOLD + (firstRun ? o.boot : 0);
     firstRun = false;
 
-    o.shot.style.setProperty("--travel", -travel + "px");
+    o.shot.style.transform = "";
+    o.shot.style.setProperty("--from", offset + "px");
+    o.shot.style.setProperty("--to", to + "px");
     o.shot.style.setProperty("--dur", scroll.toFixed(2) + "s");
     o.shot.style.setProperty("--delay", delay.toFixed(2) + "s");
-    o.shot.classList.remove("is-scrolling", "is-rewinding");
-    void o.shot.offsetWidth;                       // restart from the start
-    if (!REDUCED) o.shot.classList.add(dir > 0 ? "is-scrolling" : "is-rewinding");
+    o.shot.classList.remove("is-scrolling");
+    void o.shot.offsetWidth;                       // restart the animation
+    if (!REDUCED) o.shot.classList.add("is-scrolling");
+    endAt = to;
     arm((delay + scroll + HOLD) * 1000);
   }
 
@@ -573,6 +627,7 @@ function makeShowcase(o) {
     // a hidden browser tab has nobody watching: hold here, advancing nothing and
     // fetching nothing, and pick up again once someone looks
     if (document.hidden) { arm(1000); return; }
+    if (!REDUCED) offset = endAt;                  // the pass got where it was going
     if (autoplay && visible && dir > 0) show(current + 1);
     else { dir = -dir; cycle(); }                  // read it back up, then down
   }
@@ -583,6 +638,8 @@ function makeShowcase(o) {
     if (i === current && !force) return;
     current = i;
     const p = SHOWCASE[i];
+    if (o.onShow) o.onShow(i);
+    manual = false;
 
     tabs.forEach((t, k) => {
       const on = k === i;
@@ -594,14 +651,14 @@ function makeShowcase(o) {
     // strip itself: scrollIntoView would also drag the page back up to the
     // hero every time autoplay moved on
     const t = tabs[i];
-    o.tabsEl.scrollLeft = t.offsetLeft - (o.tabsEl.clientWidth - t.offsetWidth) / 2;
+    if (t) o.tabsEl.scrollLeft = t.offsetLeft - (o.tabsEl.clientWidth - t.offsetWidth) / 2;
 
     const host = p.url.replace(/^https?:\/\//, "").replace(/\/$/, "");
     o.urlEl.innerHTML = "<span>https://</span><b>" + host + "</b>";
     o.link.href = p.url;
     if (o.openEl) o.openEl.href = p.url;
     o.link.setAttribute("aria-label", (lang === "uk" ? "Відкрити сайт " : "Open ") + p.name);
-    o.view.setAttribute("aria-labelledby", t.id);
+    if (t) o.view.setAttribute("aria-labelledby", t.id);
     o.shot.alt = (lang === "uk" ? "Сайт " : "Website ") + p.name;
 
     clearTimeout(timer);
@@ -614,7 +671,7 @@ function makeShowcase(o) {
       o.shot.src = next.src;
       o.shot.classList.remove("is-swapping");
       dir = 1;
-      paused = false;
+      offset = 0;                                  // a new site starts at its top
       cycle();
       preload(i + 1);
     };
@@ -632,11 +689,16 @@ function makeShowcase(o) {
         o.device.classList.add("is-on");
         setTimeout(() => o.device.classList.add("is-open"), 250);
       }, 350);
-      show(current < 0 ? 0 : current, false, true);
+      show(current < 0 ? want : current, false, true);
     },
     stop() {
       running = false;
       clearTimeout(timer);
+    },
+    // a follower: open the project its leader has just opened
+    follow(i) {
+      want = i;
+      if (running) show(i);
     },
   };
 }
@@ -646,6 +708,18 @@ function startShowcase() {
   if (!lapRoot || !phRoot) return;
   const q = (root, s) => root.querySelector(s);
 
+  /* On a desktop a phone stands beside the laptop, showing the mobile version
+     of whatever the laptop has open. It is a follower: no tabs of its own, no
+     autoplay; the laptop tells it which project to show. */
+  const lapPhone = q(lapRoot, ".lap-phone");
+  const deskPhone = lapPhone ? makeShowcase({
+    id: "lph", follower: true, stage: lapRoot, device: q(lapPhone, ".ph"), tilt: null,
+    tabsEl: null, tabClass: "", urlEl: q(lapPhone, ".ph-url"), openEl: null, openLabel: false,
+    view: q(lapPhone, ".ph-view"), link: q(lapPhone, ".ph-view-link"), shot: q(lapPhone, ".ph-shot"),
+    src: (p) => "/img/showcase/" + p.slug + "-m.webp",
+    label: (p) => p.short, speed: 130, boot: 2.6,
+  }) : null;
+
   const laptop = makeShowcase({
     id: "lap", stage: lapRoot, device: q(lapRoot, ".lap"), tilt: q(lapRoot, ".lap-tilt"),
     tabsEl: q(lapRoot, ".lap-tabs"), tabClass: "lap-tab",
@@ -653,6 +727,8 @@ function startShowcase() {
     view: q(lapRoot, ".lap-view"), link: q(lapRoot, ".lap-view-link"), shot: q(lapRoot, ".lap-shot"),
     src: (p) => "/img/showcase/" + p.slug + ".webp",
     label: (p) => p.name, speed: 170, boot: 1.9,
+    // the phone beside it follows along
+    onShow: (i) => { if (deskPhone) deskPhone.follow(i); },
   });
   const phone = makeShowcase({
     id: "ph", stage: phRoot, device: q(phRoot, ".ph"), tilt: null,
@@ -689,8 +765,10 @@ function startShowcase() {
     const next = mq.matches ? phone : laptop;
     if (next === active) return;
     if (active) active.stop();
+    if (deskPhone && active === laptop) deskPhone.stop();
     active = next;
     active.start();
+    if (deskPhone && active === laptop) deskPhone.start();
     fitPhone();                                    // after start: the chips exist now
   };
   pick();
