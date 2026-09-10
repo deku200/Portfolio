@@ -700,6 +700,12 @@ function startShowcase() {
   addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(fitPhone, 150); });
   // the copy's height depends on the web font; measure again once it is in
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitPhone);
+  /* ...and on everything else that changes it after the first fit. On
+     production the hero line is still being typed in by scramble-in when the
+     phone is first measured, so the copy is shorter then than it ends up: the
+     phone came out 380px where 346 was the room, and the chips sat over the
+     button. Rather than guess when the copy is finished, watch it. */
+  if (copy && typeof ResizeObserver === "function") new ResizeObserver(fitPhone).observe(copy);
 }
 
 /* ---------- 3. ASCII PARTICLE FLOOR (hero) ---------- */
