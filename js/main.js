@@ -280,18 +280,6 @@ setTimeout(() => {
   applyIncomingHash();
 }, 0);
 
-/* The SV mark. The splash it was drawn for is gone; the spinning hero logo
-   still builds itself out of it. */
-const SV_LOGO = String.raw`
- ██████╗ ██╗   ██╗
-██╔════╝ ██║   ██║
-╚█████╗  ██║   ██║
- ╚═══██╗ ╚██╗ ██╔╝
-██████╔╝  ╚████╔╝
-╚═════╝    ╚═══╝
-    slv_visual
-`;
-
 /* A deep link such as /#calc — which is where both buttons on the projects
    page point — still needs applying by hand. The browser looks for the target
    while the horizontal scroller has not worked out its panels yet, so the jump
@@ -443,89 +431,257 @@ function applyIncomingHash() {
   })();
 }
 
-/* ---------- 2c. SPINNING 3D LOGO on the hero ---------- */
-function startHeroLogo() {
-  const pre = $("#hero-logo");
-  // the SV art without the caption line
-  const target = SV_LOGO
-    .split("\n")
-    .filter(l => l.trim() && !l.includes("slv_visual"))
-    .join("\n");
+/* ---------- 2c. PROJECT SHOWCASE on the hero: laptop, or phone ---------- */
+/* Our own sites, running in the hero: on a laptop that opens as the page
+   loads, or — below 768px — on a phone showing each site's mobile version.
+   One tab per project.
 
-  // real 3D: stack copies of the text along Z so the spinning logo has an
-  // actual extruded side face when seen edge-on. On phones, fewer slices — 8
-  // preserve-3d layers spinning is a heavy composite there; 3 still reads as 3D.
+   The screens show captures, not live iframes, and not by choice: four of
+   these five sites send X-Frame-Options or frame-ancestors headers that forbid
+   being framed by anyone, which no page can override. Five live sites on the
+   first screen would also cost exactly the load time the rest of this page is
+   built to protect. So each tab is a full-length capture that scrolls itself
+   like someone reading the site, and the screen opens the real thing.
+
+   Captures live in /img/showcase/: <slug>.webp is the desktop page at
+   1440x900, <slug>-m.webp the phone page at 390x844. A project added here
+   needs both, taken the same way. */
+const SHOWCASE = [
+  { slug: "master-the-blade", name: "MASTER THE BLADE", short: "BLADE",   url: "https://ronin-forge.store/" },
+  { slug: "melman",           name: "МЕЛМАН",           short: "МЕЛМАН",  url: "https://melman.shop/" },
+  { slug: "jemonty",          name: "JeMonty",          short: "JEMONTY", url: "https://jemonty.shop/" },
+  { slug: "orlevan",          name: "ORLEVAN SHOP",     short: "ORLEVAN", url: "https://www.orlevan.store/" },
+  { slug: "moclame-home",     name: "MOCLAME HOME",     short: "MOCLAME", url: "https://moclame-home.shop/en/" },
+];
+
+/* One screen's worth of behaviour — the tabs, the address bar, the scrolling
+   capture, autoplay — bound to whichever device shell it is handed. The laptop
+   and the phone get one each, and only the one on screen ever runs, so a phone
+   never downloads the desktop captures, nor the other way round. */
+function makeShowcase(o) {
   const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const LOW = REDUCED || matchMedia("(max-width:768px), (hover:none), (pointer:coarse)").matches;
-  const LAYERS = LOW ? 3 : 8, GAP = 4; // slices 4px apart
-  const layers = [];
-  for (let i = 0; i < LAYERS; i++) {
-    const l = document.createElement("pre");
-    l.className = "logo-layer";
-    l.style.transform = `translateZ(${-i * GAP}px)`;
-    pre.appendChild(l);
-    layers.push(l);
-  }
-  const setText = t => layers.forEach(l => (l.textContent = t));
+  const HOLD = 1.6;      // seconds held still at the top and at the bottom
+  const wrap = (i) => (i + SHOWCASE.length) % SHOWCASE.length;
 
-  // "printed out as code": characters appear one chunk at a time as random
-  // digits/code glyphs, then resolve into the art; spin starts when done.
-  const CODE = "0123456789<>/{}[]=+#$%&";
-  let printed = 0;                 // how many chars are on screen so far
-  let frame = 0;
-  const SPEED = 1.5;               // chars added per frame (halved = slower print)
-  const SETTLE = 26;               // chars behind the print head still scrambling
-  (function print() {
-    frame++;
-    printed = Math.floor(frame * SPEED);
-    setText(target
-      .split("")
-      .map((c, i) => {
-        if (/\s/.test(c)) return c;          // keep the art's shape
-        if (i >= printed) return " ";        // not printed yet
-        return i < printed - SETTLE ? c      // settled into the real glyph
-          : CODE[(Math.random() * CODE.length) | 0]; // still scrambling
-      })
-      .join(""));
-    if (printed < target.length + SETTLE) requestAnimationFrame(print);
-    else {
-      setText(target);
-      pre.classList.add("is-spinning");
-      startBitFlicker();
+  let built = false, running = false;
+  let current = -1;
+  let ratio = 0;         // height / width of the current capture
+  let dir = 1;           // 1 = reading down, -1 = back up
+  let autoplay = !REDUCED;
+  let visible = true;
+  let timer = 0, t0 = 0, left = 0, paused = false;
+  let firstRun = true;
+  let tabs = [];
+
+  function build() {
+    built = true;
+    o.tabsEl.setAttribute("aria-label", lang === "uk" ? "Наші проєкти" : "Our projects");
+    if (o.openLabel) o.openEl.textContent = lang === "uk" ? "ВІДКРИТИ ↗" : "OPEN ↗";
+    // the accessible name is always the full project name; the phone shows a
+    // shorter one, which the full name still contains
+    o.tabsEl.innerHTML = SHOWCASE.map((p, i) =>
+      '<button type="button" role="tab" class="' + o.tabClass + '" id="' + o.id + "-tab-" + i + '"' +
+      ' aria-controls="' + o.id + '-view" aria-selected="false" tabindex="-1" aria-label="' + p.name + '">' +
+      '<span class="' + o.tabClass + '-dot" aria-hidden="true"></span>' +
+      '<span class="' + o.tabClass + '-name" aria-hidden="true">' + o.label(p) + "</span></button>").join("");
+    tabs = [].slice.call(o.tabsEl.children);
+
+    o.tabsEl.addEventListener("click", (e) => {
+      const t = e.target.closest("." + o.tabClass);
+      if (t) show(tabs.indexOf(t), true);
+    });
+    o.tabsEl.addEventListener("keydown", (e) => {
+      let i = null;
+      if (e.key === "ArrowRight") i = current + 1;
+      else if (e.key === "ArrowLeft") i = current - 1;
+      else if (e.key === "Home") i = 0;
+      else if (e.key === "End") i = SHOWCASE.length - 1;
+      if (i === null) return;
+      e.preventDefault();
+      show(i, true);
+      tabs[current].focus();
+    });
+
+    // hovering the screen is someone reading: hold still, and stop autoplay
+    o.view.addEventListener("mouseenter", () => {
+      autoplay = false;
+      if (!running || paused) return;
+      paused = true;
+      clearTimeout(timer);
+      left = Math.max(0, left - (Date.now() - t0));
+    });
+    o.view.addEventListener("mouseleave", () => {
+      if (!paused) return;
+      paused = false;
+      if (running) arm(left);
+    });
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver((es) => { visible = es[0].isIntersecting; }).observe(o.stage);
     }
-  })();
+    let resizeT = 0;
+    addEventListener("resize", () => {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(() => { if (running && ratio) cycle(); }, 250);
+    });
 
-  // constant subtle noise: ~5% of the glyphs flip to 0/1 at random spots,
-  // a fresh 5% every tick, so the logo always quietly "recomputes" itself
-  function startBitFlicker() {
-    if (REDUCED) return;                 // honor reduced-motion: hold the glyphs still
-    setInterval(() => {
-      setText(target
-        .split("")
-        .map(c => (/\s/.test(c) || Math.random() > 0.05)
-          ? c
-          : (Math.random() < 0.5 ? "0" : "1"))
-        .join(""));
-    }, LOW ? 600 : 300);                 // half the rewrite rate on phones
+    // lean toward the pointer — laptop, desktop pointer only
+    if (o.tilt && !REDUCED && matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      addEventListener("pointermove", (e) => {
+        if (!running) return;
+        const rx = (e.clientY / innerHeight - 0.5) * -7;
+        const ry = (e.clientX / innerWidth - 0.5) * 12;
+        o.tilt.style.transform = "rotateX(" + rx.toFixed(1) + "deg) rotateY(" + ry.toFixed(1) + "deg)";
+      });
+    }
   }
-  // extra layer between wrap (perspective) and pre (spin) that carries the tilt
-  const tilt = document.createElement("div");
-  tilt.className = "hero-logo-tilt";
-  pre.parentElement.appendChild(tilt);
-  tilt.appendChild(pre);
-  // tilt toward the mouse — desktop pointer only (touch has no hover, and
-  // reacting to touch-scroll here just thrashes the transform)
-  if (!LOW) addEventListener("pointermove", e => {
-    const rx = (e.clientY / innerHeight - 0.5) * -24; // deg
-    const ry = (e.clientX / innerWidth - 0.5) * 24;
-    tilt.style.transform = `rotateX(${rx.toFixed(1)}deg) rotateY(${ry.toFixed(1)}deg)`;
+
+  function preload(i) {
+    const im = new Image();
+    im.decoding = "async";
+    im.src = o.src(SHOWCASE[wrap(i)]);
+  }
+
+  /* One scroll pass, down or back up, with a still moment at each end. The
+     scrolling itself is a CSS animation; what happens after it is a timer,
+     because an animation event is the kind of thing a background or
+     non-compositing tab never delivers, and the tab switch is not decoration. */
+  function cycle() {
+    clearTimeout(timer);
+    const travel = Math.max(0, o.view.clientWidth * ratio - o.view.clientHeight);
+    const scroll = travel / o.speed;
+    const delay = HOLD + (firstRun ? o.boot : 0);
+    firstRun = false;
+
+    o.shot.style.setProperty("--travel", -travel + "px");
+    o.shot.style.setProperty("--dur", scroll.toFixed(2) + "s");
+    o.shot.style.setProperty("--delay", delay.toFixed(2) + "s");
+    o.shot.classList.remove("is-scrolling", "is-rewinding");
+    void o.shot.offsetWidth;                       // restart from the start
+    if (!REDUCED) o.shot.classList.add(dir > 0 ? "is-scrolling" : "is-rewinding");
+    arm((delay + scroll + HOLD) * 1000);
+  }
+
+  function arm(ms) {
+    clearTimeout(timer);
+    t0 = Date.now(); left = ms;
+    timer = setTimeout(done, ms);
+  }
+
+  function done() {
+    if (!running) return;
+    // a hidden browser tab has nobody watching: hold here, advancing nothing and
+    // fetching nothing, and pick up again once someone looks
+    if (document.hidden) { arm(1000); return; }
+    if (autoplay && visible && dir > 0) show(current + 1);
+    else { dir = -dir; cycle(); }                  // read it back up, then down
+  }
+
+  function show(i, byUser, force) {
+    if (byUser) autoplay = false;                  // they are driving now
+    i = wrap(i);
+    if (i === current && !force) return;
+    current = i;
+    const p = SHOWCASE[i];
+
+    tabs.forEach((t, k) => {
+      const on = k === i;
+      t.classList.toggle("is-active", on);
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.tabIndex = on ? 0 : -1;
+    });
+    // keep the active tab in sight when the strip overflows — by scrolling the
+    // strip itself: scrollIntoView would also drag the page back up to the
+    // hero every time autoplay moved on
+    const t = tabs[i];
+    o.tabsEl.scrollLeft = t.offsetLeft - (o.tabsEl.clientWidth - t.offsetWidth) / 2;
+
+    const host = p.url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    o.urlEl.innerHTML = "<span>https://</span><b>" + host + "</b>";
+    o.link.href = p.url;
+    if (o.openEl) o.openEl.href = p.url;
+    o.link.setAttribute("aria-label", (lang === "uk" ? "Відкрити сайт " : "Open ") + p.name);
+    o.view.setAttribute("aria-labelledby", t.id);
+    o.shot.alt = (lang === "uk" ? "Сайт " : "Website ") + p.name;
+
+    clearTimeout(timer);
+    o.shot.classList.add("is-swapping");
+    const next = new Image();
+    next.decoding = "async";
+    next.onload = () => {
+      if (current !== i || !running) return;       // superseded, or put away
+      ratio = next.naturalHeight / next.naturalWidth;
+      o.shot.src = next.src;
+      o.shot.classList.remove("is-swapping");
+      dir = 1;
+      paused = false;
+      cycle();
+      preload(i + 1);
+    };
+    next.src = o.src(p);
+  }
+
+  return {
+    start() {
+      if (running) return;
+      running = true;
+      if (!built) build();
+      // open (or wake) once the page has painted; reduced motion skips it
+      if (REDUCED) o.device.classList.add("is-on", "is-open");
+      else setTimeout(() => {
+        o.device.classList.add("is-on");
+        setTimeout(() => o.device.classList.add("is-open"), 250);
+      }, 350);
+      show(current < 0 ? 0 : current, false, true);
+    },
+    stop() {
+      running = false;
+      clearTimeout(timer);
+    },
+  };
+}
+
+function startShowcase() {
+  const lapRoot = $("#lap-stage"), phRoot = $("#ph-stage");
+  if (!lapRoot || !phRoot) return;
+  const q = (root, s) => root.querySelector(s);
+
+  const laptop = makeShowcase({
+    id: "lap", stage: lapRoot, device: q(lapRoot, ".lap"), tilt: q(lapRoot, ".lap-tilt"),
+    tabsEl: q(lapRoot, ".lap-tabs"), tabClass: "lap-tab",
+    urlEl: q(lapRoot, ".lap-url"), openEl: q(lapRoot, ".lap-open"), openLabel: true,
+    view: q(lapRoot, ".lap-view"), link: q(lapRoot, ".lap-view-link"), shot: q(lapRoot, ".lap-shot"),
+    src: (p) => "/img/showcase/" + p.slug + ".webp",
+    label: (p) => p.name, speed: 170, boot: 1.9,
   });
+  const phone = makeShowcase({
+    id: "ph", stage: phRoot, device: q(phRoot, ".ph"), tilt: null,
+    tabsEl: q(phRoot, ".ph-tabs"), tabClass: "ph-tab",
+    urlEl: q(phRoot, ".ph-url"), openEl: q(phRoot, ".ph-urlbar"), openLabel: false,
+    view: q(phRoot, ".ph-view"), link: q(phRoot, ".ph-view-link"), shot: q(phRoot, ".ph-shot"),
+    src: (p) => "/img/showcase/" + p.slug + "-m.webp",
+    label: (p) => p.short, speed: 130, boot: 1.4,
+  });
+
+  // the same breakpoint the stylesheet uses to hide one and show the other
+  const mq = matchMedia("(max-width: 768px)");
+  let active = null;
+  const pick = () => {
+    const next = mq.matches ? phone : laptop;
+    if (next === active) return;
+    if (active) active.stop();
+    active = next;
+    active.start();
+  };
+  pick();
+  if (mq.addEventListener) mq.addEventListener("change", pick);
+  else mq.addListener(pick);
 }
 
 /* ---------- 3. ASCII PARTICLE FLOOR (hero) ---------- */
 let broken = false;
 function startHero() {
-  startHeroLogo();
+  startShowcase();
   const canvas = $("#ascii-floor");
   const ctx = canvas.getContext("2d");
   const CHARS = "·:+*#%@$&";

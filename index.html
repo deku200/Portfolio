@@ -160,7 +160,59 @@ __FAQ_LD__
       <!-- HERO -->
       <section class="hero">
         <canvas id="ascii-floor"></canvas>
-        <div class="hero-logo-wrap" aria-hidden="true"><div id="hero-logo" class="hero-logo"></div></div>
+        <!-- Laptop showcase: our own sites, on a laptop that opens as the page
+             loads. startLaptop() in main.js fills the tabs; the captures are in
+             /img/showcase/. -->
+        <div class="lap-stage" id="lap-stage">
+          <div class="lap-tilt">
+            <div class="lap">
+              <div class="lap-deck" aria-hidden="true">
+                <div class="lap-keys"></div>
+                <div class="lap-pad"></div>
+                <div class="lap-lip"></div>
+              </div>
+              <div class="lap-lid">
+                <div class="lap-back" aria-hidden="true"><span>&lt;SV&gt;</span></div>
+                <div class="lap-face">
+                  <div class="lap-screen">
+                    <div class="lap-chrome">
+                      <div class="lap-tabs" role="tablist" aria-label="Projects"></div>
+                      <div class="lap-bar">
+                        <span class="lap-url"></span>
+                        <a class="lap-open" target="_blank" rel="noopener noreferrer"></a>
+                      </div>
+                    </div>
+                    <div class="lap-view" id="lap-view" role="tabpanel">
+                      <a class="lap-view-link" target="_blank" rel="noopener noreferrer">
+                        <img class="lap-shot" alt="" decoding="async" fetchpriority="low" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Phone showcase: the same sites in their mobile versions, shown
+             instead of the laptop below 768px. The tabs sit under the phone:
+             inside a screen that small they would be unreadable. -->
+        <div class="ph-stage" id="ph-stage">
+          <div class="ph">
+            <div class="ph-side" aria-hidden="true"></div>
+            <div class="ph-body">
+              <div class="ph-screen">
+                <div class="ph-view" id="ph-view" role="tabpanel">
+                  <a class="ph-view-link" target="_blank" rel="noopener noreferrer">
+                    <img class="ph-shot" alt="" decoding="async" fetchpriority="low" />
+                  </a>
+                </div>
+                <div class="ph-island" aria-hidden="true"></div>
+                <a class="ph-urlbar" target="_blank" rel="noopener noreferrer"><span class="ph-url"></span></a>
+              </div>
+            </div>
+          </div>
+          <div class="ph-tabs" role="tablist" aria-label="Projects"></div>
+        </div>
         <div class="hero-corner hero-corner-bottom-left">
         <a href="#calc" class="btn-orange btn-small hero-cta" data-i18n="calcBtn" data-tip="→ РОЗРАХУВАТИ ВАРТІСТЬ / CALCULATE THE PRICE">CALCULATE THE PRICE</a>
         <div class="hero-line scramble-in" data-i18n="heroLine">

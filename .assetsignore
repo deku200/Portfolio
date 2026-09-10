@@ -32,3 +32,6 @@ backup/
 /*.png
 /*.jpg
 /*.jpeg
+
+# repo tooling (showcase capture script) — never served
+tools/

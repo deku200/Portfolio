@@ -36,7 +36,6 @@ html, body { background: var(--bg); color: var(--fg); font-family: var(--mono); 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; }
   html { scroll-behavior: auto; }
-  .hero-logo.is-spinning { animation: none; }
   .grain::before { animation: none; }
 }
 /* overflow-x belongs on <html> alone. On <body> it makes body a scroll
@@ -147,28 +146,275 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* ============ hero ============ */
-.hero { position: relative; height: 100vh; }
+/* Clipped, so nothing in the hero can cross the edge of the screen. The laptop
+   is a 3D object whose near edge is magnified by the perspective, and any
+   element that crosses the viewport widens the layout viewport on a phone —
+   which is precisely how the language switch ended up off-screen before. */
+.hero { position: relative; height: 100vh; overflow: hidden; overflow: clip; }
 
-/* spinning pseudo-3D SV logo, tilts toward the mouse */
-.hero-logo-wrap {
-  position: absolute; left: 50%; top: calc(34% + 100px); transform: translate(-50%, -50%);
-  perspective: 700px; pointer-events: none; z-index: 2;
+/* ---- the laptop ----
+   Our own sites, on a laptop that opens as the page loads. Plain CSS 3D: no
+   library, nothing for the CSP to allow, and the tabs stay real DOM buttons
+   inside the transform, so they click and focus like any other.
+
+   Every measurement derives from --lw, the laptop's width, so the whole object
+   scales as one piece instead of being re-drawn per breakpoint. */
+/* The room is the band between the header and the copy in the bottom-left
+   corner, and the laptop has to fit it both ways. Seen from above it is about
+   0.9 of its width tall (lid plus deck) and about 1.25 of it wide (the deck's
+   near edge, magnified). So --lw is the smallest of: a comfortable maximum, a
+   share of the width, and what the height leaves once the header and the copy
+   have theirs. top then pins the lid just under the header, whatever the
+   screen height. svh, where supported, so a phone's URL bar does not count. */
+.lap-stage {
+  --lw: min(540px, 42vw, max(260px, calc(104vh - 300px)));
+  --lw: min(540px, 42vw, max(260px, calc(104svh - 300px)));
+  --lh: calc(var(--lw) * .64);
+  position: absolute; left: 50%; top: calc(100px + var(--lw) * .32); z-index: 2;
+  width: var(--lw); height: var(--lh);
+  transform: translate(-50%, -50%);
+  perspective: calc(var(--lw) * 3.4);
+  perspective-origin: 50% 15%;
+  font-size: calc(var(--lw) * .0175);
 }
-.hero-logo-tilt { transform-style: preserve-3d; transition: transform .25s ease-out; }
-.hero-logo {
-  font-size: clamp(31px, 5.8vw, 63px); line-height: 1.02;
-  transform-style: preserve-3d; position: relative;
+.lap-tilt { width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .4s ease-out; }
+.lap {
+  position: relative; width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  /* NEGATIVE on purpose. A positive rotateX sends the top away from you, which
+     lifts the deck's near edge and shows the keyboard from underneath. Tipping
+     the whole laptop toward you is what puts the camera above it. */
+  transform: rotateX(-15deg);
+  opacity: 0; translate: 0 22px;
+  transition: opacity .6s ease, translate 1s cubic-bezier(.2, .8, .2, 1);
 }
-/* real extrusion: identical text layers stacked along Z, so edge-on the
-   logo shows an actual side face instead of vanishing into a line */
-.logo-layer { font: inherit; line-height: inherit; margin: 0; color: #2e2e2e; }
-.logo-layer:not(:first-child) { position: absolute; inset: 0; }
-.logo-layer:first-child { color: #dfdfdf; }  /* front face */
-.logo-layer:last-child { color: #171717; }   /* back face */
-.hero-logo.is-spinning { animation: logo-spin 18s linear infinite; }
-@keyframes logo-spin {
-  from { transform: rotateY(0deg); }
-  to   { transform: rotateY(360deg); }
+.lap.is-on { opacity: 1; translate: 0 0; }
+
+/* the deck lies flat, hinged to the lid's bottom edge and running toward you */
+.lap-deck {
+  position: absolute; left: -3%; right: -3%; top: 100%;
+  height: calc(var(--lw) * .52);
+  transform-origin: 50% 0; transform: rotateX(90deg);
+  transform-style: preserve-3d;
+  background: linear-gradient(180deg, #1b1b1b, #121212 75%);
+  border: 1px solid #262626;
+  border-radius: 3px 3px calc(var(--lw) * .03) calc(var(--lw) * .03);
+}
+.lap-keys {
+  position: absolute; left: 8%; right: 8%; top: 8%; height: 50%;
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 calc(100% / 15 - 2px), #0a0a0a calc(100% / 15 - 2px) calc(100% / 15)),
+    repeating-linear-gradient(0deg, transparent 0 calc(100% / 6 - 2px), #0a0a0a calc(100% / 6 - 2px) calc(100% / 6)),
+    #202020;
+}
+.lap-pad {
+  position: absolute; left: 35%; right: 35%; top: 64%; height: 27%;
+  border: 1px solid #2c2c2c; border-radius: 4px; background: #161616;
+}
+/* the deck's front edge, hanging down from its near side: the thickness */
+.lap-lip {
+  position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--lw) * .02);
+  transform-origin: 50% 100%; transform: rotateX(-90deg);
+  background: #0c0c0c; border-radius: 0 0 6px 6px;
+}
+/* a soft shadow on the floor under it */
+.lap-deck::after {
+  content: ""; position: absolute; inset: 4% -6% -12%;
+  background: radial-gradient(ellipse at 50% 45%, rgba(0, 0, 0, .85), transparent 70%);
+  transform: translateZ(-4px); filter: blur(10px); pointer-events: none;
+}
+
+/* the lid: hinged on its bottom edge, folded shut on the deck until .is-open */
+.lap-lid {
+  position: absolute; inset: 0;
+  transform-origin: 50% 100%; transform-style: preserve-3d;
+  transform: rotateX(-88deg);
+  /* the overshoot in the curve is the lid's weight carrying it past upright */
+  transition: transform 1.5s cubic-bezier(.3, 1.25, .4, 1) .45s;
+}
+/* 20deg back from upright: about 110deg from the deck, how a laptop sits open */
+.lap.is-open .lap-lid { transform: rotateX(20deg); }
+.lap-face, .lap-back {
+  position: absolute; inset: 0;
+  border-radius: calc(var(--lw) * .018) calc(var(--lw) * .018) 3px 3px;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+}
+/* rotateX, not rotateY: seen from above with the lid shut, the mark reads
+   upright rather than upside down */
+.lap-back {
+  transform: rotateX(180deg);
+  background: linear-gradient(160deg, #1d1d1d, #0d0d0d 60%);
+  border: 1px solid #2a2a2a;
+  display: grid; place-items: center;
+  font-weight: 700; font-size: calc(var(--lw) * .07); letter-spacing: .06em; color: #303030;
+}
+.lap-face {
+  background: #0b0b0b; border: 1px solid #262626;
+  padding: calc(var(--lw) * .02);
+}
+
+/* the screen powers on once the lid is most of the way up */
+.lap-screen {
+  position: relative; width: 100%; height: 100%; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: #000; border-radius: 3px;
+  opacity: 0; filter: brightness(2.6);
+  transition: opacity .35s ease 1.3s, filter .9s ease 1.3s;
+}
+.lap.is-open .lap-screen { opacity: 1; filter: brightness(1); }
+
+/* browser chrome: tabs, then the address bar */
+.lap-chrome { flex: none; background: #101010; border-bottom: 1px solid #1f1f1f; }
+.lap-tabs {
+  display: flex; gap: 1px; padding: .7em .8em 0;
+  overflow-x: auto; scrollbar-width: none;
+}
+.lap-tabs::-webkit-scrollbar { display: none; }
+.lap-tab {
+  flex: 0 1 auto; min-width: 0;
+  display: flex; align-items: center; gap: .55em;
+  padding: .6em 1em; border: 0; border-radius: .45em .45em 0 0;
+  background: transparent; color: #6a6a6a;
+  font: inherit; letter-spacing: .05em; white-space: nowrap; cursor: pointer;
+  transition: color .2s ease, background .2s ease;
+}
+.lap-tab:hover { color: #bdbdbd; }
+.lap-tab.is-active { background: #1b1b1b; color: var(--fg); }
+.lap-tab:focus-visible { outline: 1px solid var(--green); outline-offset: -1px; }
+.lap-tab-dot { flex: none; width: .55em; height: .55em; border-radius: 50%; background: #333; }
+.lap-tab.is-active .lap-tab-dot { background: var(--accent); }
+.lap-tab-name { overflow: hidden; text-overflow: ellipsis; }
+.lap-bar { display: flex; align-items: center; gap: .9em; padding: .55em 1em; background: #1b1b1b; }
+.lap-url {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  padding: .35em 1em; border-radius: 99px; background: #0d0d0d; color: #555;
+}
+.lap-url b { color: var(--green); font-weight: 400; }
+.lap-open { flex: none; color: #8a8a8a; text-decoration: none; letter-spacing: .06em; }
+.lap-open:hover { color: var(--fg); }
+
+/* the page itself: a full-length capture that scrolls like someone reading it */
+.lap-view { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #0d0d0d; }
+.lap-view-link { display: block; cursor: pointer; }
+.lap-shot { display: block; width: 100%; height: auto; will-change: transform; transition: opacity .25s ease; }
+.lap-shot.is-swapping { opacity: 0; }
+.lap-shot.is-scrolling, .lap-shot.is-rewinding {
+  animation: lap-scroll var(--dur, 12s) cubic-bezier(.45, .05, .55, .95) var(--delay, 1.6s) both;
+}
+.lap-shot.is-rewinding { animation-direction: reverse; }
+.lap-view:hover .lap-shot { animation-play-state: paused; }
+@keyframes lap-scroll {
+  from { transform: translateY(0); }
+  to   { transform: translateY(var(--travel, 0px)); }
+}
+
+@media (max-width: 1024px) {
+  .lap-stage {
+    --lw: min(520px, 60vw, max(260px, calc(104vh - 300px)));
+    --lw: min(520px, 60vw, max(260px, calc(104svh - 300px)));
+    top: calc(90px + var(--lw) * .32);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lap, .lap-lid, .lap-screen { transition: none; }
+  .lap-shot.is-scrolling, .lap-shot.is-rewinding { animation: none; }
+}
+
+/* ---- the phone ----
+   The same showcase below 768px, on a phone showing each site's mobile
+   version. A phone has nothing to open, so it wakes instead: it rises from
+   lying back to standing, and the screen powers on. Sized from its height
+   (--ph), because on a phone the room that runs out first is vertical: the
+   band between the header and the copy. */
+.ph-stage { display: none; }
+@media (max-width: 768px) {
+  .ph-stage {
+    --ph: min(380px, max(250px, calc(93vh - 420px)));
+    --ph: min(380px, max(250px, calc(93svh - 420px)));
+    --pw: calc(var(--ph) * .47);
+    display: flex; flex-direction: column; align-items: center;
+    gap: calc(var(--ph) * .05);
+    position: absolute; left: 50%; top: 96px; z-index: 2;
+    width: min(92vw, 420px);
+    transform: translateX(-50%);
+    perspective: calc(var(--ph) * 3);
+    font-size: .6rem;
+  }
+  .ph {
+    position: relative; flex: none; width: var(--pw); height: var(--ph);
+    transform-style: preserve-3d;
+    transform: rotateX(55deg) translateY(10%) scale(.9);   /* lying back, asleep */
+    opacity: 0;
+    transition: transform 1.2s cubic-bezier(.2, .9, .25, 1.08) .15s, opacity .5s ease .15s;
+  }
+  .ph.is-on { opacity: 1; }
+  .ph.is-open { transform: rotateY(-16deg) rotateX(5deg); }
+  /* the body's thickness: its outline again, pushed back */
+  .ph-side {
+    position: absolute; inset: 0; border-radius: calc(var(--pw) * .17);
+    background: #0a0a0a; box-shadow: 0 0 0 1px #262626 inset;
+    transform: translateZ(calc(var(--pw) * -.06));
+  }
+  .ph-body {
+    position: absolute; inset: 0; border-radius: calc(var(--pw) * .17);
+    padding: calc(var(--pw) * .035);
+    background: linear-gradient(145deg, #2c2c2c, #111 45%, #1c1c1c);
+    box-shadow: 0 0 0 1px #343434 inset, 0 28px 60px rgba(0, 0, 0, .75);
+  }
+  .ph-screen {
+    position: relative; width: 100%; height: 100%; overflow: hidden;
+    border-radius: calc(var(--pw) * .135); background: #000;
+    opacity: 0; filter: brightness(2.6);
+    transition: opacity .35s ease 1s, filter .9s ease 1s;
+  }
+  .ph.is-open .ph-screen { opacity: 1; filter: brightness(1); }
+  .ph-island {
+    position: absolute; top: 2%; left: 50%; z-index: 2;
+    width: 32%; height: 3.4%; border-radius: 99px; background: #000;
+    transform: translateX(-50%);
+  }
+  .ph-view { position: absolute; inset: 0; overflow: hidden; background: #0d0d0d; }
+  .ph-view-link { display: block; }
+  .ph-shot { display: block; width: 100%; height: auto; will-change: transform; transition: opacity .25s ease; }
+  .ph-shot.is-swapping { opacity: 0; }
+  .ph-shot.is-scrolling, .ph-shot.is-rewinding {
+    animation: lap-scroll var(--dur, 12s) cubic-bezier(.45, .05, .55, .95) var(--delay, 1.6s) both;
+  }
+  .ph-shot.is-rewinding { animation-direction: reverse; }
+  /* the address bar sits at the bottom, the way phone browsers put it now */
+  .ph-urlbar {
+    position: absolute; left: 9%; right: 9%; bottom: 2.6%; z-index: 2;
+    padding: .45em .9em; border-radius: 99px;
+    background: rgba(18, 18, 18, .88); box-shadow: 0 0 0 1px #2a2a2a inset;
+    font-size: calc(var(--pw) * .06); text-align: center; text-decoration: none;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #8a8a8a;
+  }
+  .ph-url span { display: none; }            /* no https:// on a bar this size */
+  .ph-url b { color: var(--green); font-weight: 400; }
+
+  /* tabs as a row of chips under the phone; scrolls sideways if it must,
+     inside itself, never the page */
+  .ph-tabs {
+    display: flex; gap: .4rem; max-width: 100%; padding: 2px;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .ph-tabs::-webkit-scrollbar { display: none; }
+  .ph-tab {
+    flex: none; display: flex; align-items: center; gap: .45em;
+    padding: .55em .85em; border: 1px solid #262626; border-radius: 99px;
+    background: rgba(0, 0, 0, .65); color: #7a7a7a;
+    font: inherit; letter-spacing: .06em; white-space: nowrap; cursor: pointer;
+    transition: color .2s ease, border-color .2s ease;
+  }
+  .ph-tab.is-active { color: var(--fg); border-color: #4a4a4a; }
+  .ph-tab:focus-visible { outline: 1px solid var(--green); outline-offset: 1px; }
+  .ph-tab-dot { flex: none; width: .5em; height: .5em; border-radius: 50%; background: #333; }
+  .ph-tab.is-active .ph-tab-dot { background: var(--accent); }
+}
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  .ph, .ph-screen { transition: none; }
+  .ph-shot.is-scrolling, .ph-shot.is-rewinding { animation: none; }
 }
 #ascii-floor { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .hero-corner { position: absolute; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
@@ -584,9 +830,8 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
   /* dots would land at the start of a wrapped line, which reads as a bullet */
   .site-header .header-nav a + a::before { content: none; }
 
-  /* hero: smaller logo, higher up; corner texts can't collide */
-  .hero-logo-wrap { top: calc(30% + 60px); }
-  .hero-logo { font-size: clamp(34px, 9.2vw, 62px); }
+  /* hero: below 768px the showcase is the phone, not the laptop (.ph-stage) */
+  .lap-stage { display: none; }
   .hero-corner-bottom-left {
     left: 5vw; bottom: 16vh; max-width: 90vw;
     font-size: .68rem; line-height: 2;
