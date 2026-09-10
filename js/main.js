@@ -891,23 +891,44 @@ const SCRAMBLE_CHARS = "!<>-_\\/[]{}—=+*^?#$%&";
 function scramble(el) {
   // remember the real markup (with <br>s) so it can be restored after the effect
   const html = el.dataset.originalHtml ?? (el.dataset.originalHtml = el.innerHTML);
-  const original = el.dataset.original ?? (el.dataset.original = el.textContent);
+  if (el.dataset.original == null) el.dataset.original = el.textContent;
+
+  /* Scrambled line by line, with the <br>s kept. It used to scramble
+     el.textContent, which has no line breaks in it, so for the length of the
+     effect a multi-line block became one long line — in the hero that line ran
+     straight across the laptop and the phone. */
+  const holder = document.createElement("div");
+  const lines = html.split(/<br\s*\/?>/i).map((part) => {
+    holder.innerHTML = part;
+    return holder.textContent;
+  });
+  const length = lines.reduce((sum, line) => sum + line.length, 0);
+  const esc = (c) => (c === "<" ? "&lt;" : c === ">" ? "&gt;" : c === "&" ? "&amp;" : c);
+
+  // a newer run (hovering again mid-effect) takes over from this one
+  const gen = (el._scrambleGen = (el._scrambleGen || 0) + 1);
+  const finish = () => { if (el._scrambleGen === gen) el.innerHTML = html; };
+
+  const FRAMES = 24;
   let frame = 0;
-  const total = 24;
   const tick = () => {
+    if (el._scrambleGen !== gen) return;
     frame++;
-    const reveal = Math.floor((frame / total) * original.length);
-    el.textContent = original
-      .split("")
-      .map((c, i) =>
-        /\s/.test(c) ? c
-        : i <= reveal ? c
-        : SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0])
-      .join("");
-    if (frame < total) requestAnimationFrame(tick);
-    else el.innerHTML = html; // restore markup incl. line breaks
+    const reveal = Math.floor((frame / FRAMES) * length);
+    let k = 0;
+    el.innerHTML = lines.map((line) => line.split("").map((c) => {
+      const i = k++;
+      if (/\s/.test(c)) return c;
+      return esc(i <= reveal ? c : SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0]);
+    }).join("")).join("<br>");
+    if (frame < FRAMES) requestAnimationFrame(tick);
+    else finish();
   };
   tick();
+  // rAF drives the effect, never the final text: in a background or
+  // non-compositing tab it can stop after one frame and strand the scramble
+  // half-done, which is exactly what the hero looked like in such a tab
+  setTimeout(finish, FRAMES * 50 + 200);
 }
 $$(".scramble-hover").forEach(el =>
   el.addEventListener("mouseenter", () => scramble(el)));
