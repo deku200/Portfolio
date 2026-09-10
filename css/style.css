@@ -170,16 +170,17 @@ button { font-family: inherit; cursor: pointer; }
    column it stands in, which is what lets it be this big: the copy is pinned
    to the bottom-left, so only its top edge limits how far down the deck may
    reach. That is the height term, from measurements rather than guesses: the
-   laptop stands 0.862 lw tall from a lid top about 93px down, and the copy
-   block's top edge is at 0.94vh - 149px (measured with offsetTop — its reveal
-   animation slides it, so a bounding-rect reading depends on the moment).
-   Keeping 16px between them gives lw <= 1.09vh - 300px. Two earlier guesses
-   at the copy's height each left the deck all but touching it. */
+   laptop stands 0.862 lw tall from a lid top 84px down (12px under the
+   header), and the copy block's top edge is at 0.94vh - 149px (measured with
+   offsetTop — its reveal animation slides it, so a bounding-rect reading
+   depends on the moment). Keeping 12px between them gives
+   lw <= 1.09vh - 285px. The 820px ceiling and 52vw only bite on big screens,
+   where that height allows more than the laptop should take. */
 .lap-stage {
-  --lw: min(700px, 48vw, max(300px, calc(109vh - 300px)));
-  --lw: min(700px, 48vw, max(300px, calc(109svh - 300px)));
+  --lw: min(820px, 52vw, max(300px, calc(109vh - 285px)));
+  --lw: min(820px, 52vw, max(300px, calc(109svh - 285px)));
   --lh: calc(var(--lw) * .64);
-  position: absolute; left: 63%; top: calc(96px + var(--lw) * .32); z-index: 2;
+  position: absolute; left: 63%; top: calc(87px + var(--lw) * .32); z-index: 2;
   width: var(--lw); height: var(--lh);
   transform: translate(-50%, -50%);
   perspective: calc(var(--lw) * 3.4);
