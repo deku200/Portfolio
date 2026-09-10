@@ -362,7 +362,8 @@ button { font-family: inherit; cursor: pointer; }
    vertically centred in it. Its width is what the laptop leaves: the stage's
    left edge (same expression as .lap-stage) minus half the laptop, the 6vw
    margin and a 32px gap. The font then comes from that width in container
-   units: 12.4cqi fits 13 monospace characters, the longest line. */
+   units: 6.9cqi fits 24 monospace characters, the longer of its two lines,
+   and nowrap holds it to exactly two. */
 .hero-hook { display: none; }
 @media (min-width: 1025px) {
   .hero-hook {
@@ -375,9 +376,10 @@ button { font-family: inherit; cursor: pointer; }
   }
   .hero-hook-title {
     display: block;
-    font-size: min(5.4vh, 64px);
-    font-size: min(12.4cqi, 5.4vh, 64px);
-    font-weight: 700; line-height: 1.02; letter-spacing: -.02em; color: var(--fg);
+    font-size: min(3vh, 40px);
+    font-size: min(6.9cqi, 64px);
+    font-weight: 700; line-height: 1.08; letter-spacing: -.02em; color: var(--fg);
+    white-space: nowrap;
   }
   .hero-hook-title em { font-style: normal; color: var(--accent); }
   .hero-hook-sub {
@@ -385,9 +387,9 @@ button { font-family: inherit; cursor: pointer; }
     color: var(--green);
   }
   /* on narrow desktops (about 1025-1250px wide with a tall screen) the laptop
-     takes nearly all the width and the headline would shrink under 30px,
+     takes nearly all the width and the headline would shrink under 20px,
      where it no longer shouts. Then it steps aside rather than whisper. */
-  @container (max-width: 239px) {
+  @container (max-width: 289px) {
     .hero-hook-title, .hero-hook-sub { display: none; }
   }
 }

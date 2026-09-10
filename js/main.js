@@ -116,9 +116,9 @@ const I18N = {
   calcBtn:      { en: "CALCULATE THE PRICE", uk: "РОЗРАХУВАТИ ВАРТІСТЬ" },
   heroLine:     { en: "&lt;PRICE YOUR FUTURE WEBSITE IN 30 SECONDS.<br>PICK THE DEVELOPER, THE BLOCKS AND THE INTEGRATIONS —<br>AND <b>SEE AN HONEST FIGURE</b>, WITH NO CALLS AND NO WAITING.<br>WEBSITES FROM $400&gt;",
                   uk: "&lt;РОЗРАХУЙ ВАРТІСТЬ СВОГО МАЙБУТНЬОГО САЙТУ ЗА 30 СЕКУНД.<br>ОБЕРИ РОЗРОБНИКА, БЛОКИ ТА ІНТЕГРАЦІЇ —<br>І <b>ПОБАЧ ЧЕСНУ ЦІНУ</b>, БЕЗ ДЗВІНКІВ І ОЧІКУВАННЯ.<br>САЙТИ — ВІД $400&gt;" },
-  // desktop-only headline; the CSS sizes it for lines of up to 13 characters
-  heroHook:     { en: "STILL<br>THINKING?<br>YOUR RIVALS<br><em>ARE SELLING.</em>",
-                  uk: "ПОКИ ТИ<br>ДУМАЄШ —<br>КОНКУРЕНТИ<br><em>ВЖЕ ПРОДАЮТЬ.</em>" },
+  // desktop-only headline, two lines; the CSS sizes it for lines of up to 24 characters
+  heroHook:     { en: "STILL THINKING?<br>YOUR RIVALS <em>ARE SELLING.</em>",
+                  uk: "ПОКИ ТИ ДУМАЄШ —<br>КОНКУРЕНТИ <em>ВЖЕ ПРОДАЮТЬ.</em>" },
   heroHookSub:  { en: "&lt;A LANDING PAGE IN 4 DAYS — AND YOU'RE SELLING TOO&gt;",
                   uk: "&lt;ЛЕНДІНГ ЗА 4 ДНІ — І ПРОДАЄШ УЖЕ ТИ&gt;" },
   breakBtn:     { en: "CLICK TO BREAK", uk: "НАТИСНИ — РОЗБИЙ" },
