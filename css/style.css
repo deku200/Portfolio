@@ -174,10 +174,14 @@ button { font-family: inherit; cursor: pointer; }
    the phone standing level with it, end at least 24px above it
    (84px + 0.862 lw <= 100vh - 24px). left keeps the laptop-and-phone pair
    24px off the right edge: the pair reaches 0.68 lw right of the centre
-   (the phone starts at 0.96 lw and is 0.22 lw wide). */
-.lap-stage {
+   (the phone starts at 0.96 lw and is 0.22 lw wide).
+   --lw lives on .hero so the desktop headline (.hero-hook) can size itself
+   to the room left of the laptop; .lap-stage inherits it. */
+.hero {
   --lw: min(984px, 62.4vw, max(300px, calc(130.8vh - 342px)), calc(116vh - 125px));
   --lw: min(984px, 62.4vw, max(300px, calc(130.8svh - 342px)), calc(116svh - 125px));
+}
+.lap-stage {
   --lh: calc(var(--lw) * .64);
   position: absolute; left: min(63%, calc(100% - 24px - var(--lw) * .68));
   top: calc(87px + var(--lw) * .32); z-index: 2;
@@ -350,6 +354,41 @@ button { font-family: inherit; cursor: pointer; }
   .hero .hero-corner-bottom-right {
     left: 6vw; right: auto; bottom: 6vh;
     flex-direction: row; align-items: center;
+  }
+}
+
+/* The desktop headline. It fills the band between the header (84px) and the
+   copy's top edge (6vh + 201px from the bottom, see the corner rules), and is
+   vertically centred in it. Its width is what the laptop leaves: the stage's
+   left edge (same expression as .lap-stage) minus half the laptop, the 6vw
+   margin and a 32px gap. The font then comes from that width in container
+   units: 12.4cqi fits 13 monospace characters, the longest line. */
+.hero-hook { display: none; }
+@media (min-width: 1025px) {
+  .hero-hook {
+    position: absolute; z-index: 3; left: 6vw; top: 84px; bottom: calc(6vh + 225px);
+    width: calc(min(63%, 100% - 24px - var(--lw) * .68) - var(--lw) * .5 - 6vw - 32px);
+    display: flex; flex-direction: column; justify-content: center; gap: 1.1rem;
+    container-type: inline-size;
+    text-transform: uppercase; pointer-events: none;
+    text-shadow: 0 1px 2px #000, 0 0 18px rgba(0, 0, 0, .95);
+  }
+  .hero-hook-title {
+    display: block;
+    font-size: min(5.4vh, 64px);
+    font-size: min(12.4cqi, 5.4vh, 64px);
+    font-weight: 700; line-height: 1.02; letter-spacing: -.02em; color: var(--fg);
+  }
+  .hero-hook-title em { font-style: normal; color: var(--accent); }
+  .hero-hook-sub {
+    display: block; font-size: .78rem; line-height: 1.7; letter-spacing: .08em;
+    color: var(--green);
+  }
+  /* on narrow desktops (about 1025-1250px wide with a tall screen) the laptop
+     takes nearly all the width and the headline would shrink under 30px,
+     where it no longer shouts. Then it steps aside rather than whisper. */
+  @container (max-width: 239px) {
+    .hero-hook-title, .hero-hook-sub { display: none; }
   }
 }
 
