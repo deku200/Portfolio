@@ -166,11 +166,20 @@ button { font-family: inherit; cursor: pointer; }
    share of the width, and what the height leaves once the header and the copy
    have theirs. top then pins the lid just under the header, whatever the
    screen height. svh, where supported, so a phone's URL bar does not count. */
+/* On a desktop it sits right of centre, beside the copy rather than over the
+   column it stands in, which is what lets it be this big: the copy is pinned
+   to the bottom-left, so only its top edge limits how far down the deck may
+   reach. That is the height term, from measurements rather than guesses: the
+   laptop stands 0.862 lw tall from a lid top about 93px down, and the copy
+   block's top edge is at 0.94vh - 149px (measured with offsetTop — its reveal
+   animation slides it, so a bounding-rect reading depends on the moment).
+   Keeping 16px between them gives lw <= 1.09vh - 300px. Two earlier guesses
+   at the copy's height each left the deck all but touching it. */
 .lap-stage {
-  --lw: min(540px, 42vw, max(260px, calc(104vh - 300px)));
-  --lw: min(540px, 42vw, max(260px, calc(104svh - 300px)));
+  --lw: min(700px, 48vw, max(300px, calc(109vh - 300px)));
+  --lw: min(700px, 48vw, max(300px, calc(109svh - 300px)));
   --lh: calc(var(--lw) * .64);
-  position: absolute; left: 50%; top: calc(100px + var(--lw) * .32); z-index: 2;
+  position: absolute; left: 63%; top: calc(96px + var(--lw) * .32); z-index: 2;
   width: var(--lw); height: var(--lh);
   transform: translate(-50%, -50%);
   perspective: calc(var(--lw) * 3.4);
@@ -189,6 +198,15 @@ button { font-family: inherit; cursor: pointer; }
   transition: opacity .6s ease, translate 1s cubic-bezier(.2, .8, .2, 1);
 }
 .lap.is-on { opacity: 1; translate: 0 0; }
+
+/* Clicks have to reach the tabs through the 3D. The containers here are
+   invisible, but they are still boxes, and inside a 3D rendering context a
+   box is a plane. Once the lid leans back, its top strip — the tabs and the
+   open link — sits behind the plane of .lap, and that transparent container
+   took every click: on production not one tab could be pressed. So nothing in
+   the laptop takes the pointer except the parts that are meant to be. */
+.lap-stage, .lap-stage * { pointer-events: none; }
+.lap-tabs, .lap-tab, .lap-open, .lap-view, .lap-view-link { pointer-events: auto; }
 
 /* the deck lies flat, hinged to the lid's bottom edge and running toward you */
 .lap-deck {
@@ -313,7 +331,8 @@ button { font-family: inherit; cursor: pointer; }
   .lap-stage {
     --lw: min(520px, 60vw, max(260px, calc(104vh - 300px)));
     --lw: min(520px, 60vw, max(260px, calc(104svh - 300px)));
-    top: calc(90px + var(--lw) * .32);
+    /* centred again: at this width the copy runs underneath it */
+    left: 50%; top: calc(90px + var(--lw) * .32);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -350,6 +369,10 @@ button { font-family: inherit; cursor: pointer; }
   }
   .ph.is-on { opacity: 1; }
   .ph.is-open { transform: rotateY(-16deg) rotateX(5deg); }
+  /* the same rule as the laptop: only the parts meant to be pressed take the
+     pointer, so no invisible plane of the rotated body can sit over them */
+  .ph, .ph * { pointer-events: none; }
+  .ph-view, .ph-view-link, .ph-urlbar { pointer-events: auto; }
   /* the body's thickness: its outline again, pushed back */
   .ph-side {
     position: absolute; inset: 0; border-radius: calc(var(--pw) * .17);
@@ -395,22 +418,24 @@ button { font-family: inherit; cursor: pointer; }
 
   /* tabs as a row of chips under the phone; scrolls sideways if it must,
      inside itself, never the page */
+  /* all five in one row, always: five equal columns that shrink with the
+     screen, instead of a strip that scrolls sideways and hides the last one */
   .ph-tabs {
-    display: flex; gap: .4rem; max-width: 100%; padding: 2px;
-    overflow-x: auto; scrollbar-width: none;
+    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: .3rem; width: 100%; padding: 0 2px;
   }
-  .ph-tabs::-webkit-scrollbar { display: none; }
   .ph-tab {
-    flex: none; display: flex; align-items: center; gap: .45em;
-    padding: .55em .85em; border: 1px solid #262626; border-radius: 99px;
+    min-width: 0; display: flex; align-items: center; justify-content: center;
+    padding: .65em .3em; border: 1px solid #262626; border-radius: 99px;
     background: rgba(0, 0, 0, .65); color: #7a7a7a;
-    font: inherit; letter-spacing: .06em; white-space: nowrap; cursor: pointer;
-    transition: color .2s ease, border-color .2s ease;
+    font: inherit; font-size: .56rem; letter-spacing: .03em; white-space: nowrap; cursor: pointer;
+    transition: color .2s ease, border-color .2s ease, background .2s ease;
   }
-  .ph-tab.is-active { color: var(--fg); border-color: #4a4a4a; }
+  .ph-tab-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  /* the dot needs width these chips no longer have; the active chip lights up whole */
+  .ph-tab-dot { display: none; }
+  .ph-tab.is-active { color: var(--fg); border-color: var(--accent); background: rgba(232, 35, 26, .12); }
   .ph-tab:focus-visible { outline: 1px solid var(--green); outline-offset: 1px; }
-  .ph-tab-dot { flex: none; width: .5em; height: .5em; border-radius: 50%; background: #333; }
-  .ph-tab.is-active .ph-tab-dot { background: var(--accent); }
 }
 @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
   .ph, .ph-screen { transition: none; }
