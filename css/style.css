@@ -173,12 +173,13 @@ button { font-family: inherit; cursor: pointer; }
    block below). What bounds it now is the hero's own bottom: the deck, and
    the phone standing level with it, end at least 24px above it
    (84px + 0.862 lw <= 100vh - 24px). left keeps the laptop-and-phone pair
-   24px off the right edge: the pair reaches 0.63 lw right of the centre. */
+   24px off the right edge: the pair reaches 0.68 lw right of the centre
+   (the phone starts at 0.96 lw and is 0.22 lw wide). */
 .lap-stage {
   --lw: min(984px, 62.4vw, max(300px, calc(130.8vh - 342px)), calc(116vh - 125px));
   --lw: min(984px, 62.4vw, max(300px, calc(130.8svh - 342px)), calc(116svh - 125px));
   --lh: calc(var(--lw) * .64);
-  position: absolute; left: min(63%, calc(100% - 24px - var(--lw) * .63));
+  position: absolute; left: min(63%, calc(100% - 24px - var(--lw) * .68));
   top: calc(87px + var(--lw) * .32); z-index: 2;
   width: var(--lw); height: var(--lh);
   transform: translate(-50%, -50%);
@@ -459,7 +460,7 @@ button { font-family: inherit; cursor: pointer; }
    Everything is in --lw, so it scales with the laptop as one object. It wakes
    a beat after the lid starts opening, and casts a shadow onto the deck. */
 .lap-phone {
-  --ph: calc(var(--lw) * .36);
+  --ph: calc(var(--lw) * .468);   /* 1.3x the .36 it started at */
   --pw: calc(var(--ph) * .47);
   position: absolute; z-index: 3;
   left: calc(var(--lw) * .96);
