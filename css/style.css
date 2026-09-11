@@ -540,12 +540,16 @@ button { font-family: inherit; cursor: pointer; }
   .ph-stage {
     /* --ph comes from .hero (the mobile hero rules further down) */
     --pw: calc(var(--ph) * .47);
-    display: flex; flex-direction: row; align-items: center; justify-content: center;
+    display: flex; flex-direction: row; align-items: center; justify-content: flex-start;
     gap: 1.1rem; position: relative; z-index: 2;
     perspective: calc(var(--ph) * 3);
     font-size: .6rem;
   }
+  /* the chips start on the same left edge as the "calculate" button below;
+     the phone is centred in the room to their right, which is where it stood
+     when the pair was centred as one */
   .ph-tabs { order: -1; flex: none; display: flex; flex-direction: column; gap: .55rem; }
+  .ph-stage > .ph { margin-inline: auto; }
   .ph-tab {
     display: flex; align-items: center; justify-content: flex-start;
     padding: .9em 1.3em; border: 1px solid #262626; border-radius: 99px;
