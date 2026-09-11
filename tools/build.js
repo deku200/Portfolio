@@ -91,8 +91,14 @@ function minify() {
   return rows;
 }
 
-fs.rmSync(OUT, { recursive: true, force: true });
-fs.mkdirSync(OUT);
+/* Empty dist/ rather than delete it, and retry: on Windows a running
+   `wrangler dev` keeps dist/ and the files in it open, and removing the
+   directory itself then fails with EPERM (it did, on a deploy started while
+   the dev server was still shutting down). */
+fs.mkdirSync(OUT, { recursive: true });
+for (const name of fs.readdirSync(OUT)) {
+  fs.rmSync(path.join(OUT, name), { recursive: true, force: true, maxRetries: 10, retryDelay: 150 });
+}
 const copied = copyTree(ignoreRules());
 const rows = minify();
 console.log(`build: ${copied} files copied to dist/`);
