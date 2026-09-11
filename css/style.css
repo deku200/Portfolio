@@ -145,6 +145,50 @@ button { font-family: inherit; cursor: pointer; }
   content: "·"; color: #3a3a3a; margin: 0 .85em;
 }
 
+/* ---- the burger ----
+   Below 768px every page header keeps to one row: the logo on the left, the
+   language switch and the burger on the right. The menu folds behind the
+   burger and drops down as a full-width panel. The header carries .menu-host
+   and js/nav.js toggles .is-menu-open on it. Written as nav.header-nav, not
+   .header-nav: legal.css and works.css load after this file and style their
+   own header's nav at the same weight. */
+.burger { display: none; }
+@media (max-width: 768px) {
+  .menu-host > .logo { order: 1; margin-right: auto; }
+  .menu-host > .lang, .menu-host > .legal-lang, .menu-host > .works-nav { order: 2; }
+  /* justify-self: the home header's nav is centred with it on a wide screen,
+     and Chrome now applies it to absolutely positioned boxes too, which
+     shrank this panel to its content in the middle of the screen */
+  .menu-host > nav.header-nav {
+    order: 9; position: absolute; top: 100%; left: 0; right: 0; z-index: 1;
+    justify-self: stretch; width: auto;
+    display: none; flex-direction: column; align-items: stretch; flex-wrap: nowrap;
+    flex-basis: auto; gap: 0; margin: 0; padding: .3rem 0 .9rem;
+    background: rgba(0, 0, 0, .96); border-bottom: 1px solid #1c1c1c;
+    font-size: .78rem; letter-spacing: .12em;
+  }
+  .menu-host.is-menu-open > nav.header-nav { display: flex; }
+  .menu-host > nav.header-nav a { padding: 1rem 6vw; border-top: 1px solid #151515; }
+  .menu-host > nav.header-nav a + a::before { content: none; }
+  .burger {
+    order: 3; flex: none; display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; margin: -8px -10px -8px 0;
+    padding: 0; background: none; border: 0; color: var(--fg);
+  }
+  .burger span, .burger span::before, .burger span::after {
+    display: block; width: 20px; height: 2px; border-radius: 1px; background: currentColor;
+    transition: transform .25s ease, background-color .25s ease;
+  }
+  .burger span { position: relative; }
+  .burger span::before, .burger span::after { content: ""; position: absolute; left: 0; }
+  .burger span::before { top: -6px; }
+  .burger span::after { top: 6px; }
+  .menu-host.is-menu-open .burger span { background-color: transparent; }
+  .menu-host.is-menu-open .burger span::before { transform: translateY(6px) rotate(45deg); }
+  .menu-host.is-menu-open .burger span::after { transform: translateY(-6px) rotate(-45deg); }
+  .burger:focus-visible { outline: 1px solid var(--green); outline-offset: 2px; }
+}
+
 /* ============ hero ============ */
 /* Clipped, so nothing in the hero can cross the edge of the screen. The laptop
    is a 3D object whose near edge is magnified by the perspective, and any
@@ -364,28 +408,29 @@ button { font-family: inherit; cursor: pointer; }
    margin and a 32px gap. The font then comes from that width in container
    units: 6.9cqi fits 24 monospace characters, the longer of its two lines,
    and nowrap holds it to exactly two. */
-.hero-hook { display: none; }
+.hero-hook {
+  display: none;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px #000, 0 0 18px rgba(0, 0, 0, .95);
+}
+.hero-hook-title {
+  display: block; font-weight: 700; line-height: 1.08; letter-spacing: -.02em;
+  color: var(--fg); white-space: nowrap;
+}
+.hero-hook-title em { font-style: normal; color: var(--accent); }
+.hero-hook-sub { display: block; line-height: 1.7; letter-spacing: .08em; color: var(--green); }
 @media (min-width: 1025px) {
   .hero-hook {
     position: absolute; z-index: 3; left: 6vw; top: 84px; bottom: calc(6vh + 225px);
     width: calc(min(63%, 100% - 24px - var(--lw) * .68) - var(--lw) * .5 - 6vw - 32px);
     display: flex; flex-direction: column; justify-content: center; gap: 1.1rem;
-    container-type: inline-size;
-    text-transform: uppercase; pointer-events: none;
-    text-shadow: 0 1px 2px #000, 0 0 18px rgba(0, 0, 0, .95);
+    container-type: inline-size; pointer-events: none;
   }
   .hero-hook-title {
-    display: block;
     font-size: min(3vh, 40px);
     font-size: min(6.9cqi, 64px);
-    font-weight: 700; line-height: 1.08; letter-spacing: -.02em; color: var(--fg);
-    white-space: nowrap;
   }
-  .hero-hook-title em { font-style: normal; color: var(--accent); }
-  .hero-hook-sub {
-    display: block; font-size: .78rem; line-height: 1.7; letter-spacing: .08em;
-    color: var(--green);
-  }
+  .hero-hook-sub { font-size: .78rem; }
   /* on narrow desktops (about 1025-1250px wide with a tall screen) the laptop
      takes nearly all the width and the headline would shrink under 20px,
      where it no longer shouts. Then it steps aside rather than whisper. */
@@ -461,36 +506,27 @@ button { font-family: inherit; cursor: pointer; }
 .ph-url span { display: none; }            /* no https:// on a bar this size */
 .ph-url b { color: var(--green); font-weight: 400; }
 
-/* below 768px the phone is the showcase, with its chips underneath */
+/* below 768px the phone is the showcase: under the "calculate" button, with
+   the project chips in a column on its left */
 .ph-stage { display: none; }
 @media (max-width: 768px) {
   .ph-stage {
-    --ph: min(380px, max(250px, calc(93vh - 420px)));
-    --ph: min(380px, max(250px, calc(93svh - 420px)));
+    /* --ph comes from .hero (the mobile hero rules further down) */
     --pw: calc(var(--ph) * .47);
-    display: flex; flex-direction: column; align-items: center;
-    gap: calc(var(--ph) * .05);
-    position: absolute; left: 50%; top: 96px; z-index: 2;
-    width: min(92vw, 420px);
-    transform: translateX(-50%);
+    display: flex; flex-direction: row; align-items: center; justify-content: center;
+    gap: 1.1rem; position: relative; z-index: 2;
     perspective: calc(var(--ph) * 3);
     font-size: .6rem;
   }
-  /* all five in one row, always: five equal columns that shrink with the
-     screen, instead of a strip that scrolls sideways and hides the last one */
-  .ph-tabs {
-    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: .3rem; width: 100%; padding: 0 2px;
-  }
+  .ph-tabs { order: -1; flex: none; display: flex; flex-direction: column; gap: .45rem; }
   .ph-tab {
-    min-width: 0; display: flex; align-items: center; justify-content: center;
-    padding: .65em .3em; border: 1px solid #262626; border-radius: 99px;
+    display: flex; align-items: center; justify-content: flex-start;
+    padding: .75em 1.1em; border: 1px solid #262626; border-radius: 99px;
     background: rgba(0, 0, 0, .65); color: #7a7a7a;
-    font: inherit; font-size: .56rem; letter-spacing: .03em; white-space: nowrap; cursor: pointer;
+    font: inherit; font-size: .56rem; letter-spacing: .05em; white-space: nowrap; cursor: pointer;
     transition: color .2s ease, border-color .2s ease, background .2s ease;
   }
-  .ph-tab-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-  /* the dot needs width these chips no longer have; the active chip lights up whole */
+  /* the dot needs room these chips do not spend; the active chip lights up whole */
   .ph-tab-dot { display: none; }
   .ph-tab.is-active { color: var(--fg); border-color: var(--accent); background: rgba(232, 35, 26, .12); }
   .ph-tab:focus-visible { outline: 1px solid var(--green); outline-offset: 1px; }
@@ -911,36 +947,49 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
 
 /* --- mobile --- */
 @media (max-width: 768px) {
+  /* Flex, not grid: grid columns feed widths back into each other, which once
+     pushed the language switch off the right edge of the screen. One row:
+     the logo, then the language switch and the burger (see "the burger"). */
   .site-header {
-    grid-template-columns: auto auto;
-    /* Flex, not grid. As a grid this was "logo lang" over a "nav nav" row, and
-       a row-spanning item feeds its own width back into the two columns it
-       spans: the menu is wider than logo + language, so it pushed the columns
-       apart until the language switch hung off the right edge of the screen.
-       Wrapping flex items carry no such obligation to each other. */
-    display: flex; flex-wrap: wrap; align-items: center;
-    justify-content: space-between; gap: .55rem 1rem;
+    display: flex; align-items: center; gap: 1rem;
     padding: 1rem 5vw .7rem;
     background: linear-gradient(180deg, rgba(0,0,0,.92), rgba(0,0,0,.8) 55%, transparent);
   }
-  .site-header .logo { order: 1; }
-  .site-header .lang { order: 2; text-align: right; }
-  .site-header .header-nav {
-    order: 3; flex-basis: 100%; min-width: 0;
-    justify-content: center; gap: .3rem .85rem; font-size: .6rem;
-  }
-  /* the switch is the last thing on its line, so its trailing gap is overhang */
+  .site-header .lang { text-align: right; }
+  /* a single row has no room for the "<LANG>" caption over the switch */
+  .site-header .lang-label { display: none; }
+  /* the switch sits right before the burger, so its trailing gap is overhang */
   .site-header .lang .lang-btn:last-child { margin-right: 0; }
-  /* dots would land at the start of a wrapped line, which reads as a bullet */
-  .site-header .header-nav a + a::before { content: none; }
 
-  /* hero: below 768px the showcase is the phone, not the laptop (.ph-stage) */
+  /* hero: one column that flows, instead of corners pinned over a 100vh box.
+     The headline, the phone, then "calculate" with the pitch under it. The
+     phone stands above them, but the button is laid over the foot of the
+     phone (8.5% of its height, as it was placed by hand). Then the two quiet
+     buttons. On a short phone the hero grows past one screen rather than
+     stacking things on top of each other. */
   .lap-stage { display: none; }
-  .hero-corner-bottom-left {
-    left: 5vw; bottom: 16vh; max-width: 90vw;
-    font-size: .68rem; line-height: 2;
+  .hero {
+    /* 368px on a 375x812 phone, where it was placed by hand; scales from
+       there. Set here, not on .ph-stage, because the copy's overlap is
+       measured in it too. */
+    --ph: min(400px, 98vw, 46vh);
+    --ph: min(400px, 98vw, 46svh);
+    height: auto; min-height: 100vh; min-height: 100svh;
+    display: flex; flex-direction: column; gap: 1.5rem;
+    padding: 76px 5vw 7vh;
   }
-  .hero-corner-bottom-right { right: 5vw; bottom: 7vh; }
+  .hero-hook { display: flex; flex-direction: column; gap: .6rem; order: 1; position: relative; z-index: 3; }
+  /* 20.5px on a 375px phone, the size it was given by hand */
+  .hero-hook-title { font-size: min(5.47vw, 26px); }
+  .hero-hook-sub { font-size: .62rem; }
+  .ph-stage { order: 2; }
+  /* above the phone's layer (.ph-stage is z-index 2) */
+  .hero-corner { position: relative; inset: auto; z-index: 3; }
+  .hero-corner-bottom-left {
+    order: 3; font-size: .68rem; line-height: 2;
+    margin-top: calc(-1.5rem - var(--ph) * .085);
+  }
+  .hero-corner-bottom-right { order: 4; flex-direction: row; align-items: center; }
 
   .work-items { padding: 8vh 5vw 0; gap: 8vh; }
   .work-title { font-size: .95rem; }

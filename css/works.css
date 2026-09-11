@@ -39,6 +39,12 @@
   }
   .works-header-nav a + a::before { content: none; }
 }
+/* On a phone the header is the logo, the language switch and the burger, in
+   one row. The calculate button does not fit beside them, and this page has
+   its own further down, so the header's copy steps aside. */
+@media (max-width: 768px) {
+  .works-nav > .btn-orange { display: none; }
+}
 .works-lang { display: flex; gap: .35rem; }
 /* targets the attribute, not the element: these are links now, so that the
    other language is crawlable rather than only reachable by script */

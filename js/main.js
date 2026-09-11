@@ -747,24 +747,9 @@ function startShowcase() {
   // the same breakpoint the stylesheet uses to hide one and show the other
   const mq = matchMedia("(max-width: 768px)");
 
-  /* The phone gets exactly the room left above the copy. The stylesheet can
-     only estimate that from the screen height, and on a 360px phone the copy
-     wraps to an extra line or two, which on a short screen put the chips over
-     the "calculate" button. Measuring is safe here because the copy is pinned
-     to the bottom of the hero: its top does not move when the phone does. */
-  const copy = $(".hero-corner-bottom-left");
-  const phTabs = q(phRoot, ".ph-tabs");
-  function fitPhone() {
-    if (!mq.matches || !copy) return;
-    // offsetTop, not getBoundingClientRect: the copy slides up into place as it
-    // is revealed, and a reading taken mid-slide put its top ~40px too low —
-    // on a 375x812 phone that was enough to let the chips cover the button.
-    // Both are positioned in .hero, so their offsetTops compare directly.
-    const room = copy.offsetTop - phRoot.offsetTop
-      - phTabs.offsetHeight - 30;                  // the gap, and some air above the copy
-    phRoot.style.setProperty("--ph", Math.max(150, Math.min(380, Math.round(room))) + "px");
-  }
-
+  /* The phone's size is the stylesheet's. It used to be measured into the
+     room left above the copy; since the hero became one flowing column the
+     phone sits under the "calculate" button and there is nothing to fit. */
   let active = null;
   const pick = () => {
     const next = mq.matches ? phone : laptop;
@@ -774,21 +759,10 @@ function startShowcase() {
     active = next;
     active.start();
     if (deskPhone && active === laptop) deskPhone.start();
-    fitPhone();                                    // after start: the chips exist now
   };
   pick();
   if (mq.addEventListener) mq.addEventListener("change", pick);
   else mq.addListener(pick);
-  let fitT = 0;
-  addEventListener("resize", () => { clearTimeout(fitT); fitT = setTimeout(fitPhone, 150); });
-  // the copy's height depends on the web font; measure again once it is in
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitPhone);
-  /* ...and on everything else that changes it after the first fit. On
-     production the hero line is still being typed in by scramble-in when the
-     phone is first measured, so the copy is shorter then than it ends up: the
-     phone came out 380px where 346 was the room, and the chips sat over the
-     button. Rather than guess when the copy is finished, watch it. */
-  if (copy && typeof ResizeObserver === "function") new ResizeObserver(fitPhone).observe(copy);
 }
 
 /* ---------- 3. ASCII PARTICLE FLOOR (hero) ---------- */
@@ -816,6 +790,10 @@ function startHero() {
   }
   resize();
   addEventListener("resize", resize);
+  /* ...and whenever the hero changes size without the window doing so. On a
+     phone the hero is a flowing column, which grows as the web font and the
+     scrambled lines settle, and a canvas sized once would keep its first size. */
+  if (typeof ResizeObserver === "function") new ResizeObserver(resize).observe(canvas);
   canvas.addEventListener("pointermove", e => {
     const r = canvas.getBoundingClientRect();
     mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;

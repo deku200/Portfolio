@@ -26,9 +26,9 @@
   <div class="grain" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
 
-  <header class="works-header">
+  <header class="works-header menu-host">
     <a class="logo" href="__BASE__/">&lt;SV&gt;</a>
-    <nav class="header-nav works-header-nav" aria-label="Menu">__NAV__</nav>
+    <nav id="site-menu" class="header-nav works-header-nav" aria-label="Menu">__NAV__</nav>
     <nav class="works-nav">
       <div class="works-lang">
         <a href="__PATH_EN__" data-set-lang="en">EN</a>
@@ -38,6 +38,7 @@
         <span data-lang-block="uk">РОЗРАХУВАТИ ВАРТІСТЬ</span><span data-lang-block="en">CALCULATE THE PRICE</span>
       </a>
     </nav>
+    <button class="burger" type="button" aria-controls="site-menu" aria-expanded="false" aria-label="Menu"><span></span></button>
   </header>
 
   <main>
@@ -140,5 +141,6 @@
   <!-- Plerdy — heatmaps / click tracking. Externalised because the CSP
        forbids inline scripts; the snippet itself is verbatim in the file. -->
   <script data-plerdy_code="1" src="/js/plerdy.js?v=__V__" defer></script>
+  <script src="/js/nav.js?v=__V__" defer></script>
 </body>
 </html>

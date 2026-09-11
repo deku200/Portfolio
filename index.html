@@ -146,14 +146,15 @@ __FAQ_LD__
   <!-- ============ SITE ============ -->
   <div id="site" class="site">
 
-    <header class="site-header">
+    <header class="site-header menu-host">
       <div class="logo scramble-hover">&lt;SV&gt;</div>
-      <nav class="header-nav" aria-label="Menu">__NAV__</nav>
+      <nav id="site-menu" class="header-nav" aria-label="Menu">__NAV__</nav>
       <div class="header-col lang">
-        &lt;LANG&gt;<br>
+        <span class="lang-label">&lt;LANG&gt;<br></span>
         <a class="lang-btn is-active" href="__PATH_EN__" data-lang="en" data-tip="ENGLISH">EN</a>
         <a class="lang-btn" href="__PATH_UK__" data-lang="uk" data-tip="УКРАЇНСЬКА">UK</a>
       </div>
+      <button class="burger" type="button" aria-controls="site-menu" aria-expanded="false" aria-label="Menu"><span></span></button>
     </header>
 
     <main>
@@ -875,5 +876,6 @@ __FAQ_LD__
   <!-- Plerdy — heatmaps / click tracking. Externalised because the CSP
        forbids inline scripts; the snippet itself is verbatim in the file. -->
   <script data-plerdy_code="1" src="/js/plerdy.js?v=__V__" defer></script>
+  <script src="/js/nav.js?v=__V__" defer></script>
 </body>
 </html>

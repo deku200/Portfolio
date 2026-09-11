@@ -23,13 +23,14 @@
 </head>
 <body class="legal-body">
 
-  <header class="legal-header">
+  <header class="legal-header menu-host">
     <a class="logo" href="__BASE__/">&lt;SV&gt;</a>
-    <nav class="header-nav legal-nav" aria-label="Menu">__NAV__</nav>
+    <nav id="site-menu" class="header-nav legal-nav" aria-label="Menu">__NAV__</nav>
     <div class="legal-lang">
       <a href="__PATH_EN__" data-set-lang="en" class="is-active">EN</a>
       <a href="__PATH_UK__" data-set-lang="uk">UK</a>
     </div>
+    <button class="burger" type="button" aria-controls="site-menu" aria-expanded="false" aria-label="Menu"><span></span></button>
   </header>
 
   <main class="legal-main">
@@ -148,5 +149,6 @@
   <!-- Plerdy — heatmaps / click tracking. Externalised because the CSP
        forbids inline scripts; the snippet itself is verbatim in the file. -->
   <script data-plerdy_code="1" src="/js/plerdy.js?v=__V__" defer></script>
+  <script src="/js/nav.js?v=__V__" defer></script>
 </body>
 </html>

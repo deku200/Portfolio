@@ -118,18 +118,8 @@
 .legal-footer a:hover { color: var(--green, #9dff9e); }
 .legal-footer .sep { opacity: 0.4; }
 
-/* Narrow: the three-across header stops fitting, so the menu drops to its own
-   row under the logo and the language switch. */
-@media (max-width: 720px) {
-  .legal-header { flex-wrap: wrap; row-gap: .55rem; padding-bottom: .8rem; }
-  .legal-header .logo { order: 1; }
-  .legal-lang { order: 2; margin-left: auto; }
-  .legal-header .header-nav {
-    order: 3; flex-basis: 100%; justify-content: center;
-    gap: .3rem .85rem; font-size: .6rem;
-  }
-  .legal-header .header-nav a + a::before { content: none; }
-}
+/* Below 768px the menu folds behind the burger, with the logo, the language
+   switch and the burger on one row: see "the burger" in style.css. */
 
 /* bilingual toggle: show only the active language's blocks */
 [data-lang="en"] [data-lang-block="uk"],
