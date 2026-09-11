@@ -518,12 +518,12 @@ button { font-family: inherit; cursor: pointer; }
     perspective: calc(var(--ph) * 3);
     font-size: .6rem;
   }
-  .ph-tabs { order: -1; flex: none; display: flex; flex-direction: column; gap: .45rem; }
+  .ph-tabs { order: -1; flex: none; display: flex; flex-direction: column; gap: .55rem; }
   .ph-tab {
     display: flex; align-items: center; justify-content: flex-start;
-    padding: .75em 1.1em; border: 1px solid #262626; border-radius: 99px;
+    padding: .9em 1.3em; border: 1px solid #262626; border-radius: 99px;
     background: rgba(0, 0, 0, .65); color: #7a7a7a;
-    font: inherit; font-size: .56rem; letter-spacing: .05em; white-space: nowrap; cursor: pointer;
+    font: inherit; font-size: .66rem; letter-spacing: .05em; white-space: nowrap; cursor: pointer;
     transition: color .2s ease, border-color .2s ease, background .2s ease;
   }
   /* the dot needs room these chips do not spend; the active chip lights up whole */
@@ -986,9 +986,13 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
   .ph-stage { order: 2; margin-top: calc(.3rem - 1.5rem); }
   /* above the phone's layer (.ph-stage is z-index 2) */
   .hero-corner { position: relative; inset: auto; z-index: 3; }
+  /* The button overlaps only the phone's bottom bezel: the address bar ends
+     3.2% of the phone's height above its foot, and the button starts 6px
+     under that, so the site's link on the mockup stays readable. (It was
+     8.5% of the height, which put the button over the link.) */
   .hero-corner-bottom-left {
     order: 3; font-size: .68rem; line-height: 2;
-    margin-top: calc(-1.5rem - var(--ph) * .085);
+    margin-top: calc(-1.5rem - var(--ph) * .032 + 6px);
   }
   .hero-corner-bottom-right { order: 4; flex-direction: row; align-items: center; }
 
