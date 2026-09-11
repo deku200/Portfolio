@@ -18,7 +18,17 @@ workers_dev = false
 # dist/ is rebuilt from them and is not committed.
 [build]
 command = "node tools/build.js"
-watch_dir = ["js", "css", "img", "fonts"]
+# With a custom build, wrangler dev only reloads on changes under watch_dir —
+# the pages and text files the Worker imports have to be listed too, or a
+# change to them is not picked up until a restart. They are listed one by
+# one because the repo root cannot be watched: the build writes dist/ inside
+# it and would set itself off again.
+watch_dir = [
+  "js", "css", "img", "fonts", "worker",
+  "index.html", "admin.html", "projects.html", "privacy.html", "terms.html",
+  "price.html", "landing.html", "online-store.html",
+  "robots.txt", "llms.txt", "sitemap.xml", "site.webmanifest", "_headers",
+]
 
 [assets]
 directory = "./dist"
