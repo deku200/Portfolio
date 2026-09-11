@@ -12,8 +12,16 @@ compatibility_date = "2026-08-01"
 # side-stepped via a *.workers.dev URL.
 workers_dev = false
 
+# Assets are uploaded from dist/, which tools/build.js makes before every
+# deploy and dev session: a copy of what .assetsignore allows, with js/ and
+# css/ minified (source maps in /maps/). Edit js/ and css/ at the repo root —
+# dist/ is rebuilt from them and is not committed.
+[build]
+command = "node tools/build.js"
+watch_dir = ["js", "css", "img", "fonts"]
+
 [assets]
-directory = "."
+directory = "./dist"
 binding = "ASSETS"
 
 [[d1_databases]]
