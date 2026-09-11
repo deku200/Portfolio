@@ -982,7 +982,8 @@ li.is-open .s-row .s-tag { opacity: 1; transform: translateX(0); }
   /* 20.5px on a 375px phone, the size it was given by hand */
   .hero-hook-title { font-size: min(5.47vw, 26px); }
   .hero-hook-sub { font-size: .62rem; }
-  .ph-stage { order: 2; }
+  /* pulled up to the headline's sub-line, leaving ~5px instead of the column gap */
+  .ph-stage { order: 2; margin-top: calc(.3rem - 1.5rem); }
   /* above the phone's layer (.ph-stage is z-index 2) */
   .hero-corner { position: relative; inset: auto; z-index: 3; }
   .hero-corner-bottom-left {
