@@ -18,6 +18,11 @@
 /js/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Fonts are named for the upstream version (jetbrains-mono-v24-*), so a new
+# version of the font is a new file name and each file can be frozen for a year.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
 # Images change only on deploy and are not versioned, so they get a day, then
 # stale-while-revalidate keeps the next visit instant while a fresh copy is
 # fetched behind it.

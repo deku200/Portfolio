@@ -42,9 +42,8 @@
   <meta name="twitter:title" content="__TITLE__" />
   <meta name="twitter:description" content="__DESC__" />
   <meta name="twitter:image" content="https://www.slv-visual.online/img/og-cover.png" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&subset=cyrillic&display=swap" rel="stylesheet" />
+  <link rel="preload" href="/fonts/jetbrains-mono-v24-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/jetbrains-mono-v24-cyrillic.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/css/style.css?v=__V__" />
 
   <!-- Structured data (schema.org) — kept in the static HTML so search engines
@@ -872,7 +871,7 @@ __FAQ_LD__
     </main>
   </div>
 
-  <script src="/js/main.js?v=__V__"></script>
+  <script src="/js/main.js?v=__V__" defer></script>
   <!-- Plerdy — heatmaps / click tracking. Externalised because the CSP
        forbids inline scripts; the snippet itself is verbatim in the file. -->
   <script data-plerdy_code="1" src="/js/plerdy.js?v=__V__" defer></script>

@@ -48,8 +48,9 @@ const PAGES = {
    which domain was refused before it says anything else. */
 const CSP =
   "default-src 'self'; script-src 'self' https://*.plerdy.com; " +
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-  "font-src 'self' https://fonts.gstatic.com; " +
+  // fonts are served from /fonts now, so Google Fonts is no longer allowed in
+  "style-src 'self' 'unsafe-inline'; " +
+  "font-src 'self'; " +
   "img-src 'self' data: https://*.plerdy.com; " +
   "connect-src 'self' https://*.plerdy.com; " +
   "object-src 'none'; base-uri 'self'; form-action 'self'; " +
