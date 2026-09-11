@@ -36,23 +36,19 @@ const PAGES = {
 };
 
 /* ---------------------------------------------------------------- helpers */
-/* Plerdy is the one third party allowed to run script here. It is named by
-   host rather than by opening the policy up: 'unsafe-inline' would have let its
-   pasted snippet run, but it would also have let through anything else that
-   ever managed to get an inline <script> onto a page, which is the whole class
-   of attack this header exists to stop. The snippet lives in /js/plerdy.js
-   instead, and only the host it fetches from is listed.
-
-   The wildcard covers a.plerdy.com and whatever sibling endpoints it calls for
-   reporting; Plerdy publishes no list. If tracking breaks, the console will say
-   which domain was refused before it says anything else. */
+/* No third party runs script here: everything the pages load is served from
+   this origin. 'unsafe-inline' stays out of script-src — it would let through
+   anything that ever managed to get an inline <script> onto a page, which is
+   the whole class of attack this header exists to stop — and so does
+   'unsafe-eval'. The one inline script, Cloudflare's own, is let in by a
+   per-page nonce (see servePage). */
 const CSP =
-  "default-src 'self'; script-src 'self' https://*.plerdy.com; " +
+  "default-src 'self'; script-src 'self'; " +
   // fonts are served from /fonts now, so Google Fonts is no longer allowed in
   "style-src 'self' 'unsafe-inline'; " +
   "font-src 'self'; " +
-  "img-src 'self' data: https://*.plerdy.com; " +
-  "connect-src 'self' https://*.plerdy.com; " +
+  "img-src 'self' data:; " +
+  "connect-src 'self'; " +
   "object-src 'none'; base-uri 'self'; form-action 'self'; " +
   "frame-ancestors 'self'";
 

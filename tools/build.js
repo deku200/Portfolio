@@ -18,8 +18,6 @@ const esbuild = require("esbuild");
 
 const ROOT = path.join(__dirname, "..");
 const OUT = path.join(ROOT, "dist");
-// a vendor snippet: the script it loads reads its top-level names
-const KEEP_AS_IS = new Set(["js/plerdy.js"]);
 
 // .assetsignore in the gitignore style it is written in: "dir/" is a
 // directory at any depth, "*.ext" a file name at any depth, "/x" the root only
@@ -66,7 +64,6 @@ function minify() {
     for (const name of fs.readdirSync(abs)) {
       if (!name.endsWith("." + dir)) continue;
       const rel = dir + "/" + name;
-      if (KEEP_AS_IS.has(rel)) continue;
       const src = fs.readFileSync(path.join(abs, name), "utf8");
       const r = esbuild.transformSync(src, {
         loader: dir,
