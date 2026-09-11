@@ -659,12 +659,20 @@ function servePage(file, env, lang) {
     .replace(/__FAQ_LD__/g, file === "index.html" ? FAQ_LD[lang] || "" : "")
     .replace(/__PAGE_LD__/g, () => (PAGE_LD[file] && PAGE_LD[file][lang]) || "");
 
+  /* A fresh nonce on every page. Nothing of ours is inline: it is there for
+     the bot-detection script Cloudflare's edge appends before </html>
+     (window.__CF$cv$params, /cdn-cgi/challenge-platform/), which the CSP
+     otherwise blocks. Cloudflare copies the nonce from this header onto the
+     script it injects. A hash cannot do it: that script carries per-request
+     values. A nonce nobody can guess opens nothing else. */
+  const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
   return new Response(html, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Content-Language": lang,
       "Cache-Control": "no-cache",
       ...SECURITY_HEADERS,
+      "Content-Security-Policy": CSP.replace("script-src 'self'", "script-src 'self' 'nonce-" + nonce + "'"),
     },
   });
 }
