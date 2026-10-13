@@ -42,6 +42,7 @@ Every page also exists in English under /en/ — for example https://www.slv-vis
 - [Master the Blade](https://ronin-forge.store): one-page store selling custom-made katanas on order.
 - [МЕЛМАН](https://melman.shop/): merch store for the best-known ostrich on Ukrainian TikTok.
 - MOCLAME HOME: e-commerce for 3D-printed home decor with live 3D previews (in development).
+- [MOTOCHAS](https://motochas.com.ua/): online store for electric scooters, electric trikes, ATVs and engines — 110+ models, delivery across Ukraine, instalments.
 
 ## Where it works
 Remote, with no in-person meeting required. Clients across Ukraine — Kyiv, Kharkiv, Odesa, Dnipro, Lviv, Zaporizhzhia, Vinnytsia — and abroad in Europe, the United States and Canada. Sites can be built in Ukrainian, in English, or bilingual.
