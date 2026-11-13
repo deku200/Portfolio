@@ -19,6 +19,7 @@ import termsHtml from "../terms.html";
 import priceHtml from "../price.html";
 import landingHtml from "../landing.html";
 import storeHtml from "../online-store.html";
+import calcHtml from "../calculator.html";
 import robotsTxt from "../robots.txt";
 import llmsTxt from "../llms.txt";
 import sitemapXml from "../sitemap.xml";
@@ -33,6 +34,7 @@ const PAGES = {
   "price.html": priceHtml,
   "landing.html": landingHtml,
   "online-store.html": storeHtml,
+  "calculator.html": calcHtml,
 };
 
 /* ---------------------------------------------------------------- helpers */
@@ -209,6 +211,7 @@ const PAGE_PATH = {
   "price.html": "/price",
   "landing.html": "/landing",
   "online-store.html": "/online-store",
+  "calculator.html": "/calculator",
 };
 const PAGE_OF = {
   "": "index.html", "index": "index.html",
@@ -218,6 +221,7 @@ const PAGE_OF = {
   "price": "price.html",
   "landing": "landing.html",
   "online-store": "online-store.html",
+  "calculator": "calculator.html",
 };
 
 /* Title and description are the two strongest on-page signals, so they are
@@ -277,6 +281,16 @@ const META = {
       desc: "Custom online store development from $900: catalogue, cart, card payments, delivery and an admin panel. Built for Instagram and TikTok sellers. Price it in 30 seconds.",
     },
   },
+  "calculator.html": {
+    uk: {
+      title: "Калькулятор вартості сайту — порахуйте ціну за 30 секунд | slv_visual",
+      desc: "Онлайн-калькулятор вартості сайту: оберіть виконавця, тип сайту, блоки та інтеграції — і отримайте кошторис по пунктах за 30 секунд. Лендінг від $400, магазин від $900.",
+    },
+    en: {
+      title: "Website Cost Calculator — Price Your Site in 30 Seconds | slv_visual",
+      desc: "Online website cost calculator: pick the developer, the type of site, the blocks and integrations, and get an itemised estimate in 30 seconds. Landing pages from $400.",
+    },
+  },
   "privacy.html": {
     uk: {
       title: "Політика конфіденційності — slv_visual",
@@ -305,6 +319,7 @@ const META = {
    through __NAV__ and wraps it in whatever its own header calls a nav. */
 const NAV = [
   ["/price", "ЦІНИ", "PRICING"],
+  ["/calculator", "КАЛЬКУЛЯТОР", "CALCULATOR"],
   ["/landing", "ЛЕНДІНГ", "LANDING PAGES"],
   ["/online-store", "ІНТЕРНЕТ-МАГАЗИН", "ONLINE STORES"],
   ["/projects", "ПРОЄКТИ", "PROJECTS"],
@@ -989,7 +1004,7 @@ async function api(request, env, path, method) {
   }
 
   /* ----------------------------------------------------------- estimates */
-  /* Written by the price calculator on the home page. Everything here is
+  /* Written by the price calculator (/calculator). Everything here is
      visitor-supplied and nothing downstream charges from it — the stored total
      is a lead signal, not an invoice, and the real price is fixed after the
      briefing. So the defence is containment rather than trust: every field is

@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="__LANG__" data-lang="__LANG__">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="color-scheme" content="dark" />
+  <title>__TITLE__</title>
+  <meta name="description" content="__DESC__" />
+  <link rel="canonical" href="__CANON__" />
+  <link rel="alternate" hreflang="uk" href="__ALT_UK__" />
+  <link rel="alternate" hreflang="en" href="__ALT_EN__" />
+  <link rel="alternate" hreflang="x-default" href="__ALT_EN__" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="slv_visual" />
+  <meta property="og:url" content="__CANON__" />
+  <meta property="og:title" content="__TITLE__" />
+  <meta property="og:description" content="__DESC__" />
+  <meta property="og:image" content="https://www.slv-visual.online/img/og-cover.png" />
+  <meta property="og:locale" content="__OGLOCALE__" />
+  <meta property="og:locale:alternate" content="__OGALT__" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="__TITLE__" />
+  <meta name="twitter:description" content="__DESC__" />
+  <meta name="twitter:image" content="https://www.slv-visual.online/img/og-cover.png" />
+  <link rel="preload" href="/fonts/jetbrains-mono-v24-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/jetbrains-mono-v24-cyrillic.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/css/style.css?v=__V__" />
+  <link rel="stylesheet" href="/css/legal.css?v=__V__" />
+__PAGE_LD__
+</head>
+<body class="legal-body calc-body">
+
+  <header class="legal-header menu-host">
+    <a class="logo" href="__BASE__/">&lt;SV&gt;</a>
+    <nav id="site-menu" class="header-nav legal-nav" aria-label="Menu">__NAV__</nav>
+    <div class="legal-lang">
+      <a href="__PATH_EN__" data-set-lang="en" class="is-active">EN</a>
+      <a href="__PATH_UK__" data-set-lang="uk">UK</a>
+    </div>
+    <button class="burger" type="button" aria-controls="site-menu" aria-expanded="false" aria-label="Menu"><span></span></button>
+  </header>
+
+  <main class="calc-main">
+    <nav class="legal-breadcrumb calc-crumb">
+      <a href="__BASE__/">slv_visual</a> /
+      <span data-lang-block="uk">Калькулятор вартості сайту</span><span data-lang-block="en">Website cost calculator</span>
+    </nav>
+
+    <section class="works-section calc" id="calc">
+      <h1 class="works-label">
+        <span data-lang-block="uk">&lt;РОЗРАХУЙ ВАРТІСТЬ СВОГО МАЙБУТНЬОГО САЙТУ&gt;</span><span data-lang-block="en">&lt;ESTIMATE YOUR FUTURE WEBSITE&gt;</span>
+      </h1>
+
+      <p class="calc-lead">
+        <span data-lang-block="uk">Зберіть сайт по деталях.<br><b>Ціну побачите за 30 секунд.</b></span>
+        <span data-lang-block="en">Assemble the site part by part.<br><b>See the price in 30 seconds.</b></span>
+      </p>
+      <p class="calc-sub">
+        <span data-lang-block="uk">Виконавець, тип сайту, блоки й інтеграції — і чесний кошторис по пунктах. Без дзвінків.</span>
+        <span data-lang-block="en">Developer, type of site, blocks and integrations — and an honest, itemised estimate. No calls.</span>
+      </p>
+
+      <div class="calc-shell">
+        <!-- ============ configurator ============ -->
+        <form class="calc-config" id="calc-config" autocomplete="off">
+
+          <fieldset class="calc-step">
+            <legend class="calc-step-key">&gt; <span data-lang-block="uk">ВИКОНАВЕЦЬ</span><span data-lang-block="en">DEVELOPER</span></legend>
+            <div class="calc-devs" id="calc-devs"></div>
+          </fieldset>
+
+          <fieldset class="calc-step">
+            <legend class="calc-step-key">&gt; <span data-lang-block="uk">ТИП САЙТУ</span><span data-lang-block="en">TYPE OF SITE</span></legend>
+            <div class="calc-cats" id="calc-cats"></div>
+          </fieldset>
+
+          <fieldset class="calc-step">
+            <legend class="calc-step-key">&gt; <span data-lang-block="uk">СФЕРА ДІЯЛЬНОСТІ</span><span data-lang-block="en">YOUR INDUSTRY</span></legend>
+            <p class="calc-step-note">
+              <span data-lang-block="uk">На ціну не впливає — так ми одразу бачимо вашу нішу.</span>
+              <span data-lang-block="en">Does not affect the price — it just tells us your niche.</span>
+            </p>
+            <div class="calc-combo" id="calc-niche">
+              <button type="button" class="cb-trigger" aria-haspopup="listbox" aria-expanded="false">
+                <span class="cb-value"></span>
+                <span class="cb-caret" aria-hidden="true">&#9660;</span>
+              </button>
+              <div class="cb-panel" hidden>
+                <input class="cb-search" type="text" role="combobox" autocomplete="off"
+                       spellcheck="false" aria-expanded="true" aria-controls="cb-list"
+                       aria-autocomplete="list" />
+                <ul class="cb-list" id="cb-list" role="listbox"></ul>
+                <p class="cb-empty" hidden></p>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="calc-step">
+            <legend class="calc-step-key">&gt; <span data-lang-block="uk">БЛОКИ САЙТУ</span><span data-lang-block="en">PAGE BLOCKS</span></legend>
+            <div class="calc-included" id="calc-included"></div>
+            <div class="calc-opts" id="calc-blocks"></div>
+          </fieldset>
+
+          <fieldset class="calc-step">
+            <legend class="calc-step-key">&gt; <span data-lang-block="uk">СЕРВІСИ ТА ІНТЕГРАЦІЇ</span><span data-lang-block="en">SERVICES &amp; INTEGRATIONS</span></legend>
+            <div class="calc-groups" id="calc-groups"></div>
+            <div class="calc-opts" id="calc-services"></div>
+            <!-- shown only when a shop orders copywriting: the one price that
+                 depends on something only the visitor can tell us -->
+            <div class="calc-qty" id="calc-copy-qty" hidden>
+              <label class="calc-qty-label">
+                <span data-lang-block="uk">Скільки товарів у каталозі?</span><span data-lang-block="en">How many products in the catalogue?</span>
+                <input type="number" id="calc-products" min="0" max="5000" step="1" value="20" inputmode="numeric" />
+              </label>
+              <p class="calc-qty-note">
+                <span data-lang-block="uk">Копірайтинг магазину — $100 за сайт плюс $2 за опис кожного товару.</span>
+                <span data-lang-block="en">Shop copywriting is $100 for the site plus $2 for every product description.</span>
+              </p>
+            </div>
+          </fieldset>
+
+          <fieldset class="calc-step">
+            <legend class="calc-step-key">&gt; <span data-lang-block="uk">ПІДТРИМКА</span><span data-lang-block="en">SUPPORT</span></legend>
+            <div class="calc-opts calc-opts-single" id="calc-support"></div>
+          </fieldset>
+        </form>
+
+        <!-- ============ the estimate printing beside it ============ -->
+        <aside class="calc-receipt">
+          <div class="term-window calc-paper" id="calc-paper">
+            <div class="term-bar">
+              <span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span>
+              <span class="term-title">slv_visual:~/estimate</span>
+              <span class="calc-state" id="calc-state" aria-hidden="true"></span>
+            </div>
+
+            <div class="calc-paper-body">
+              <ul class="calc-lines" id="calc-lines"></ul>
+
+              <div class="calc-total">
+                <span class="calc-total-key">
+                  <span data-lang-block="uk">РАЗОМ</span><span data-lang-block="en">TOTAL</span>
+                </span>
+                <span class="calc-total-val is-masked" id="calc-total">$•••</span>
+              </div>
+              <div class="calc-total-sub" id="calc-total-sub" hidden></div>
+
+              <p class="calc-eta" id="calc-eta" hidden></p>
+
+              <div class="calc-tg">
+                <label class="calc-tg-label" for="calc-telegram">
+                  <span data-lang-block="uk">Телеграм (для зв'язку)</span><span data-lang-block="en">Telegram (so we can reach you)</span>
+                </label>
+                <input class="calc-tg-input" id="calc-telegram" type="text" maxlength="64"
+                       autocomplete="username" spellcheck="false" placeholder="@username"
+                       aria-describedby="calc-tg-hint" />
+                <p class="calc-tg-hint" id="calc-tg-hint">
+                  <span data-lang-block="uk">Надішлемо розрахунок і відповімо на питання. Без дзвінків і без спаму.</span>
+                  <span data-lang-block="en">We'll send you the estimate and answer any questions. No calls, no spam.</span>
+                </p>
+                <p class="calc-tg-err" id="calc-tg-err" role="alert" hidden></p>
+              </div>
+
+              <label class="calc-referral">
+                <input type="checkbox" id="calc-melman" class="sr-only" />
+                <span class="co-pick" aria-hidden="true"></span>
+                <span class="cr-body">
+                  <span class="cr-name"><span data-lang-block="uk">Ви від Мелмана?</span><span data-lang-block="en">Came from Melman?</span></span>
+                  <em class="cr-note"><span data-lang-block="uk">Знижка −10% на всю суму — застосується після розрахунку.</span><span data-lang-block="en">−10% off the whole total — applied once you calculate.</span></em>
+                </span>
+              </label>
+
+              <div class="calc-actions">
+                <button type="button" class="cta-btn calc-go" id="calc-go">
+                  <span class="cta-btn-prompt" aria-hidden="true">&gt;</span>
+                  <span data-lang-block="uk">РОЗРАХУВАТИ ВАРТІСТЬ</span><span data-lang-block="en">CALCULATE THE PRICE</span>
+                  <span class="cta-caret" aria-hidden="true"></span>
+                </button>
+
+                <div class="calc-after" id="calc-after" hidden>
+                  <a class="cta-btn calc-send" href="__BASE__/#contact" id="calc-send">
+                    <span class="cta-btn-prompt" aria-hidden="true">&gt;</span>
+                    <span data-lang-block="uk">ЗАЛИШИТИ ЗАЯВКУ З ЦИМ РОЗРАХУНКОМ</span><span data-lang-block="en">SEND A REQUEST WITH THIS ESTIMATE</span>
+                  </a>
+                  <button type="button" class="calc-reset" id="calc-reset">
+                    <span data-lang-block="uk">↻ ПЕРЕЗІБРАТИ</span><span data-lang-block="en">↻ REBUILD IT</span>
+                  </button>
+                </div>
+              </div>
+
+              <p class="calc-note">
+                <span data-lang-block="uk">Це попередній кошторис, а не рахунок. Фінальну ціну ми фіксуємо після брифінгу — і вона не росте посеред роботи.</span>
+                <span data-lang-block="en">This is a preliminary estimate, not an invoice. The final price is fixed after the briefing — and it never grows mid-project.</span>
+              </p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="legal-footer">
+    <span>&lt;YAROSLAV / slv_visual&gt;</span>
+    <a href="__BASE__/">
+      <span data-lang-block="uk">Головна</span><span data-lang-block="en">Home</span>
+    </a>
+    <span class="sep">·</span>
+    <a href="__BASE__/price">
+      <span data-lang-block="uk">Ціни</span><span data-lang-block="en">Pricing</span>
+    </a>
+    <span class="sep">·</span>
+    <a href="__BASE__/projects">
+      <span data-lang-block="uk">Проєкти</span><span data-lang-block="en">Projects</span>
+    </a>
+    <span class="sep">·</span>
+    <a href="__BASE__/privacy">
+      <span data-lang-block="uk">Конфіденційність</span><span data-lang-block="en">Privacy</span>
+    </a>
+    <span class="sep">·</span>
+    <a href="https://t.me/slv_visual" target="_blank" rel="noopener noreferrer">Telegram</a>
+  </footer>
+
+  <script src="/js/legal.js?v=__V__" defer></script>
+  <script src="/js/nav.js?v=__V__" defer></script>
+  <script src="/js/calc.js?v=__V__" defer></script>
+</body>
+</html>

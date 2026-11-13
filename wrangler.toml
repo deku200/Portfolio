@@ -26,7 +26,7 @@ command = "node tools/build.js"
 watch_dir = [
   "js", "css", "img", "fonts", "worker",
   "index.html", "admin.html", "projects.html", "privacy.html", "terms.html",
-  "price.html", "landing.html", "online-store.html",
+  "price.html", "landing.html", "online-store.html", "calculator.html",
   "robots.txt", "llms.txt", "sitemap.xml", "site.webmanifest", "_headers",
 ]
 

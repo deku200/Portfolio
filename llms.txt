@@ -30,7 +30,8 @@ Published in full at https://www.slv-visual.online/price. All figures in USD and
 A worked example, a 30-product clothing store with catalogue, product pages, cart, filters, card payments, Nova Poshta and an admin panel, comes to $2,420.
 
 ## Pages
-- [Home and price calculator](https://www.slv-visual.online/): the calculator lives at /#calc
+- [Home](https://www.slv-visual.online/): who we are, the projects and the contact form
+- [Price calculator](https://www.slv-visual.online/calculator): an itemised estimate in 30 seconds
 - [Website pricing](https://www.slv-visual.online/price): the complete price list and cost FAQ
 - [Landing page development](https://www.slv-visual.online/landing): one-page sites, what they suit, what they cost
 - [Online store development](https://www.slv-visual.online/online-store): e-commerce, Instagram and TikTok sellers, a worked estimate
