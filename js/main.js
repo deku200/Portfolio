@@ -997,7 +997,7 @@ function observeSections() {
 /* ---------- 5b. SCROLL-REVEAL (fade + rise, staggered) ---------- */
 function setupReveals() {
   const targets = $$(
-    ".hero-corner, .work-item, .quote-label, .quote-author, " +
+    ".hero-corner, .ring-label, .ring-ui, .quote-label, .quote-author, " +
     ".team-tabs, .team-panels, .services-label, .services-list li, .services-cta, " +
     ".clients-label, .clients-list li, .contact-label, .contact-form label, " +
     ".contact-form button, .site-footer > div"
@@ -1605,42 +1605,37 @@ function applyLocalOverrides() {
   }
 
   function renderProjects(projects) {
-    // The home page has three slots; fill them by position, not by id — ids are
-    // no longer 0,1,2 once projects are added or deleted in the admin panel.
-    // Everything beyond the third lives on /projects.html.
-    const slots = $$(".work-item");
-    slots.forEach((art, i) => { if (!projects[i]) art.hidden = true; });
-    projects.slice(0, slots.length).forEach((p, i) => {
-      const art = slots[i];
-      if (!art) return;
-      art.hidden = false;
-      const titleEl = $(".work-title", art);
-      if (titleEl) {
-        const label = `&lt;${esc(p.title)}&gt;`;
-        art.dataset.title = label;
-        titleEl.innerHTML = p.link
-          ? `<a data-tip="${esc(p.link)} ↗" href="${esc(p.link)}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`
-          : label;
-      }
-      const ce = $(".w-case", art); if (ce) ce.textContent = p.caseLabel;
-      const se = $(".w-status", art); if (se) { se.textContent = p.status; se.classList.toggle("is-live", /live/i.test(p.status)); }
-      const tb = $(".w-tags", art);
-      if (tb) tb.innerHTML = String(p.tags).split(",").map(t => t.trim()).filter(Boolean).map(t => `<span>${esc(t)}</span>`).join("");
-      /* The slot's markup still carries the alt text of whatever project was
-         hard-coded there, so swapping only the src leaves every image described
-         as a different case study — wrong for search and wrong for a screen
-         reader. Stored paths are also a mix of "img/…" and "/uploads/…", and a
-         relative one would resolve against /en/ and 404. */
-      const img = $(".work-media img", art);
-      if (img && p.image) {
-        img.src = assetUrl(p.image);
-        img.alt = p.title + (lang === "uk"
-          ? " — сайт, розроблений slv_visual"
-          : " — website built by slv_visual");
-      }
-      const de = $(".work-desc", art), key = de && de.dataset.i18n;
-      if (key && I18N[key] && p.desc) I18N[key] = { en: p.desc.en, uk: p.desc.uk };
-    });
+    // every project goes on the ring (§15), in the admin panel's order
+    const track = document.getElementById("ring-track");
+    if (!track || !projects || !projects.length) return;
+    const host = (u) => String(u).replace(/^https?:\/\/(www\.)?/, "").replace(/\/.*$/, "");
+    track.innerHTML = projects.map((p, i) => {
+      const title = esc(p.title);
+      const link = p.link ? esc(p.link) : "";
+      const desc = p.desc || {};
+      const uk = esc(desc.uk || desc.en || ""), en = esc(desc.en || desc.uk || "");
+      const tags = String(p.tags || "").split(",").map((t) => t.trim()).filter(Boolean)
+        .map((t) => `<span>${esc(t)}</span>`).join("");
+      const front = link ? `a class="rc-face rc-front" href="${link}" target="_blank" rel="noopener noreferrer" tabindex="-1" draggable="false"`
+        : `div class="rc-face rc-front"`;
+      return `<article class="ring-card">
+        <${front}>
+          <span class="rc-bar" aria-hidden="true"><i></i><i></i><i></i><span class="rc-url">${link ? esc(host(p.link)) : "slv_visual"}</span></span>
+          ${p.image ? `<img src="${esc(p.image)}" alt="${title}${lang === "uk" ? " — сайт, розроблений slv_visual" : " — website built by slv_visual"}" loading="lazy" decoding="async" draggable="false" />` : ""}
+        </${link ? "a" : "div"}>
+        <div class="rc-face rc-back" aria-hidden="true">
+          <span class="rc-no">${String(i + 1).padStart(3, "0")}</span>
+          <span class="rc-name">&lt;${title}&gt;</span>
+        </div>
+        <div class="rc-info">
+          <div class="w-head"><span class="w-case">${esc(p.caseLabel || "")}</span><span class="w-status${/live/i.test(p.status) ? " is-live" : ""}">${esc(p.status || "")}</span></div>
+          <h3 class="work-title">${link ? `<a href="${link}" target="_blank" rel="noopener noreferrer">&lt;${title}&gt; ↗</a>` : `&lt;${title}&gt;`}</h3>
+          <p class="work-desc"><span data-lang-block="uk">${uk}</span><span data-lang-block="en">${en}</span></p>
+          <div class="w-tags">${tags}</div>
+        </div>
+      </article>`;
+    }).join("");
+    Ring.refresh();
   }
 
   Promise.all([
@@ -1705,4 +1700,194 @@ function applyLocalOverrides() {
   set("contact", e.contact, true);
   set("budget", e.budget);
   set("message", e.message);
+})();
+
+/* ---------- 15. WORK RING ----------
+   The projects stand on a ring in 3D and turn in a loop. `pos` is where the
+   ring is, in cards (fractional while it turns); `target` is where it is
+   going. Arrows, the dots, a click on a side card, the keyboard, a swipe or
+   drag and the autoplay all just move `target`; one rAF loop eases `pos`
+   after it, so every way of turning the ring feels the same. Autoplay waits
+   while the ring is off screen, hovered, being dragged, or the tab is hidden. */
+const Ring = (function workRing() {
+  const stage = document.getElementById("ring-stage");
+  const track = document.getElementById("ring-track");
+  if (!stage || !track) return { refresh() {} };
+  const info = document.getElementById("ring-info");
+  const countEl = document.getElementById("ring-count");
+  const dotsEl = document.getElementById("ring-dots");
+  const bar = document.getElementById("ring-bar");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const AUTO = 5200; // ms each project stays in front
+  const mod = (x, m) => ((x % m) + m) % m;
+
+  let cards = [], n = 0, step = 0, radius = 0;
+  let pos = 0, target = 0, active = -1, raf = 0;
+  let drag = null, hovered = false, visible = false, autoT0 = performance.now(), lastT = 0;
+
+  function layout() {
+    cards = [...track.children];
+    n = cards.length;
+    if (!n) return;
+    step = 360 / n;
+    const cw = track.offsetWidth;
+    // the radius at which n cards of this width close into a ring, with air
+    // on a phone the ring is tighter, so the neighbours still peek in at the edges
+    const air = innerWidth < 700 ? 1.18 : 1.5;
+    radius = n > 2 ? (cw / 2) / Math.tan(Math.PI / n) * air : cw * .9;
+    cards.forEach((c, i) => { c.style.transform = `rotateY(${i * step}deg) translateZ(${radius}px)`; });
+    render();
+  }
+
+  function render() {
+    if (!n) return;
+    track.style.transform = `translateZ(${-radius}px) rotateY(${-pos * step}deg)`;
+    cards.forEach((c, i) => {
+      const d = Math.abs(mod(i - pos + n / 2, n) - n / 2); // cards from the front
+      c.style.setProperty("--d", d.toFixed(3));
+      c.classList.toggle("is-front", d < .5);
+    });
+    const a = mod(Math.round(pos), n);
+    if (a !== active) { active = a; showInfo(); }
+  }
+
+  function showInfo() {
+    const src = cards[active] && cards[active].querySelector(".rc-info");
+    if (info && src) {
+      info.innerHTML = src.innerHTML;
+      info.classList.remove("is-swap");
+      void info.offsetWidth; // restart the entrance animation
+      info.classList.add("is-swap");
+    }
+    if (countEl) countEl.textContent = String(active + 1).padStart(2, "0") + " / " + String(n).padStart(2, "0");
+    if (dotsEl) [...dotsEl.children].forEach((b, i) => b.setAttribute("aria-current", String(i === active)));
+  }
+
+  function tick(now) {
+    raf = 0;
+    // easing per millisecond, not per frame, so a 120 Hz screen turns it no faster
+    const dt = lastT ? Math.min(now - lastT, 100) : 16.7;
+    lastT = now;
+    if (!drag) {
+      if (!reduce && visible && !hovered && !document.hidden && n > 1) {
+        const p = (now - autoT0) / AUTO;
+        if (bar) bar.style.transform = `scaleX(${Math.min(p, 1)})`;
+        if (p >= 1) { target = Math.round(target) + 1; autoT0 = now; }
+      }
+      const diff = target - pos;
+      pos = Math.abs(diff) < .0008 ? target : pos + diff * (reduce ? 1 : 1 - Math.pow(1 - .085, dt / 16.7));
+    }
+    render();
+    if (visible || drag || pos !== target) raf = requestAnimationFrame(tick);
+    else lastT = 0;
+  }
+  const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+
+  function go(delta) {
+    target = Math.round(target) + delta;
+    autoT0 = performance.now();
+    if (bar) bar.style.transform = "scaleX(0)";
+    kick();
+  }
+  function goTo(i) { // the short way round
+    let d = i - mod(Math.round(target), n);
+    if (d > n / 2) d -= n;
+    if (d < -n / 2) d += n;
+    if (d) go(d);
+  }
+
+  /* drag / swipe: the ring follows the pointer, then a flick carries it on */
+  const per = () => track.offsetWidth * 1.1; // px of drag per card
+  stage.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0 || n < 2) return;
+    drag = { x: e.clientX, pos, moved: 0, lastX: e.clientX, lastT: e.timeStamp, v: 0 };
+    stage.classList.add("is-dragging");
+    kick();
+  });
+  window.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    drag.moved = Math.max(drag.moved, Math.abs(dx));
+    pos = drag.pos - dx / per();
+    const dt = e.timeStamp - drag.lastT;
+    if (dt > 0) { drag.v = (e.clientX - drag.lastX) / dt; drag.lastX = e.clientX; drag.lastT = e.timeStamp; }
+  });
+  const endDrag = () => {
+    if (!drag) return;
+    target = Math.round(pos - (drag.v * 220) / per());
+    stage.dataset.moved = drag.moved > 6 ? "1" : "";
+    drag = null;
+    stage.classList.remove("is-dragging");
+    autoT0 = performance.now();
+    kick();
+  };
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("pointercancel", endDrag);
+
+  // a drag must not count as a click; a click on a side card brings it round,
+  // and only the card already in front opens the site
+  stage.addEventListener("click", (e) => {
+    if (stage.dataset.moved) { e.preventDefault(); e.stopPropagation(); stage.dataset.moved = ""; return; }
+    const card = e.target.closest(".ring-card");
+    if (!card) return;
+    const i = cards.indexOf(card);
+    if (i !== active) { e.preventDefault(); goTo(i); }
+  }, true);
+
+  stage.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight") { e.preventDefault(); go(1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); go(-1); }
+    else if (e.key === "Enter") {
+      const a = cards[active] && cards[active].querySelector("a.rc-front");
+      if (a) window.open(a.href, "_blank", "noopener");
+    }
+  });
+
+  // sideways trackpad scroll turns it too, one card per gesture
+  let wheelAcc = 0, wheelT = 0;
+  stage.addEventListener("wheel", (e) => {
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    if (e.timeStamp - wheelT > 450) wheelAcc = 0;
+    wheelAcc += e.deltaX;
+    if (Math.abs(wheelAcc) > 60) { go(Math.sign(wheelAcc)); wheelAcc = 0; wheelT = e.timeStamp; }
+  }, { passive: false });
+
+  const prev = document.getElementById("ring-prev"), next = document.getElementById("ring-next");
+  if (prev) prev.addEventListener("click", () => go(-1));
+  if (next) next.addEventListener("click", () => go(1));
+
+  const ring = document.getElementById("work-ring");
+  [stage, info].forEach((el) => {
+    if (!el) return;
+    el.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") hovered = true; });
+    el.addEventListener("pointerleave", () => { hovered = false; autoT0 = performance.now(); });
+  });
+  new IntersectionObserver((es) => {
+    visible = es.some((x) => x.isIntersecting);
+    autoT0 = performance.now();
+    kick();
+  }, { threshold: 0.25 }).observe(ring || stage);
+
+  let resizeRaf = 0;
+  window.addEventListener("resize", () => {
+    cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(layout);
+  });
+
+  function refresh() {
+    cards = [...track.children];
+    n = cards.length;
+    pos = target = 0;
+    active = -1;
+    if (dotsEl) {
+      dotsEl.innerHTML = cards.map((_, i) =>
+        `<button type="button" aria-label="${i + 1}"></button>`).join("");
+      [...dotsEl.children].forEach((b, i) => b.addEventListener("click", () => goTo(i)));
+    }
+    layout();
+    kick();
+  }
+  refresh();
+  return { refresh };
 })();

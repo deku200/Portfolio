@@ -329,28 +329,130 @@ __FAQ_LD__
         <div class="marquee" aria-hidden="true">
           <div class="marquee-track" id="tag-marquee"></div>
         </div>
-        <div class="work-items">
-          <article class="work-item" data-title="&lt;GREENING AFRICA&gt;">
-            <div class="w-head"><span class="w-case">CASE 001 — 2026</span><span class="w-status">■ DESIGN</span></div>
-            <div class="work-media glitchable"><img src="/img/greening-africa.webp" alt="Greening Africa — landing page" loading="lazy" decoding="async" /></div>
-            <h2 class="work-title scramble-hover">&lt;GREENING AFRICA&gt;</h2>
-            <p class="work-desc" data-i18n="descGreening">LANDING PAGE FOR A COLLECTIVE REFORESTATION INITIATIVE.</p>
-            <div class="w-tags"><span>FIGMA</span><span>GSAP</span><span>LANDING</span></div>
-          </article>
-          <article class="work-item" data-title="&lt;МЕЛМАН&gt;">
-            <div class="w-head"><span class="w-case">CASE 002 — 2026</span><span class="w-status is-live">● LIVE</span></div>
-            <div class="work-media glitchable"><img src="/img/melman.webp" alt="МЕЛМАН — merch store" loading="lazy" decoding="async" /></div>
-            <h2 class="work-title scramble-hover"><a data-tip="MELMAN.SHOP ↗" href="https://melman.shop/" target="_blank" rel="noopener noreferrer">&lt;МЕЛМАН&gt; ↗</a></h2>
-            <p class="work-desc" data-i18n="descMelman">MERCH STORE FOR THE #1 OSTRICH IN UKRAINIAN TIKTOK.</p>
-            <div class="w-tags"><span>E-COMMERCE</span><span>JS</span><span>NETLIFY</span></div>
-          </article>
-          <article class="work-item" data-title="&lt;MOCLAME HOME&gt;">
-            <div class="w-head"><span class="w-case">CASE 003 — 2026</span><span class="w-status">■ IN DEV</span></div>
-            <div class="work-media glitchable"><img src="/img/moclame-home.webp" alt="MOCLAME HOME — 3D print shop" loading="lazy" decoding="async" /></div>
-            <h2 class="work-title scramble-hover">&lt;MOCLAME HOME&gt;</h2>
-            <p class="work-desc" data-i18n="descMoclame">E-COMMERCE FOR 3D-PRINTED HOME DECOR WITH LIVE 3D PREVIEWS.</p>
-            <div class="w-tags"><span>3D</span><span>THREE.JS</span><span>SHOP</span></div>
-          </article>
+        <!-- WORK RING — the projects stand on a 3D ring that turns in a loop:
+             arrows, swipe/drag, the keyboard, or on its own. The card in front
+             is in colour and its case file is read out below the ring. Cards
+             are rebuilt from /api/projects by main.js §15; these are the
+             no-JS / crawler copy. -->
+        <div class="ring" id="work-ring" role="region" aria-roledescription="carousel"
+             aria-label="Наші роботи / Our work">
+          <h2 class="works-label ring-label">
+            <span data-lang-block="uk">&lt;НАШІ РОБОТИ&gt;</span><span data-lang-block="en">&lt;OUR WORK&gt;</span>
+          </h2>
+          <div class="ring-stage" id="ring-stage" tabindex="0">
+            <div class="ring-floor" aria-hidden="true"></div>
+            <div class="ring-tilt">
+              <div class="ring-track" id="ring-track">
+            <article class="ring-card">
+              <a class="rc-face rc-front" href="https://ronin-forge.store" target="_blank" rel="noopener noreferrer" tabindex="-1" draggable="false">
+                <span class="rc-bar" aria-hidden="true"><i></i><i></i><i></i><span class="rc-url">ronin-forge.store</span></span>
+                <img src="/img/master-the-blade.webp" alt="MASTER THE BLADE — односторінковий сайт для продажу кастомних катан на замовлення" loading="lazy" decoding="async" draggable="false" />
+              </a>
+              <div class="rc-face rc-back" aria-hidden="true">
+                <span class="rc-no">001</span>
+                <span class="rc-name">&lt;MASTER THE BLADE&gt;</span>
+              </div>
+              <div class="rc-info">
+                <div class="w-head"><span class="w-case">CASE 001 — 2026</span><span class="w-status is-live">● LIVE</span></div>
+                <h3 class="work-title"><a href="https://ronin-forge.store" target="_blank" rel="noopener noreferrer">&lt;MASTER THE BLADE&gt; ↗</a></h3>
+                <p class="work-desc"><span data-lang-block="uk">Односторінковий сайт для продажу кастомних катан на замовлення.</span><span data-lang-block="en">A one-page website that sells custom-made katanas to order.</span></p>
+                <div class="w-tags"><span>CLOUDFLARE</span><span>JS</span><span>LANDING</span></div>
+              </div>
+            </article>
+            <article class="ring-card">
+              <a class="rc-face rc-front" href="https://melman.shop/" target="_blank" rel="noopener noreferrer" tabindex="-1" draggable="false">
+                <span class="rc-bar" aria-hidden="true"><i></i><i></i><i></i><span class="rc-url">melman.shop</span></span>
+                <img src="/img/melman.webp" alt="МЕЛМАН — магазин мерчу страуса №1 в українському tiktok" loading="lazy" decoding="async" draggable="false" />
+              </a>
+              <div class="rc-face rc-back" aria-hidden="true">
+                <span class="rc-no">002</span>
+                <span class="rc-name">&lt;МЕЛМАН&gt;</span>
+              </div>
+              <div class="rc-info">
+                <div class="w-head"><span class="w-case">CASE 002 — 2026</span><span class="w-status is-live">● LIVE</span></div>
+                <h3 class="work-title"><a href="https://melman.shop/" target="_blank" rel="noopener noreferrer">&lt;МЕЛМАН&gt; ↗</a></h3>
+                <p class="work-desc"><span data-lang-block="uk">Магазин мерчу страуса №1 в українському TikTok.</span><span data-lang-block="en">Merch store for the #1 ostrich in Ukrainian TikTok.</span></p>
+                <div class="w-tags"><span>E-COMMERCE</span><span>JS</span><span>NETLIFY</span></div>
+              </div>
+            </article>
+            <article class="ring-card">
+              <a class="rc-face rc-front" href="https://jemonty.shop/" target="_blank" rel="noopener noreferrer" tabindex="-1" draggable="false">
+                <span class="rc-bar" aria-hidden="true"><i></i><i></i><i></i><span class="rc-url">jemonty.shop</span></span>
+                <img src="/img/jemonty.webp" alt="JeMonty — ресторан французької кухні з професійним шефом jemonty" loading="lazy" decoding="async" draggable="false" />
+              </a>
+              <div class="rc-face rc-back" aria-hidden="true">
+                <span class="rc-no">003</span>
+                <span class="rc-name">&lt;JeMonty&gt;</span>
+              </div>
+              <div class="rc-info">
+                <div class="w-head"><span class="w-case">CASE 003 — 2026</span><span class="w-status is-live">● LIVE</span></div>
+                <h3 class="work-title"><a href="https://jemonty.shop/" target="_blank" rel="noopener noreferrer">&lt;JeMonty&gt; ↗</a></h3>
+                <p class="work-desc"><span data-lang-block="uk">Ресторан французької кухні з професійним шефом JeMonty.</span><span data-lang-block="en">A French cuisine restaurant with professional chef JeMonty.</span></p>
+                <div class="w-tags"><span>E-COMMERCE</span><span>JS</span><span>SHOP</span><span>CLOUDFLARE</span></div>
+              </div>
+            </article>
+            <article class="ring-card">
+              <a class="rc-face rc-front" href="https://www.orlevan.store/" target="_blank" rel="noopener noreferrer" tabindex="-1" draggable="false">
+                <span class="rc-bar" aria-hidden="true"><i></i><i></i><i></i><span class="rc-url">orlevan.store</span></span>
+                <img src="/img/orlevan-shop.webp" alt="ORLEVAN SHOP — онлайн-магазин ювелірних виробів ручної роботи під замовлення" loading="lazy" decoding="async" draggable="false" />
+              </a>
+              <div class="rc-face rc-back" aria-hidden="true">
+                <span class="rc-no">004</span>
+                <span class="rc-name">&lt;ORLEVAN SHOP&gt;</span>
+              </div>
+              <div class="rc-info">
+                <div class="w-head"><span class="w-case">CASE 004 — 2026</span><span class="w-status is-live">● LIVE</span></div>
+                <h3 class="work-title"><a href="https://www.orlevan.store/" target="_blank" rel="noopener noreferrer">&lt;ORLEVAN SHOP&gt; ↗</a></h3>
+                <p class="work-desc"><span data-lang-block="uk">Онлайн-магазин ювелірних виробів ручної роботи під замовлення.</span><span data-lang-block="en">An online store of handmade custom jewellery.</span></p>
+                <div class="w-tags"><span>E-COMMERCE</span><span>NODEJS</span><span>VERCEL</span><span>CLOUDFLARE</span></div>
+              </div>
+            </article>
+            <article class="ring-card">
+              <a class="rc-face rc-front" href="https://moclame-home.shop/en/" target="_blank" rel="noopener noreferrer" tabindex="-1" draggable="false">
+                <span class="rc-bar" aria-hidden="true"><i></i><i></i><i></i><span class="rc-url">moclame-home.shop</span></span>
+                <img src="/img/moclame-home.webp" alt="MOCLAME HOME — 3d-друк для вашого дому" loading="lazy" decoding="async" draggable="false" />
+              </a>
+              <div class="rc-face rc-back" aria-hidden="true">
+                <span class="rc-no">005</span>
+                <span class="rc-name">&lt;MOCLAME HOME&gt;</span>
+              </div>
+              <div class="rc-info">
+                <div class="w-head"><span class="w-case">CASE 005 — 2026</span><span class="w-status is-live">● LIVE</span></div>
+                <h3 class="work-title"><a href="https://moclame-home.shop/en/" target="_blank" rel="noopener noreferrer">&lt;MOCLAME HOME&gt; ↗</a></h3>
+                <p class="work-desc"><span data-lang-block="uk">3D-друк для вашого дому.</span><span data-lang-block="en">3D printing for your home.</span></p>
+                <div class="w-tags"><span>E-COMMERCE</span><span>NODEJS</span><span>SUPABASE</span><span>CRM</span><span>SEO</span></div>
+              </div>
+            </article>
+            <article class="ring-card">
+              <a class="rc-face rc-front" href="https://motochas.com.ua/" target="_blank" rel="noopener noreferrer" tabindex="-1" draggable="false">
+                <span class="rc-bar" aria-hidden="true"><i></i><i></i><i></i><span class="rc-url">motochas.com.ua</span></span>
+                <img src="/img/motochas.webp" alt="MOTOCHAS — інтернет-магазин електроскутерів, трициклів і квадроциклів — 110+ моделей" loading="lazy" decoding="async" draggable="false" />
+              </a>
+              <div class="rc-face rc-back" aria-hidden="true">
+                <span class="rc-no">006</span>
+                <span class="rc-name">&lt;MOTOCHAS&gt;</span>
+              </div>
+              <div class="rc-info">
+                <div class="w-head"><span class="w-case">CASE 006 — 2026</span><span class="w-status is-live">● LIVE</span></div>
+                <h3 class="work-title"><a href="https://motochas.com.ua/" target="_blank" rel="noopener noreferrer">&lt;MOTOCHAS&gt; ↗</a></h3>
+                <p class="work-desc"><span data-lang-block="uk">Інтернет-магазин електроскутерів, трициклів і квадроциклів — 110+ моделей.</span><span data-lang-block="en">An online store for electric scooters, trikes and ATVs — 110+ models.</span></p>
+                <div class="w-tags"><span>E-COMMERCE</span><span>CATALOG</span><span>NOVA POSHTA</span><span>SEO</span></div>
+              </div>
+            </article>
+              </div>
+            </div>
+          </div>
+
+          <div class="ring-ui">
+            <button type="button" class="ring-btn" id="ring-prev" aria-label="Попередня робота / Previous">&larr;</button>
+            <div class="ring-info" id="ring-info" aria-live="polite"></div>
+            <button type="button" class="ring-btn" id="ring-next" aria-label="Наступна робота / Next">&rarr;</button>
+          </div>
+          <div class="ring-meta">
+            <span class="ring-count" id="ring-count">01 / 06</span>
+            <span class="ring-progress" aria-hidden="true"><i id="ring-bar"></i></span>
+            <span class="ring-dots" id="ring-dots"></span>
+          </div>
         </div>
         <div class="work-more">
           <a href="__BASE__/projects" class="btn-orange work-more-btn" data-i18n="viewAll" data-tip="→ ALL PROJECTS / УСІ ПРОЄКТИ">ДИВИТИСЯ ВСІ →</a>
